@@ -1,0 +1,127 @@
+﻿@{
+    Page.Title = "PublicacionAlta";
+
+    Layout = "~/_SiteLayout.cshtml";
+
+    ObjetoBusqueda objetoBusqueda = new ObjetoBusqueda();
+    objetoBusqueda.IntEjecuta = 0;
+    var lstObjCategoria = new Categoria().ObtenerListaGenerica(objetoBusqueda);
+    int IntIdCategoriaCasas = lstObjCategoria.Where(w=>w.StrCveCategoria == "CASAS").First().IntIdCategoria;
+    int i = 0;
+}
+<link rel="stylesheet" href="@VariableGlobal.StrUrlSitio/css/product.css">
+<section>
+    <div class="containerForm">
+        <form>
+            <div class="containerNav_Publicacion">
+                <h2>Agrega publicación</h2>
+            </div>
+            <hr>
+            <div class="form-group">
+                <label for="ddl_Categoria">Categoria</label>
+                @foreach (var item in lstObjCategoria)
+                {
+                    if (IntIdCategoriaCasas == item.IntIdCategoria)
+                    {
+                        <option selected value="@item.IntIdCategoria">@item.StrDescCategoria</option>
+                    }
+                }
+            </div>
+            <div class="form-group">
+                <div class="mb-3">
+                    <label for="formFile" class="form-label">Selecciona imagen</label>
+                    <input class="form-control formMix" type="file" id="formFile">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="it_Presupuesto">Presupuesto</label>
+                <br>
+                <input type="number" class="form-control"
+                       id="it_Presupuesto" maxlength="10"
+                       placeholder="" aria-label="Presupuesto">
+            </div>
+            <div class="form-group">
+                <label for="it_MetrosConstruccion">Construccion (mts2)</label>
+                <br>
+                <input type="number" class="form-control"
+                       id="it_MetrosConstruccion" maxlength="10"
+                       placeholder="" aria-label="Presupuesto">
+            </div>
+            <div class="form-group">
+                <label for="it_MetrosTerreno">Terreno (mts2)</label>
+                <br>
+                <input type="number" class="form-control"
+                       id="it_MetrosTerreno" maxlength="10"
+                       placeholder="" aria-label="Presupuesto">
+            </div>
+            <div class="form-group">
+                <label for="it_Banos">Baños</label>
+                <br>
+                <input type="number" class="form-control"
+                       id="it_Banos" maxlength="10"
+                       placeholder="" aria-label="Presupuesto">
+            </div>
+            <div class="form-group">
+                <label for="txt_Descripcion">Descripción</label>
+                <br>
+                <textarea name="" id="txt_Descripcion"></textarea>
+            </div>
+            <div class="containerNavFooter">
+                <button type="button" id="btn_RegistraPublicacion" class="btn btn-primary">Agregar</button>
+            </div>
+        </form>
+    </div>
+    <div class="footer">
+        <i></i>
+        <i></i>
+    </div>
+    <br />
+    <br />
+</section>
+
+<script>
+    $(document).ready(function () {
+        $("#btn_RegistraPublicacion").click(function () {
+            fn_RegistroPublicacion(this);
+        });
+    });
+
+
+    function fn_RegistroPublicacion(btnClick) {
+        var obj_Publicacion = {
+            IntIdPublicacion: $("#containerNav_Publicacion").data("id"),
+            IntIdCategoria: $("#ddl_Categoria").val(),
+            DecPresupuesto: $("#it_Presupuesto").val(),
+            StrDescripcion: $("#txt_Descripcion").val()
+        }
+
+        var str_Metodo = "";
+        var str_Url = "";
+        str_Metodo = "POST";
+        str_Url = "@VariableGlobal.StrUrlApi/Publicacion";
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_Publicacion),
+            type: str_Metodo,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (obj_Datos) {
+
+                //Se manda el mensaje de exito
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                if (obj_Datos["IntError"] == 1) {
+                    setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
+                        location.href = '@VariableGlobal.StrUrlSitio/Views/Publicacion/publicacionAlta.cshtml';
+                    }, 3500);
+                } else {
+                    setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
+                        location.href = '@VariableGlobal.StrUrlSitio/Views/Default/Default.cshtml';
+                    }, 3500);
+                }
+            }
+        });
+    }
+</script>
+
+

@@ -1,0 +1,91 @@
+﻿@{
+	if (!VariableGlobal.SessionBoolActivo ||
+	VariableGlobal.SessionStrTipoMenu == "" ||
+	(VariableGlobal.SessionStrTipoMenu != "ejecutivo" && VariableGlobal.SessionStrTipoMenu != "operativo"))//si no existe la sesion entonces retornamos a login
+	{
+		Response.Redirect("~/Acceso.cshtml");
+	}
+
+	Page.Title = "SinAcceso";
+	int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+	string StrUrl = Request.QueryString["Url"]?.ToString() ?? "";
+	string msgErrorAcceso = "";
+
+}
+
+<head>
+	<meta charset="utf-8" />
+	<title>@Page.Title - @VariableGlobal.StrNombreApicacion</title>
+
+	<link rel="icon" type="img/png" href="~/img/alianza-b.png" />
+
+
+	<!-- css -->
+	<link href="~/css/bootstrap.min.css" rel="stylesheet">
+	<link href="~/font-awesome/css/font-awesome.css" rel="stylesheet">
+	<link href="~/css/animate.css" rel="stylesheet">
+	<link href="~/css/style.css" rel="stylesheet">
+
+	<!-- Toast - Mensajes flotantes -->
+	<link href="~/Scripts/plugins/toastr/toastr.min.css" rel="stylesheet" />
+
+	<!-- Modificaciones de estilos al proyecto -->
+	<link href="~/css/utileria.css" rel="stylesheet">
+
+    @if (IntPopUp == 0)
+    {
+	    <!-- Mainly scripts -->
+	    <script src="~/Scripts/jquery-2.1.1.js"></script>
+	    <script src="~/Scripts/bootstrap.min.js"></script>
+
+	    <!-- Toast - Mensajes flotantes -->
+	    <script src="~/Scripts/plugins/toastr/toastr.min.js"></script>
+    }
+</head>
+
+
+<body class="gray-bg">
+	<div class="login-page">
+		<div class="middle-box text-center loginscreen animated fadeInDown">
+			<div>
+				<div>
+					<cfoutput>
+						<h1 class="logo-name">
+							@*<img src="~/img/alianza.png" />*@
+						</h1>
+					</cfoutput>
+				</div>
+				<br />
+				<h3>Página No Encontrada </h3>
+
+				<p>No se encontró la página solicitada, asegúrate de haber colocado la url correcta: '@StrUrl'</p>
+
+
+					<input type="hidden" name="hblogin" value="0">
+
+					<button type="submit" class="btn btn_Regresar btn-warning block full-width m-b">Regresar</button>
+
+			</div>
+		</div>
+
+	</div>
+</body>
+
+<script type="text/javascript">
+
+    if (@IntPopUp == 1) {
+        $(".middle-box").css("padding-top", "0px");
+    }
+    $(".btn_Regresar").click(function () {
+       // var url = window.document.referrer;
+        //window.location.href = window.document.referrer;
+        if (@IntPopUp == 0) {
+            history.back();
+            return false;
+        }
+        else {
+            $.pgwModal('close');
+        }
+        });
+
+</script>

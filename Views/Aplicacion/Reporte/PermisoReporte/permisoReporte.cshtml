@@ -1,0 +1,259 @@
+﻿@using System.Web.WebPages.Html
+@using Newtonsoft.Json;
+@{
+    Page.Title = "Reporte permisos usuario perfil";
+    Layout = "~/_SiteLayout.cshtml";
+
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+
+    ///////////////////////////////////////////////
+    //Codigo para reglas de negocio y Obtener botones
+    ///////////////////////////////////////////////
+
+    string Strurl = Request.RawUrl;
+    bool urlDefault = Strurl.Contains("Default.cshtml");
+    List<Accion> objAccion = null;
+    String jsonAccionPagina = null;
+    String jsonReglasNegocio = null;
+    var int_Robot = VariableGlobal.SessionIntBRobot;
+
+    // Comienza petición de acciones para la pagina
+    var objAccesoPagina = new PaginaMenuController().Get((int_Robot == 1 ? 2 : 1), Strurl);
+    jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+    jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+    objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+
+    ///////////////////////////////////////////////
+    //Fin de Codigo para reglas de negocio y Obtener botones
+    ///////////////////////////////////////////////
+
+    //Combos para filtros
+    var obj_Perfiles = new PerfilController().ObtenerLista(1, 0);
+    var obj_Menus = new MenuController().ObtenerLista(4, 0);
+    ObjetoBusqueda ObjetoBusqueda = new ObjetoBusqueda();
+    ObjetoBusqueda.IntTipoBusqueda = 2;
+
+    UsuarioListadoController objUsuario = new UsuarioListadoController();
+    var ddl_Usuarios = objUsuario.ObtenerListadoGenerico(ObjetoBusqueda).Content;
+
+    int int_IdPerfil = 0;
+    int int_IdMenu = 0;
+    int int_IdUsuario = 0;
+
+    if (IsPost)
+    {
+        int_IdPerfil = (string.IsNullOrEmpty(Request.Form["ddl_FiltroPerfiles"])) ? 0 : int.Parse(Request.Form["ddl_FiltroPerfiles"]);
+        int_IdMenu = (string.IsNullOrEmpty(Request.Form["ddl_FiltroMenus"])) ? 0 : int.Parse(Request.Form["ddl_FiltroMenus"]);
+        int_IdUsuario = (string.IsNullOrEmpty(Request.Form["ddl_FiltroUsuarios"])) ? 0 : int.Parse(Request.Form["ddl_FiltroUsuarios"]);
+    }
+
+    var objFiltro = new FiltrosDTPermisoReporte();
+    objFiltro.IntIdMenu = int_IdMenu;
+    objFiltro.IntIdPerfil = int_IdPerfil;
+    objFiltro.IntIdUsuario = int_IdUsuario;
+
+    var objReportePermisos = new PermisoReporteController().ObtenerPermisos(objFiltro);
+
+    //Permiso para exportar datos
+    var BtnAccionExportar = objAccion.Where(x => x.StrCveAccion == "Exportar").ToList();
+}
+
+<script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/table2excel/table2excel.js"></script>
+
+<div class="wrapper border-bottom white-bg page-heading">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="text-center" id="lbl_TituloPagina">@Page.Title</h2>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12  text-center">
+
+        </div>
+    </div>
+</div>
+<br /><br /><br />
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Filtros</h5>
+                    <div class="ibox-tools div_Documento">
+                        <div class="div_Acciones text-right" style="display: inline-block;">
+                            @{
+                                if (BtnAccionExportar.Count > 0)
+                                {
+                                    <button id="btn_Exportar" class="btn btn-info" style="background-color: #1F7345; border-color: #1F7345;" id="btn_ImportarArchivo" type="button" data-toggle="tooltip" data-placement="right" title="" data-original-title="Exportar archivo"><i class="fa fa-file-excel-o"></i></button>
+                                }
+                            }
+                            @{
+                                var BtnAccionBuscar = objAccion.Where(x => x.StrCveAccion == "Buscar").ToList();
+
+                                if (BtnAccionBuscar.Count != 0)
+
+                                {
+
+                                    <button id="@BtnAccionBuscar[0].StrObjetoId" name="@BtnAccionBuscar[0].StrObjetoId" class="@BtnAccionBuscar[0].StrObjetoClase" type="button" title="@BtnAccionBuscar[0].StrObjetoNombre"><i class="@BtnAccionBuscar[0].StrObjetoIcono"></i></button>
+
+                                }
+                            }
+                        </div>
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form role="form" id="form_AnticiposReporte" action="../../../Aplicacion/Reporte/PermisoReporte/permisoReporte.cshtml" method="post" class="form-horizontal">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="col-lg-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="ddl_FiltroPerfiles" class="col-lg-4 col-sm-2 control-label">Perfiles:</label>
+                                        <div class="col-lg-6 col-sm-10">
+                                            @Html.DropDownList("ddl_FiltroPerfiles", "- TODOS -", obj_Perfiles.Select(x => new SelectListItem() { Value = x.idPerfil.ToString(), Text = x.descPerfil.ToString() }), 0, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="ddl_FiltroUsuarios" class="col-lg-4 col-sm-2 control-label">Usuarios:</label>
+                                        <div class="col-lg-6 col-sm-10">
+                                            <select class="form-control" id="ddl_FiltroUsuarios" name="ddl_FiltroUsuarios">
+                                                <option value="0">-SELECCIONE-</option>
+                                                @foreach (Usuario usuario in ddl_Usuarios)
+                                                {
+                                                    <option value="@usuario.IntIdUsuario">@usuario.StrDescUsuario</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="ddl_FiltroMenus" class="col-lg-4 col-sm-2 control-label">Menus:</label>
+                                        <div class="col-lg-6 col-sm-10">
+                                            @Html.DropDownList("ddl_FiltroMenus", "- TODOS -", obj_Menus.Select(x => new SelectListItem() { Value = x.idMenu.ToString(), Text = x.descMenu.ToString() }), 0, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clear-fix clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ibox contenido-inicial">
+        <div class="ibox-content" id="div_TblReporte">
+            <table class="table table-hover table-bordered" id="tbl_Reporte">
+                <thead>
+                    <tr>
+                        <th>Menú</th>
+                        <th>Página</th>
+                        <th>Acceso por</th>
+                        <th>Acceso</th>
+                        <th>Acción</th>
+                        <th>Movimientos Especiales</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (objReportePermisos.Count > 0)
+                    {
+                        foreach (var val in objReportePermisos)
+                        {
+                            <tr>
+                                <td>@val.StrDescRutaMenu</td>
+                                <td>@val.StrRutaVista</td>
+                                <td>@val.StrDescAccesoPor</td>
+                                <td>@val.StrDescAcceso</td>
+                                <td> @(new HtmlString(@val.StrDescAccion))</td>
+                                <td> @(new HtmlString(@val.StrDesPermisosEspeciales))</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@if (IntPopUp == 1)
+{
+
+    @(new HtmlString("</div></body>"))
+
+}
+
+<script>
+    var int_Robot = @int_Robot;
+    var int_ObjContador = @objReportePermisos.Count;
+    var int_IdUsuario = @int_IdUsuario;
+
+
+    $(document).ready(function () {
+
+       $('#tbl_Reporte').DataTable({
+            paging: false,
+            searching: false,
+            ordering: false,
+            scrollY: true,
+            scrollX: true,
+            language: obj_ClaseDataTable.json_LanguageDataTable,
+            fixedHeader: {
+                header: true,
+                footer: false
+            },
+            select: false,
+            info: false
+        });
+
+        $("#btn_Buscar").click(function () {
+            fn_Buscar();
+        });
+
+        $('#btn_Exportar').click(function () {
+            if (int_ObjContador <= 0) {
+                $(this).prop('disabled', true);
+                toastr["warning"]("La búsqueda no arrojó ningun resultado. Imposible exportar.");
+                return false;
+            } else {
+                $(this).prop('disabled', false);
+                exportarAExcel();
+            }
+        });
+
+        $("#ddl_FiltroPerfiles option[value='" + @int_IdPerfil + "']").prop("selected",true).trigger('change');
+        $("#ddl_FiltroMenus option[value='" + @int_IdMenu + "']").prop("selected",true).trigger('change');
+        $("#ddl_FiltroUsuarios option[value='" + int_IdUsuario + "']").prop("selected", true).trigger('change');
+    });
+
+    function fn_Buscar() {
+        $("#btn_Buscar").prop('disabled', true);
+        var int_ComprobarFiltro = 0;
+
+        $(".form-control").each(function (index, value) {
+
+            if ($(this).val() != "" && $(this).val() >= 0) {
+                int_ComprobarFiltro = 1;
+                return false;
+            }
+        });
+
+        if (int_ComprobarFiltro == 0 && int_Robot == 0) {
+            $("#btn_Buscar").prop('disabled', false);
+            toastr["warning"]("La búsqueda debe contener al menos un filtro.");
+            return false;
+        }
+
+        $("#form_AnticiposReporte").submit();
+    }
+
+    function exportarAExcel() {
+        var dt = new Date();
+        var date = dt.getDay() + "" + dt.getMonth() + "" + dt.getYear() + "_" + dt.getHours() + "" + dt.getMinutes() + "" + dt.getSeconds();
+
+        var blob = new Blob([document.getElementById('div_TblReporte').innerHTML], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8" });
+        saveAs(blob, "ReportePermisosUsuarios_" + date + ".xls");
+    }
+</script>

@@ -1,0 +1,51 @@
+﻿@{
+    Page.Title = "Publicación";
+
+    Layout = "~/_SiteLayout.cshtml";
+    int IntIdPublicacion = int.Parse(Request.QueryString["IdPublicacion"]?.ToString() ?? "0");
+
+    ObjetoBusqueda objetoBusqueda = new ObjetoBusqueda();
+    objetoBusqueda.IntEjecuta = 0;
+    objetoBusqueda.IntId1 = IntIdPublicacion;
+    if (IntIdPublicacion == 0)
+    {
+        Response.Redirect("~/Views/Default/Default.cshtml");
+    }
+    var lstObjPublicacion = new Publicacion().ObtenerListaGenerica(objetoBusqueda);
+    int i = 0;
+}
+
+<link rel="stylesheet" href="@VariableGlobal.StrUrlSitio/css/productDetail.css">
+@foreach (var objPublicacion in lstObjPublicacion)
+{
+    <section style="margin-top: 15%;
+        margin-bottom: 15%; height: 100%;">
+        <div class="containerCarusel">
+            <div class="exit">
+                <i class="material-icons md-48">arrow_back_ios</i>
+            </div>
+            <img src="@VariableGlobal.StrUrlSitio/img/mustang1.png" alt="">
+        </div>
+        <div class="containerTittle">
+            <div>
+                <p class="tittle">@objPublicacion.StrCveCategoria</p>
+                <p class="category">@objPublicacion.StrCveCategoria <span>DISPONIBLE</span></p>
+            </div>
+            <div class="containerPrice">
+                <div>
+                    <p>$@objPublicacion.DecPresupuesto.ToString("#,###,###.##")</p>
+                </div>
+                <button type="button" class="btn btn-block">Contactar</button>
+            </div>
+        </div>
+        <div class="ContainerDesc">
+            @objPublicacion.StrDescCategoria
+
+            @objPublicacion.StrDescripcion
+        </div>
+        <div class="footer">
+            <i></i>
+            <i></i>
+        </div>
+    </section>
+}

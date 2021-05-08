@@ -1,0 +1,728 @@
+﻿@using Newtonsoft.Json;
+@{
+    //verificamos si trae parametro para ser Popup o ventana
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+    int IntIdCuentaContable = int.Parse(Request.QueryString["pIdCuentaContable"]?.ToString() ?? "0");
+
+    ///////////////////////////////////////////////
+    //Codigo para reglas de negocio
+    ///////////////////////////////////////////////
+    string Strurl = Request.RawUrl;
+    bool urlDefault = Strurl.Contains("Default.cshtml");
+    List<Accion> objAccion = null;
+    String jsonAccionPagina = null;
+    String jsonReglasNegocio = null;
+    var int_Robot = VariableGlobal.SessionIntBRobot;
+
+    // Comienza petición de acciones para la pagina
+    var objAccesoPagina = new PaginaMenuController().Get((int_Robot == 1 ? 2 : 1), Strurl);
+
+
+    if (IntPopUp == 0)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+        // Comienza petición de acciones para la pagina
+        jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+        jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+        objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+
+    }
+    else
+    {
+        //So el usuario no es robot, no tiene acceso a la pagina y la pagina no es default
+        if (VariableGlobal.SessionIntBRobot != 1 && objAccesoPagina.Content.IntIdPagina == 0 && !urlDefault)
+        {
+            Response.Redirect("~/Views/Aplicacion/Acceso/SinAcceso.cshtml?Popup=1");
+        }
+        else
+        {
+            // Comienza petición de acciones para la pagina
+            jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+            jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+            objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+        }
+
+    }
+
+    //Permiso para exportar datos de DataGrid
+    var BtnAccionExportar = objAccion.Where(x => x.StrCveAccion == "Exportar").ToList();
+    var BtnAccionImprimir = objAccion.Where(x => x.StrCveAccion == "Imprimir").ToList();
+
+    ///Combo de tiempos
+    DateTime DtHoy = DateTime.Now;
+    DateTime DtPrimerDiaMes = new DateTime(DtHoy.Year, DtHoy.Month, 1);
+    string str_FechaFiltro = "RANGOFECHAS";
+
+    IEnumerable<dynamic> ddl_TipoRangoFechas = Enumerable.Empty<dynamic>();
+    if (int_Robot == 1)
+    {
+        ddl_TipoRangoFechas = new MultiListaController().ObtenerLista(2, 0, "TIPORANGOFECHAS");
+    }
+    else
+    {
+        ddl_TipoRangoFechas = new MultiListaController().ObtenerListaChar(10, 0, "TIPORANGOFECHAS", "ANIOACTUAL,DOSANIOS");
+    }
+
+    ddl_TipoRangoFechas = ddl_TipoRangoFechas.OrderBy(o => o.idMultiLista).ToList();
+
+    string str_FechaInicial = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd 00:00:00");
+    string str_FechaFinal = DateTime.Now.ToString("yyyy-MM-dd 23:59:59");
+
+    var ddl_RegistroAccesoPagina = new RegistroAccesoListadoController().ObtenerLista(1, 0);
+
+    Page.Title = "Reporte Registro Acceso";
+}
+
+<script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/moment/moment.min.js"></script>
+<!-- Utileria devExtreme para reportes-->
+<link href="@VariableGlobal.StrUrlSitio/css/plugins/devExtreme/dx.common.css" rel="stylesheet">
+<link href="@VariableGlobal.StrUrlSitio/css/plugins/devExtreme/dx.light.css" rel="stylesheet">
+<!-- Utileria devExtreme para reportes-->
+<script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/devExtreme/dx.all.js"></script>
+<script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/devExtreme/jszip.min.js"></script>
+<script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/devExtreme/localization.es.js"></script>
+<script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/iCheck/icheck.min.js"></script>
+<style>
+    .fa-minus, .fa-plus {
+        font-size: 16px !important;
+    }
+</style>
+
+<div class="wrapper border-bottom white-bg page-heading">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="text-center" id="lbl_TituloPagina">@Page.Title</h2>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12  text-center">
+
+        </div>
+    </div>
+</div>
+<br /><br /><br />
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Filtros</h5>
+                    <div class="ibox-tools">
+                        <div class="div_Acciones text-right" style="display: inline-block;">
+                            @{
+                                var BtnAccionBuscar = objAccion.Where(x => x.StrCveAccion == "Buscar").ToList();
+                                if (BtnAccionBuscar.Count != 0)
+                                {
+                                    <button id="@BtnAccionBuscar[0].StrObjetoId" name="@BtnAccionBuscar[0].StrObjetoId" class="@BtnAccionBuscar[0].StrObjetoClase" type="button" title="@BtnAccionBuscar[0].StrObjetoNombre"><i class="@BtnAccionBuscar[0].StrObjetoIcono"></i></button>
+                                }
+                            }
+                        </div>
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form role="form" id="form_RegistroAcceso" method="post" class="form-horizontal">
+                        <div class="col-lg-12">
+                            <div class="col-lg-6 col-xs-12">
+                                <div class="form-group">
+                                    <label for="ddl_Pagina" class="col-lg-4 col-sm-2 control-label">Página</label>
+                                    <div class="col-lg-6 col-sm-10">
+                                        <select name="ddl_Pagina" class="form-control" id="ddl_Pagina">
+                                            <option value="0">-TODAS-</option>
+                                            @{
+                    foreach (var item in ddl_RegistroAccesoPagina)
+                    {
+                            <option value="@item.idPagina">@item.descMenu</option>
+}
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ddl_TipoReporte" class="col-lg-4 col-sm-2 control-label">Tipo Reporte</label>
+                                    <div class="col-lg-6 col-sm-10">
+                                        <select name="ddl_TipoReporte" id="ddl_TipoReporte" class="form-control">
+                                            <option value="1">AGRUPADO</option>
+                                            <option value="2">DETALLADO</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="div_Error">
+                                    <label for="ddl_BError" class="col-lg-4 col-sm-2 control-label">Con Error</label>
+                                    <div class="col-lg-6 col-sm-10">
+                                        <select name="ddl_BError" id="ddl_BError" class="form-control">
+                                            <option value="-1">-TODOS-</option>
+                                            <option value="1">SI</option>
+                                            <option value="0" selected>NO</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-xs-12">
+                                <div class="form-group" id="dt_Rango">
+                                    <label for="ddl_FechaFiltro" class="col-lg-4 col-sm-2 control-label">Fecha Registro</label>
+                                    <div id="div_FechaLiquidacion">
+                                        <div class="col-lg-6 col-sm-10">
+                                            <select id="ddl_FechaFiltro" name="ddl_FechaFiltro" class="form-control">
+                                                @foreach (var item in ddl_TipoRangoFechas)
+                                                {
+                                                    <option value="@item.valor1char">@item.descMultiLista</option>
+                                                }
+                                            </select>
+                                        </div><br />
+                                        <div class="col-lg-4 col-sm-10">
+                                            <label></label>
+                                        </div><br />
+                                        <div class="input-daterange input-group col-lg-6 col-sm-10" id="datepicker" style="width: 48.4%; padding-left: 15px;">
+                                            <input type="text" class="input-sm form-control" name="it_FechaInicioFiltro" id="it_FechaInicioFiltro" value="@DtPrimerDiaMes.ToString("dd/MM/yyyy")" />
+                                            <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                                            <span class="input-group-addon"><strong>A:</strong></span>
+                                            <input type="text" class="input-sm form-control" name="it_FechaFinFiltro" id="it_FechaFinFiltro" />
+                                            <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <div class="demo-container" id="div_Tbl">
+                            <div id="gridContainerAgrupado"></div>
+                            <div id="gridContainerDetallado"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="modal_Ejecuta">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ejecutar Registro Acceso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="p_Ejecuta" style="word-break: break-all; font-size:13px;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var dateTime =  new moment('@str_FechaInicial').format('DD/MM/YYYY');
+    var dateTime2 = new moment('@str_FechaFinal').format('DD/MM/YYYY');
+    var str_JsonRegistroAccesoListado = [];
+    var str_FechaFiltro = '@str_FechaFiltro';
+    DevExpress.localization.locale(navigator.language || navigator.browserLanguage);
+    var int_DataGridInicializadoAgrupado = 0;
+    var int_DataGridInicializadoDetallado = 0;
+    var int_AltoInicial = 0;
+    var int_AltoIncremental = 0;
+
+    $(document).ready(function () {
+        $("#it_FechaInicioFiltro").val(dateTime);
+        $("#it_FechaFinFiltro").val(dateTime2);
+
+        //Combo de tiempo
+        $("#ddl_FechaFiltro").val(str_FechaFiltro).trigger('change');
+
+        $("#ddl_FechaFiltro").change(function () {
+            var $this = $(this);
+
+            if ($this.val() == "RANGOFECHAS") {
+                $("#it_FechaInicioFiltro").prop('readonly', false);
+                $("#it_FechaFinFiltro").prop('readonly', false);
+                $("#it_FechaInicioFiltro").css('pointer-events', 'auto');
+                $("#it_FechaFinFiltro").css('pointer-events', 'auto');
+                $("#it_FechaInicioFiltro").css('background-color', '#fff');
+                $("#it_FechaFinFiltro").css('background-color', '#fff');
+            } else {
+                var objMultilista = {
+                    valor1char: $this.val()
+                };
+
+                $("#it_FechaInicioFiltro").prop('readonly', true);
+                $("#it_FechaFinFiltro").prop('readonly', true);
+                $("#it_FechaInicioFiltro").css('pointer-events', 'none');
+                $("#it_FechaFinFiltro").css('pointer-events', 'none');
+                $("#it_FechaInicioFiltro").css('background-color', '#eee');
+                $("#it_FechaFinFiltro").css('background-color', '#eee');
+
+                var respuesta = obj_ClaseGlobal.fn_CalcularRangoFechas(objMultilista);
+                $("#it_FechaInicioFiltro").val(respuesta.nuevaFechaInicio);
+                $("#it_FechaFinFiltro").val(respuesta.nuevaFechaFin);
+            }
+        });
+
+        if (str_FechaFiltro == "RANGOFECHAS") {
+            $("#it_FechaInicioFiltro").prop('readonly', false);
+            $("#it_FechaFinFiltro").prop('readonly', false);
+            $("#it_FechaInicioFiltro").css('pointer-events', 'auto');
+            $("#it_FechaFinFiltro").css('pointer-events', 'auto');
+        } else {
+            $("#it_FechaInicioFiltro").prop('readonly', true);
+            $("#it_FechaFinFiltro").prop('readonly', true);
+            $("#it_FechaInicioFiltro").css('pointer-events', 'none');
+            $("#it_FechaFinFiltro").css('pointer-events', 'none');
+        }
+        //termina combo de tiempo
+
+
+        $('#dt_Rango .input-daterange').datepicker({
+            language: 'es',
+            setDate: dateTime,
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true
+        });
+
+        $("#btn_Buscar").click(function () {
+            if (!obj_ClaseGlobal.fn_ValidarDatosFormulario()) {
+                return false;
+            }
+            fn_ObtenerRegistroAccesoListado();
+        });
+
+        function fn_ObtenerRegistroAccesoListado() {
+            $("html").loading({ message: "Cargando información, espere..." });
+            var dt_FechaInicio = new moment($("#it_FechaInicioFiltro").val(), "DD/MM/YYYY").format("YYYY-MM-DD 00:00:00");
+            var dt_FechaFin = new moment($("#it_FechaFinFiltro").val(), "DD/MM/YYYY").format("YYYY-MM-DD 23:59:59");
+
+            var obj_Filtros = {
+                DtFechaInicial: dt_FechaInicio,
+                DtFechaFinal: dt_FechaFin,
+                IntTipoReporte: $("#ddl_TipoReporte").val(),
+                IntIdPagina: $("#ddl_Pagina").val(),
+                IntBError: $("#ddl_BError").val()
+            };
+
+            setTimeout(function () {
+            $.ajax({
+                url: "@VariableGlobal.StrUrlApi/RegistroAccesoListado/ObtenerRegistroAccesoListado/0/"
+                , async: false
+                , type: "POST" //tipo de accion
+                , data: JSON.stringify(obj_Filtros)
+                , contentType: "application/json; charset=utf-8"
+                , dataType: "json"
+                , success: function (obj_Datos) {
+                    $.each(obj_Datos, function (index, value) {
+
+                        if (value.StrJsonRegistroAcceso != "") {
+                            str_JsonRegistroAccesoListado = $.parseJSON(value.StrJsonRegistroAcceso);
+
+                            if ($("#ddl_TipoReporte").val()=="1") {
+                                $("#gridContainerAgrupado").show();
+                                $("#gridContainerDetallado").hide();
+                                if (int_DataGridInicializadoAgrupado == 0) {
+                                    fn_CargarDataGridAgrupado();
+                                    int_DataGridInicializadoAgrupado = 1;
+                                } else {
+                                    var dataGrid = $('#gridContainerAgrupado').dxDataGrid('instance');
+                                    dataGrid.option("dataSource", str_JsonRegistroAccesoListado);
+                                }
+                            } else {
+                                $("#gridContainerAgrupado").hide();
+                                $("#gridContainerDetallado").show();
+
+                                if (int_DataGridInicializadoDetallado == 0) {
+                                    fn_CargarDataGridDetallado();
+                                    int_DataGridInicializadoDetallado = 1;
+                                } else {
+                                    var dataGrid = $('#gridContainerDetallado').dxDataGrid('instance');
+                                    dataGrid.option("dataSource", str_JsonRegistroAccesoListado);
+                                }
+                            }
+                        } else {
+                            str_JsonRegistroAccesoListado = '';
+                            if ($("#ddl_TipoReporte").val() == "1") {
+                                $("#gridContainerAgrupado").show();
+                                $("#gridContainerDetallado").hide();
+                                fn_CargarDataGridAgrupado();
+                            } else {
+                                $("#gridContainerAgrupado").hide();
+                                $("#gridContainerDetallado").show();
+                                fn_CargarDataGridDetallado();
+                            }
+                        }
+
+                    });
+
+                }, error: function (xhr, ajaxOptions, thrownError) {
+                    $("html").loading('stop');
+                    toastr["error"]("Ocurrió un error obtener la lista de convenios: " + thrownError);
+                }
+
+            }).done(function () {
+                $("html").loading('stop');
+                    });
+            }, 500);
+        }
+    });
+
+    function fn_CargarDataGridAgrupado() {
+        var dt = new Date();
+        var date = dt.getDay() + "" + dt.getMonth() + "" + dt.getYear() + "_" + dt.getHours() + "" + dt.getMinutes() + "" + dt.getSeconds();
+
+        $("#gridContainerAgrupado").dxDataGrid({
+            dataSource: str_JsonRegistroAccesoListado,
+            columnsAutoWidth: true,
+            columnResizingMode: "widget",
+            allowColumnResizing: true,
+            rowAlternationEnabled: true,
+            filterRow: { visible: true },
+            filterPanel: { visible: true, texts: { createFilter: "Crear Filtro", clearFilter: "Limpiar" } },
+            headerFilter: { visible: true },
+            columnChooser: { enabled: true, mode: "select" },
+            allowColumnReordering: true,
+            width: "100%",
+           height: function () {
+               return window.innerHeight / 1.5;
+            },
+           @{
+                 if(BtnAccionExportar.Count > 0) {
+                    <TEXT>
+                            "export": {
+                                enabled: true,
+                                fileName: "RegistroAcceso_" + date,
+                                allowExportSelectedData: false
+                            },
+                   </TEXT>
+                }
+            }
+            filterBuilder: {
+                visible: false
+            },
+            summary: {
+                totalItems: [{
+                        column: "descMenu",
+                        summaryType: "count",
+                        alignment: "left",
+                        cssClass: "total-filas"
+                    }
+                ],
+                texts: {
+                    count: "Total Registros: {0}"
+                }
+            },
+            scrolling: { mode: "infinite" },
+            showBorders: true,
+            columns: [{
+                caption: "Fecha",
+                dataField: "fechaInicio",
+                dataType: "date",
+                format: 'dd/MM/yyyy',
+                allowHeaderFiltering: false,
+                groupIndex: 0
+            },{
+                caption: "Página",
+                dataField: "descMenu",
+                dataType: "string"
+            }, {
+                caption: "Proceso",
+                dataField: "proceso",
+                dataType: "string"
+            }, {
+                caption: "Método",
+                dataField: "metodo",
+                dataType: "string"
+            }, {
+                caption: "Tiempo Promedio",
+                dataField: "promedio",
+                dataType: "number",
+                cellTemplate: function (container, info) {
+                    container.html((info.data.promedio).formatMoney(2));
+                },
+                headerFilter: {
+                    groupInterval: 5
+                }
+            }], onToolbarPreparing: function (e) {
+            var dataGrid = e.component;
+
+                e.toolbarOptions.items.unshift({
+                    location: "before",
+                    template: ""
+                },   @{
+                    if (BtnAccionImprimir.Count > 0 )
+                    {
+                        <text>
+                                {
+                                    location: "after",
+                                    widget: "dxButton",
+                                    options: {
+                                        icon: "fa fa-print",
+                                        hint: "Imprimir",
+                                        onClick: function (e) {
+                                            var str_Html = obj_ClaseGlobal.fn_DataGridGenericoImprimir('#gridContainerAgrupado', str_JsonLiquidacionPolizaReporte, "");
+                                            fn_ImpresionGenerica(str_Html, str_JsonRegistroAccesoListado.length, "Reporte Registro Acceso");
+                                            e.event.preventDefault();
+                                        }
+                                    }
+                                },
+                        </text>
+                    }
+                }{
+                        location: "after",
+                        widget: "dxButton",
+                        options: {
+                            hint: "Decrementa alto de tabla",
+                            icon: "fa fa-minus",
+                            onClick: function (e) {
+                                e.event.preventDefault();
+                                obj_ClaseGlobal.fn_DecrementarAltoDataGrid("#gridContainerAgrupado");
+                            }
+                        }
+                    }, {
+                        location: "after",
+                        widget: "dxButton",
+                        options: {
+                            icon: "fa fa-plus",
+                            hint: "Incrementa alto de tabla",
+                            onClick: function (e) {
+                                e.event.preventDefault();
+                                obj_ClaseGlobal.fn_IncrementarAltoDataGrid("#gridContainerAgrupado");
+                            }
+                        }
+                    }, {
+                        location: "after",
+                        widget: "dxButton",
+                        options: {
+                            icon: "arrowup",
+                            hint: "Ir al incio de la lista",
+                            onClick: function (e) {
+                                e.event.preventDefault();
+                                $("#gridContainerAgrupado").dxDataGrid("instance").getScrollable().scrollTo(0);
+                            }
+                        }
+                    }, {
+                        location: "after",
+                        widget: "dxButton",
+                        options: {
+                            icon: "arrowdown",
+                            hint: "Ir al final de la lista",
+                            onClick: function (e) {
+                                e.event.preventDefault();
+                                $("#gridContainerAgrupado").dxDataGrid("instance").getScrollable().scrollTo($("#gridContainer").dxDataGrid("instance").getScrollable().scrollHeight());
+                            }
+                        }
+                });
+           }
+       });
+
+        $("html").loading('stop');
+        int_AltoInicial = $("#gridContainerAgrupado").height();
+        int_AltoIncremental = $("#gridContainerAgrupado").height();
+    }
+
+    function fn_CargarDataGridDetallado() {
+        var dt = new Date();
+        var date = dt.getDay() + "" + dt.getMonth() + "" + dt.getYear() + "_" + dt.getHours() + "" + dt.getMinutes() + "" + dt.getSeconds();
+
+        $("#gridContainerDetallado").dxDataGrid({
+            dataSource: str_JsonRegistroAccesoListado,
+            columnsAutoWidth: true,
+            columnResizingMode: "widget",
+            allowColumnResizing: true,
+            rowAlternationEnabled: true,
+            filterRow: { visible: true },
+            filterPanel: { visible: true, texts: { createFilter: "Crear Filtro", clearFilter: "Limpiar" } },
+            headerFilter: { visible: true },
+            columnChooser: { enabled: true, mode: "select" },
+            allowColumnReordering: true,
+            width: "100%",
+           height: function () {
+               return window.innerHeight / 1.5;
+            },
+           @{
+                 if(BtnAccionExportar.Count > 0) {
+                    <TEXT>
+                            "export": {
+                                enabled: true,
+                                fileName: "RegistroAcceso_" + date,
+                                allowExportSelectedData: false
+                            },
+                   </TEXT>
+                }
+            }
+            filterBuilder: {
+                visible: false
+            },
+            summary: {
+                totalItems: [{
+                        column: "fechaInicio",
+                        summaryType: "count",
+                        alignment: "left",
+                        cssClass: "total-filas"
+                    }
+                ],
+                texts: {
+                    count: "Total Registros: {0}"
+                }
+            },
+            scrolling: { mode: "infinite" },
+            showBorders: true,
+            columns: [{
+                caption: "Fecha",
+                dataField: "fechaInicio",
+                dataType: "date",
+                format: 'dd/MM/yyyy HH:mm:ss'
+            },{
+                caption: "Página",
+                dataField: "descMenu",
+                dataType: "string"
+            }, {
+                caption: "Proceso",
+                dataField: "proceso",
+                dataType: "string"
+            }, {
+                caption: "Método",
+                dataField: "metodo",
+                dataType: "string",
+                cellTemplate: function (container, info) {
+                    $('<a/>').addClass('dx-link')
+                        .text(info.data.metodo)
+                        .on('dxclick', function () {
+                            fn_ObtenerExecMetodo(info.data.proceso, info.data.parametros);
+                        })
+                        .appendTo(container);
+                }
+            },{
+                caption: "Tiempo",
+                dataField: "segundos",
+                dataType: "number",
+                cellTemplate: function (container, info) {
+                    container.html((info.data.segundos).formatMoney(2));
+                },
+                headerFilter: {
+                    groupInterval: 5
+                }
+             }, {
+                caption: "Modelo",
+                dataField: "modelo",
+                dataType: "string"
+            }, {
+                caption: "Código Error",
+                dataField: "errorCodigo",
+                dataType: "string"
+            }, {
+                caption: "Mensaje Error",
+                 dataField: "errorMensaje",
+                dataType: "string"
+            }, {
+                caption: "Con Error",
+                dataField: "bError",
+                dataType: "string"
+            }, {
+                caption: "Usuario",
+                dataField: "cveUsuario",
+                dataType: "string"
+            }, {
+                caption: "Terminal",
+                dataField: "cveTerminal",
+                dataType: "string"
+            }], onToolbarPreparing: function (e) {
+            var dataGrid = e.component;
+
+                e.toolbarOptions.items.unshift({
+                    location: "before",
+                    template: ""
+                },   @{
+                    if (BtnAccionImprimir.Count > 0 )
+                    {
+                        <text>
+                                {
+                                    location: "after",
+                                    widget: "dxButton",
+                                    options: {
+                                        icon: "fa fa-print",
+                                        hint: "Imprimir",
+                                        onClick: function (e) {
+                                            var str_Html = obj_ClaseGlobal.fn_DataGridGenericoImprimir('#gridContainerDetallado', str_JsonLiquidacionPolizaReporte, "");
+                                            fn_ImpresionGenerica(str_Html, str_JsonRegistroAccesoListado.length, "Reporte Registro Acceso");
+                                            e.event.preventDefault();
+                                        }
+                                    }
+                                },
+                        </text>
+                    }
+                }{
+                        location: "after",
+                        widget: "dxButton",
+                        options: {
+                            hint: "Decrementa alto de tabla",
+                            icon: "fa fa-minus",
+                            onClick: function (e) {
+                                e.event.preventDefault();
+                                obj_ClaseGlobal.fn_DecrementarAltoDataGrid("#gridContainerDetallado");
+                            }
+                        }
+                    }, {
+                        location: "after",
+                        widget: "dxButton",
+                        options: {
+                            icon: "fa fa-plus",
+                            hint: "Incrementa alto de tabla",
+                            onClick: function (e) {
+                                e.event.preventDefault();
+                                obj_ClaseGlobal.fn_IncrementarAltoDataGrid("#gridContainerDetallado");
+                            }
+                        }
+                    }, {
+                        location: "after",
+                        widget: "dxButton",
+                        options: {
+                            icon: "arrowup",
+                            hint: "Ir al incio de la lista",
+                            onClick: function (e) {
+                                e.event.preventDefault();
+                                $("#gridContainerAgrupado").dxDataGrid("instance").getScrollable().scrollTo(0);
+                            }
+                        }
+                    }, {
+                        location: "after",
+                        widget: "dxButton",
+                        options: {
+                            icon: "arrowdown",
+                            hint: "Ir al final de la lista",
+                            onClick: function (e) {
+                                e.event.preventDefault();
+                                $("#gridContainerAgrupado").dxDataGrid("instance").getScrollable().scrollTo($("#gridContainerDetallado").dxDataGrid("instance").getScrollable().scrollHeight());
+                            }
+                        }
+                });
+           }
+       });
+
+        $("html").loading('stop');
+        int_AltoInicial = $("#gridContainerAgrupado").height();
+        int_AltoIncremental = $("#gridContainerAgrupado").height();
+    }
+
+    function fn_ObtenerExecMetodo(ParamStrProceso, ParamStrParametros) {
+        $("#p_Ejecuta").html('');
+        var str_Parametros = "";
+        var str_ParametrosSplit = "";
+        if (ParamStrParametros.includes("p_RegistroError")) {
+            str_ParametrosSplit = ParamStrParametros.split(',@@p_RegistroError');
+            str_Parametros = str_ParametrosSplit[0] + ", @@p_RegistroError='{}'";
+        } else {
+            str_Parametros = ParamStrParametros + " @@p_RegistroError='{}'";
+        }
+        $("#p_Ejecuta").html('<b>EXEC</b> ' + ParamStrProceso + ' ' + str_Parametros);
+        $("#modal_Ejecuta").modal('show');
+    }
+</script>

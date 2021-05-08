@@ -1,0 +1,615 @@
+﻿@using System.Web.WebPages.Html
+@using Newtonsoft.Json;
+@{
+    //verificamos si trae parametro para ser Popup o ventana
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+    int IntIdUsuario = int.Parse(Request.QueryString["IdUsuario"]?.ToString() ?? "0");
+
+    if (IntPopUp == 0)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+    }
+
+    ///////////////////////////////////////////////
+    //Codigo para reglas de negocio y Obtener botones
+    ///////////////////////////////////////////////
+
+    string Strurl = Request.RawUrl;
+    bool urlDefault = Strurl.Contains("Default.cshtml");
+    List<Accion> objAccion = null;
+    String jsonAccionPagina = null;
+    String jsonReglasNegocio = null;
+    var int_Robot = VariableGlobal.SessionIntBRobot;
+
+    // Comienza petición de acciones para la pagina
+    var objAccesoPagina = new PaginaMenuController().Get((int_Robot == 1 ? 2 : 1), Strurl);
+    jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+    jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+    objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+
+    ///////////////////////////////////////////////
+    //Fin de Codigo para reglas de negocio y Obtener botones
+    ///////////////////////////////////////////////
+
+    Page.Title = "Usuario";
+
+}
+
+<script src="@VariableGlobal.StrUrlSitio/Scripts/EasyAutocomplete/jquery.easy-autocomplete.js"></script>
+<link href="@VariableGlobal.StrUrlSitio/Scripts/EasyAutocomplete/easy-autocomplete.css" rel="stylesheet" />
+
+<div class="wrapper wrapper-content">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            @{
+                if (IntPopUp == 0)
+                {
+                    <div class="ibox-title text-center">
+                        <h2>@Page.Title</h2>
+                    </div>
+                }
+            }
+            <div class="ibox-content">
+                <form method="get" class="form-horizontal">
+                    <div class="tabs-container">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#tab_1"> General</a></li>
+                            <li id="li_EmpresaUsaurio" class="hidden"><a data-toggle="tab" href="#tab_2">Empresas</a></li>
+                            @*<li id="li_PermisoUsaurio" class="hidden"><a data-toggle="tab" href="#tab_3">Permisos</a></li>*@
+                        </ul>
+                        <div class="tab-content">
+                            <!-- Tab 1 - Generales -->
+                            <div id="tab_1" class="tab-pane active">
+                                <div class="panel-body">
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="it_idUsuario" class="col-lg-4 control-label">Id Usuario:</label>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="it_idUsuario" maxlength="25" readonly name="it_idUsuario" class="form-control required" value="@IntIdUsuario">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="it_Nombre" class="col-lg-4 control-label">Nombre:</label>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="it_Nombre" maxlength="40" name="it_Nombre" class="form-control required" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="it_CveUsuario" class="col-lg-4 control-label">Clave Usuario:</label>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="it_CveUsuario" name="it_CveUsuario" maxlength="25" class="form-control required minusculas" value="">
+                                            </div>
+                                        </div>
+                                        @{
+                                            if (VariableGlobal.SessionIntBRobot == 1 || IntIdUsuario == 0)
+                                            {
+                                                <div class="form-group hidden" id="div_Password">
+                                                    <label for="it_Password" class="col-lg-4 control-label">Password:</label>
+                                                    <div class="col-lg-8">
+                                                        <input type="text" id="it_Password" name="it_Password" maxlength="24" class="form-control required minusculas" value="">
+                                                    </div>
+                                                    <div id="pswd_info">
+                                                        <h4>Estos son los requerimientos de la nueva contraseña:</h4>
+                                                        <ul>
+                                                            <li id="letter" class="invalid">
+                                                                Minimo <strong>1 letra</strong>
+                                                            </li>
+                                                            <li id="capital" class="invalid">
+                                                                Minimo <strong>1 Mayuscula</strong>
+                                                            </li>
+                                                            <li id="number" class="invalid">
+                                                                Minimo <strong>1 Número</strong>
+                                                            </li>
+                                                            <li id="length" class="invalid">
+                                                                Minimo <strong>8 Caracteres</strong>
+                                                                Maximo <strong>24 Caracteres</strong>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        <div class="form-group">
+                                            <label for="it_Correo" class="col-lg-4 control-label">Correo:</label>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="it_Correo" name="it_Correo" maxlength="50" class="form-control required  minusculas" value="">
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <!--DIV DE LA SECCION IZQUIERDA-->
+
+                                        <div class="form-group"></div>
+
+                                        <div class="form-group">
+                                            <div class="i-checks">
+                                                <label for="check_VigenciaContrasena" class="col-lg-4 control-label">Vigencia Contraseña:</label>
+                                                <div class="col-lg-3">
+                                                    <div class="i-checks form-control">
+                                                        <input type="checkbox" id="check_VigenciaContrasena" name="check_VigenciaContrasena" class="form-control checkbox" value="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group has-feedback hidden" id="div_FechaVigenciaContrasena">
+                                            <label for="it_FechaVigenciContrasena" class="col-sm-4 control-label">Fecha Vigencia Contraseña:</label>
+                                            <div class="col-sm-4">
+                                                <input class="form-control datepicker" type="text" id="it_FechaVigenciContrasena" readonly name="it_FechaVigenciContrasena" />
+                                                <span class="glyphicon glyphicon-calendar form-control-feedback" aria-hidden="true"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="i-checks">
+                                                <label for="check_Multiempresa" class="col-lg-4 control-label">Multiempresa:</label>
+                                                <div class="col-lg-8">
+                                                    <div class="i-checks form-control">
+                                                        <input type="checkbox" id="check_Multiempresa" name="check_Multiempresa" class="form-control checkbox" value="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="i-checks">
+                                                <label for="check_Activo" class="col-lg-4 control-label">Activo:</label>
+                                                <div class="col-lg-8">
+                                                    <div class="i-checks form-control">
+                                                        <input type="checkbox" id="check_Activo" name="check_Activo" class="form-control checkbox" value="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!--TERMINA DIV DE LA SECCION IZQUIERDA-->
+                                    <!-- Botones de Guardar y Cancelar -->
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-sm-12 text-center m-sm">
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Tab 2 - Empresas  -->
+                            <div id="tab_2" class="tab-pane">
+                                <div class="panel-body">
+
+                                    <table id="tbl_ListaEmpresas" class="table table-striped table-bordered table-hover"></table>
+
+                                    <button id="btn_AgregarEmpresa" class="btn btn-success m-xs pull-right" type="button"><i class="fa fa-plus"></i> Agregar Empresa</button>
+
+                                </div>
+                            </div>
+
+                            <!-- Botones de Guardar y Cancelar -->
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12 text-center m-sm">
+                                        @{
+                                            var BtnAccionGrabar = objAccion.Where(x => x.StrCveAccion == "Editar").ToList();
+                                            if (BtnAccionGrabar.Count != 0)
+                                            {
+                                                <button id="@BtnAccionGrabar[0].StrObjetoId" class="@BtnAccionGrabar[0].StrObjetoClase" type="button" title="@BtnAccionGrabar[0].StrObjetoNombre"><i class="@BtnAccionGrabar[0].StrObjetoIcono"></i> @BtnAccionGrabar[0].StrObjetoNombre</button>
+                                            }
+                                            var BtnAccionRegresar = objAccion.Where(x => x.StrCveAccion == "Regresar").ToList();
+                                            if (BtnAccionRegresar.Count != 0)
+                                            {
+                                                <button id="@BtnAccionRegresar[0].StrObjetoId" class="@BtnAccionRegresar[0].StrObjetoClase" type="button" title="@BtnAccionRegresar[0].StrObjetoNombre"><i class="@BtnAccionRegresar[0].StrObjetoIcono"></i> @BtnAccionRegresar[0].StrObjetoNombre</button>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    const int_Roobot = @VariableGlobal.SessionIntBRobot;
+    const it_passWord = document.getElementById('it_Password');
+
+    var int_IdUsuario = @IntIdUsuario;
+    var obj_DataTableEmpresa;
+
+    var longitud = false;
+    var minuscula = false;
+    var numero = false;
+    var mayuscula = false;
+
+    $(document).ready(function () {
+
+        $('#btn_Regresar').click(function () {
+            fn_Cancelar();
+        });
+
+        $("#btn_Grabar").click(function () {
+            fn_Grabar();
+        });
+
+        $("#btn_AgregarEmpresa").click(function () {
+            var str_url = "usuarioEmpresaAbc.cshtml?Popup=1&IdEmpresa=0&IdUsuario=" + int_IdUsuario;;
+
+            fn_EditarEmpresa("Nuevo", str_url)
+        });
+
+        $("body").on("blur", "#it_PuestoRh", function (e) {
+            if ($('#it_PuestoRh').data("id") == 0 || $('#it_PuestoRh').data("vSel") != $('#it_PuestoRh').val()) {
+                $('#it_PuestoRh').val("").data("id", 0).data("vSel", "");
+            };
+        });
+
+		/******************************AUTOCOMPLETE*********************************/
+        if ($('#it_PuestoRh').prop("disabled") === false) {
+			var obj_opcionesAutoComplete = {
+                url: function (str_Buscar) {
+				    if (str_Buscar !== "") {
+                        return "@VariableGlobal.StrUrlApi/RemitenteDestinatarioListado?IntLimite=20&IntTipoBusqueda=0&StrBuscar=" + str_Buscar;//le pasa la frase tecleada
+                    } else {
+                        return "@VariableGlobal.StrUrlApi/RemitenteDestinatarioListado?IntLimite=20&IntTipoBusqueda=0&StrBuscar=empty";// manda vacio
+                    }
+                },
+                getValue: "Text",
+                requestDelay: 300, //EL TIEMPO que esperara el plugin para iniciar la busqueda
+                theme: "round",
+                listLocation: "listResults",//le indicamos de que objeto obtendra el texto a mostrar
+                matchResponseProperty: "inputPhrase",
+                list: {
+                    onChooseEvent: function () {
+                        var objSeleccionado = $("#it_PuestoRh").getItemData($("#it_PuestoRh").getSelectedItemIndex());
+					    var intIdSeleccionado = objSeleccionado.Value;
+                        $("#it_PuestoRh").data("id", intIdSeleccionado);
+                        $("#it_PuestoRh").data("vSel", objSeleccionado.Text);
+                    },
+                    maxNumberOfElements: 10000// numero de resultados que mostrara
+                },
+                template: {
+                    type: "custom",
+                    method: function (value, item) {
+                        return item.Value + " | " + item.Text; //aqui va el html que se mostrara en la lista
+                    }
+                }
+            }
+            $("#it_PuestoRh").easyAutocomplete(obj_opcionesAutoComplete);
+		}
+    /************************************TERMINA AUTOCOMPLETE********************/
+
+        if (int_Roobot == 1 || int_IdUsuario == 0) {
+            it_passWord.onblur = fn_inputPassWordBlur;
+            it_passWord.onfocus = fn_inputPassWordFocus;
+            it_passWord.addEventListener("keydown", event => {
+                if (event.isComposing || event.keyCode === 229) {
+                    return;
+                }
+                let value = it_passWord.value;
+                fn_ValidarContrasena(value);
+            });
+            it_passWord.addEventListener("keyup", event => {
+                if (event.isComposing || event.keyCode === 229) {
+                    return;
+                }
+                let value = it_passWord.value;
+                fn_ValidarContrasena(value);
+            });
+        }
+
+        fn_Cargar();
+        fn_CargarDataTableEmpresas();
+    });
+
+    function fn_EditarEmpresa(par_str_Title, par_str_LinkEdit) {
+        if ($.pgwModal('isOpen') == true) { return }
+        $.pgwModal({
+            url: par_str_LinkEdit,
+            loadingContent: '<span style="text-align:center">Loading in progress</span>',
+            closeOnBackgroundClick: false,
+            title: "Usuario-Empresa - " + par_str_Title,
+            maxWidth: '90%'
+        });
+
+    };
+
+    function fn_CargarDataTableEmpresas() {
+
+        obj_DataTableEmpresa = $("#tbl_ListaEmpresas").DataTable({//inicializamos el datatable
+            "language": obj_ClaseDataTable.json_LanguageDataTable,//cargamos la configuracion del lenguaje, configurado en utileria.js
+            "fnServerParams": function (oData) {//aqui van los parametros para el filtrado
+                oData.FiltroIntIdUsuario = int_IdUsuario
+            },
+            "ajax": {//llamamos el metodo datatbale
+                url: "@VariableGlobal.StrUrlApi/UsuarioEmpresaListado",
+                type:"POST"
+            },
+            "columns": [//columnas a mostrar en el datatble
+                {
+                    "data": "StrNomEmpresa",
+                    "render": function (data, type, row, meta) {
+                        var str_urledit = "usuarioEmpresaAbc.cshtml?Popup=1&IdUsuarioEmpresa=" + row.IntIdUsuarioEmpresa + "&IdUsuario=" + int_IdUsuario;
+                        return '<a href="#" onclick="javascript: fn_EditarEmpresa(\'Editar\',\'' + str_urledit + '\');" >' + data + '</a>';
+                    },
+                    "title": "Empresa"
+                },
+                {
+                    "data": "StrTerminales",
+                    "title": "Terminales"
+                },
+                {
+                    "data": "StrAplicaciones",
+                    "title": "Aplicaciones"
+                },
+                {
+                    "data": "StrDescPerfil",
+                    "title": "Perfil"
+                }
+            ],
+            "processing": true,//mensaje loadgin de procesamiento en llamada al servidor
+            "serverSide": true,//esto quiere decir que se va aconsumir desde el servidor,
+            dom: 'rftip',
+            pageLength: 10,//logitud por defaul
+            "searching": false,
+            "initComplete": function (settings, json) {//metodo para que el header flote al momento de scrollear asi abajo
+                obj_ClaseGlobal.fn_AgregarMargenEncabezado(obj_DataTableEmpresa)
+            }
+        });
+    }
+
+    function fn_Cancelar() {
+        location.href = 'usuarioLista.cshtml';
+    }
+
+    function fn_Grabar() {
+
+        //parametros
+        var str_Nombre = $("#it_Nombre").val();
+        var str_CveUsuario = $("#it_CveUsuario").val();
+        var str_Password = $("#it_Password").val();
+
+        if (int_Roobot == 1 || int_IdUsuario == 0) {
+            if (!fn_ValidarContrasena(str_Password)) {
+                $('#pswd_info').show();
+                $("#it_Password").focus();
+                return false;
+            }
+        }
+
+        //var str_Empleado = $("#it_Empleado").val();
+        var str_Correo = $("#it_Correo").val();
+        //var int_BAccesoRemoto = ($('#check_AccesoRemoto').is(':checked')) ? 1 : 0;
+        var int_BActivo = ($('#check_Activo').is(':checked')) ? 1 : 0;
+
+        var int_BVigenciaContrasena = ($('#check_VigenciaContrasena').is(':checked')) ? 1 : 0;
+        var int_BMultiempresa = ($('#check_Multiempresa').is(':checked')) ? 1 : 0;
+        var int_IdMultilista_TipoUsuario = 0;  // no se esta usando, cambiio a nivel usuario-empresa
+        var str_FechaVigenciaContrasena = $("#it_FechaVigenciContrasena").val() != "" ? new Date(obj_ClaseGlobal.fn_ConvertirFecha($("#it_FechaVigenciContrasena").val(), 2, 1)) : null;
+
+        //validaciones
+        if (!obj_ClaseGlobal.fn_ValidarDatosFormulario()) {
+            return false;
+        }
+
+        //declaramos el objeto que se le pasara al controlador
+        var obj_Insertar = {
+            IntIdUsuario: int_IdUsuario,
+            StrCveUsuario: str_CveUsuario,
+            StrDescUsuario: str_Nombre,
+            StrContrasena: str_Password,
+            StrEmail: str_Correo,
+            IntBActivo: int_BActivo,
+            IntIdMultilista_TipoUsuario: int_IdMultilista_TipoUsuario,
+            IntIdBVigenciaContrasena: int_BVigenciaContrasena,
+            DtFechaVigenciaContrasena: str_FechaVigenciaContrasena,
+            IntBMultiempresa: int_BMultiempresa
+        }
+
+        //Mandamos los datos al webmethod para guardar los datos
+        var str_Metodo = "";
+        var str_Url = "@VariableGlobal.StrUrlApi/Usuario";
+
+        if (int_IdUsuario > 0) {
+            str_Metodo = "PUT";
+        } else {
+            str_Metodo = "POST";
+        }
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_Insertar),
+            type: str_Metodo,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (obj_Datos) {
+
+                //Se manda el mensaje de exito
+                if (int_IdUsuario == 0 && obj_Datos["IntError"] === 0) {//si es nuevo y no regreso error al guardar entonces regresamos a la lista
+                    toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);//mandamos el mensaje de exito
+                    setTimeout(function () {//esperamos unos segundos y redireccionamos a la lista
+                        location.href = 'usuarioLista.cshtml';
+                    }, 2000);
+
+                } else {
+                    toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                }
+
+            }
+        });
+    }
+
+    function fn_Cargar() {
+        if (int_IdUsuario > 0) {
+            $.ajax({
+                url: "@VariableGlobal.StrUrlApi/Usuario/" + int_IdUsuario
+                , type: "GET"
+                , contentType: "application/json; charset=utf-8"
+                , dataType: "json"
+                , async: false
+                , success: function (obj_Datos) {
+                    $("#it_Nombre").val(obj_Datos.StrDescUsuario);
+                    $("#it_CveUsuario").val(obj_Datos.StrCveUsuario);
+                    $("#it_Password").val(obj_Datos.StrContrasena);
+                    $("#it_Correo").val(obj_Datos.StrEmail);
+                    $("#it_FechaVigenciContrasena").val(obj_ClaseGlobal.fn_ValidarFechaNula(obj_Datos.DtFechaVigenciaContrasena, 1, 2));
+
+                    obj_ClaseIcheck.fn_ActivaDesactivaIcheck("check_Activo", obj_Datos.IntBActivo)
+                    obj_ClaseIcheck.fn_ActivaDesactivaIcheck("check_VigenciaContrasena", obj_Datos.IntIdBVigenciaContrasena)
+                    obj_ClaseIcheck.fn_ActivaDesactivaIcheck("check_Multiempresa", obj_Datos.IntBMultiempresa)
+
+                    if ($('#check_VigenciaContrasena').is(':checked')) {
+                        $("#div_FechaVigenciaContrasena").removeClass('hidden')
+                        $("#it_FechaVigenciContrasena").addClass('required')
+                    } else {
+                        $("#div_FechaVigenciaContrasena").addClass('hidden')
+                        $("#it_FechaVigenciContrasena").datepicker("setDate", null).removeClass('required');
+                    };
+
+                    if (int_Roobot == 1 || int_IdUsuario == 0) {
+                        $('#div_Password').removeClass('hidden');
+                        $('#it_Password').prop( "disabled", false );
+                    } else {
+                        $('#div_Password').addClass('hidden');
+                        $('#it_Password').prop( "disabled", true );
+                    }
+                }
+            });
+
+            //
+            $("#li_EmpresaUsaurio, #li_PermisoUsaurio").removeClass("hidden");
+
+        } else {
+            if (int_Roobot == 1 || int_IdUsuario == 0) {
+                $('#div_Password').removeClass('hidden');
+                $('#it_Password').prop( "disabled", false );
+            } else {
+                $('#div_Password').addClass('hidden');
+                $('#it_Password').prop( "disabled", true );
+            }
+            $("#check_Activo").iCheck("check");
+        }
+
+        var obj_icheck = new class_iCheck();
+
+        $('#check_VigenciaContrasena').on('ifChecked', function (event) {
+            $("#div_FechaVigenciaContrasena").removeClass('hidden')
+            $("#it_FechaVigenciContrasena").addClass('required')
+        }).on('ifUnchecked', function (event) {
+            $("#div_FechaVigenciaContrasena").addClass('hidden')
+            $("#it_FechaVigenciContrasena").datepicker("setDate", null).removeClass('required');
+
+        });
+    };
+
+    function fn_ValidarContrasena(value) {
+        var bool_Valido = false;
+
+        if (value.length < 8 || value.length > 24) {
+            $('#length').removeClass('valid').addClass('invalid');
+            longitud = false;
+        } else {
+            $('#length').removeClass('invalid').addClass('valid');
+            longitud = true;
+        }
+
+        //validate letter
+        if (value.match(/[A-z]/)) {
+            $('#letter').removeClass('invalid').addClass('valid');
+            minuscula = true;
+        } else {
+            $('#letter').removeClass('valid').addClass('invalid');
+            minuscula = false;
+        }
+
+        //validate capital letter
+        if (value.match(/[A-Z]/)) {
+            $('#capital').removeClass('invalid').addClass('valid');
+            mayuscula = true;
+        } else {
+            $('#capital').removeClass('valid').addClass('invalid');
+            mayuscula = false;
+        }
+
+        //validate number
+        if (value.match(/\d/)) {
+            $('#number').removeClass('invalid').addClass('valid');
+            numero = true;
+        } else {
+            $('#number').removeClass('valid').addClass('invalid');
+            numero = false;
+        }
+
+        if (longitud && minuscula && mayuscula && numero) { bool_Valido = true; }
+        else { bool_Valido = false; }
+
+        return bool_Valido;
+    }
+
+    function fn_inputPassWordBlur() {
+        $('#pswd_info').hide();
+    }
+
+    function fn_inputPassWordFocus() {
+        $('#pswd_info').show();
+    }
+
+</script>
+
+<style>
+    #pswd_info {
+        position: absolute;
+        bottom: -115px\9;
+        /* IE Specific */
+        right: -20%;
+        width: 250px;
+        padding: 15px;
+        background: #fefefe;
+        font-size: .875em;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px #ccc;
+        border: 1px solid #ddd;
+    }
+
+        #pswd_info h4 {
+            margin: 0 0 10px 0;
+            padding: 0;
+            font-weight: normal;
+        }
+
+        #pswd_info::before {
+            content: "\25C0";
+            position: absolute;
+            top: 10px;
+            left: -5%;
+            font-size: 14px;
+            line-height: 14px;
+            color: #ddd;
+            text-shadow: none;
+            display: block;
+        }
+
+    .invalid {
+        padding-left: 22px;
+        line-height: 24px;
+        color: #ec3f41;
+    }
+
+    .valid {
+        padding-left: 22px;
+        line-height: 24px;
+        color: #3a7d34;
+    }
+
+    #pswd_info {
+        display: none;
+    }
+</style>
+

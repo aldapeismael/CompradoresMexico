@@ -1,0 +1,665 @@
+﻿@using System.Web.WebPages.Html
+@{
+
+    //verificamos si trae parametro para ser Popup o ventana
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+    int IntIdMenu = int.Parse(Request.QueryString["IdMenu"]?.ToString() ?? "0");
+    int IntIdEmpresaSesion = VariableGlobal.SessionIntIdEmpresa;
+
+    if (IntPopUp == 0)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+    }
+
+    Page.Title = "Menus";
+    String Titulo;
+    Titulo = "Abc "+Page.Title;
+
+    var objMenuLista = new MenuController().ObtenerLista(2, 0);
+}
+
+<div class="wrapper wrapper-content">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <form method="get" class="form-horizontal">
+                    <div class="col-lg-12">
+                        <h2 class="text-center" id="lblTituloPagina">@Titulo</h2>
+                        <br />
+                    </div>
+                    <div class="tabs-container">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#tab_1"> General</a></li>
+                            <li class=""><a data-toggle="tab" href="#tab_2">Pagina</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <!-- Tab 1 - Generales -->
+                            <div id="tab_1" class="tab-pane active">
+                                <div class="panel-body">
+                                    <div class="col-sm-6 col-xs-12">
+
+                                        <div id="div_IdMenu" class="form-group">
+                                            <label for="lbl_IdMenu" class="col-lg-4 control-label">Id:</label>
+                                            <div class="col-lg-8">
+                                                <input class="form-control" type="text" name="it_IdMenu" id="it_IdMenu" maxlength="100" disabled="true" />
+                                            </div>
+                                        </div>
+
+
+                                        <div id="div_IdMenuPadre" class="form-group">
+                                            <label for="lbl_IdMenu" class="col-lg-4 control-label">Menú Padre:</label>
+                                            <div class="col-lg-8">
+                                                @Html.DropDownList("ddl_MenuPadre", "- MODULO -", objMenuLista.Select(x => new SelectListItem() { Value = x.idMenuPadre.ToString(), Text = x.descMenuPadre.ToString() }), 0, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+
+                                        <div id="div_Orden" class="form-group">
+                                            <label for="lbl_Orden" class="col-lg-4 control-label">Orden</label>
+                                            <div class="col-lg-8">
+                                                <input class="form-control numerico" type="text" name="it_Orden" id="it_Orden" maxlength="5" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-sm-6 col-xs-12">
+
+                                        <div class="form-group">
+                                            <label for="lbl_NombreMenu" class="col-lg-4 control-label">Nombre:</label>
+                                            <div class="col-lg-8">
+                                                <input class="form-control required minusculas" type="text" name="it_NombreMenu" id="it_NombreMenu" maxlength="300" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="i-checks">
+                                                <label for="check_Activo" class="col-sm-4 control-label">Activo:</label>
+                                                <div class="col-lg-8">
+                                                    <div class="i-checks form-control">
+                                                        <input type="checkbox" id="check_Activo" name="check_Activo" class="form-control checkbox" value="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="it_Icono" class="col-lg-4 control-label">Icono:</label>
+                                            <div class="col-lg-8">
+                                                <input class="form-control" type="text" name="it_Icono" id="it_Icono" maxlength="100" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab 2 - Acciones -->
+                            <div id="tab_2" class="tab-pane">
+                                <div class="panel-body">
+
+                                    <table id="tbl_PaginaMenu" class="table table-bordered tabla-grid">
+                                        <thead>
+                                            <!--TEMPLATE QUE SE TOMARA PÁRA AGREGAR LA FILAS-->
+                                            <tr id="tr_PaginaMenu" class="hidden">
+                                                <td width="10%" style="text-align: center;">
+                                                    <div class="i-checks-dinamic">
+                                                        <input type="radio" id="radio_PaginaInicial" name="radio_PaginaInicial" class="form-control radio" data-id="">
+                                                    </div>
+                                                </td>
+                                                <td id="td_PaginaMenu">
+                                                    <div class="col-sm-12">
+                                                        <div class="col-lg-12">
+                                                            <input class="form-control required minusculas" type="text" name="it_NombrePagina" id="it_NombrePagina" data-id="" maxlength="100" />
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="col-lg-12">
+                                                        <input class="form-control required minusculas" type="text" name="it_UrlPagina" id="it_UrlPagina" maxlength="200" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="col-lg-8">
+                                                        <div class="i-checks-dinamic">
+                                                            <input type="checkbox" id="check_PaginaActivo" name="check_PaginaActivo" class="form-control checkbox" value="">
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <!--                  <td class="text-center"><button type="button" class="btn btn-warning btn-lg fn_EliminarFilaGrid"><i class="fa fa-trash"></i></button></td> -->
+                                            </tr>
+                                            <tr>
+                                                <th>Página Principal</th>
+                                                <th>Nombre de Página</th>
+                                                <th>URL</th>
+                                                <th>Activo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="6">
+                                                    <button id="btn_AgregarPagina" class="btn btn-primary pull-right" type="button" title="Agregar"><i class="fa fa-plus"></i> Agregar Pagina</button>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                            <!-- Botones de Guardar y Cancelar -->
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12 text-center m-sm">
+                                        <button id="btn_Grabar" class="btn btn-primary m-xs" type="button" title="Grabar"><i class="fa fa-check"></i> Grabar</button>
+                                        <button id="btn_Cancelar" class="btn btn-danger m-xs" type="button" title="Regresar"><i class="fa fa-times"></i> Regresar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    //pasamos el valor Razor a variable de javascript
+    var Int_IdMenu = @IntIdMenu; //valor de la tabla campo 'id'
+    var Int_ContChekPaginas = 0;
+    var Int_ContChekPaginasUpdate = 0;
+    var Int_ContChekAccionesUpdate = 0;
+
+    $(document).ready(function () {
+
+        $('#btn_Cancelar, .btn_Cancelar').click(function () {
+            location.href = 'menuLista.cshtml';
+        });
+
+        $('#btn_Grabar').click(function() {
+            fn_Grabar();
+        });
+
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-orange',
+            radioClass: 'iradio_square-orange',
+        });
+
+        //Elimina la fila de un grid
+        $('body').on('click', '.fn_EliminarFilaGrid', function () {
+            obj_menu.fn.fn_EliminarFilaGrid($(this));
+        });
+
+        $("#btn_AgregarPagina").click(function () {
+            obj_menu.fn.fn_AgregarPagina();
+        });
+
+        $("body").delegate(".noespacios", "keyup", function () {
+            var val = $(this).val();
+            val = val.replace(/\s/g, '');
+
+            $(this).val(val);
+        });
+
+        //se crea el objeto menu
+        var obj_menu = {};
+        obj_menu = {
+            // obj_menu.fn
+            fn: {
+                
+                fn_EliminarFilaGrid: function (e) {
+                    $(e).closest("tr").remove();
+                },
+
+                fn_AgregarPagina: function (e) {
+
+                    //Al dar click en agregar pagina, generamos el row, con la respectiva información y acciones.
+
+                    Int_ContChekPaginas++;
+                    if (obj_ClaseGlobal.fn_validarDatosTabla("tbl_PaginaMenu")) {
+                        var tr_Pagina = '<tr id="tr_PaginaMenuDinamico' + Int_ContChekPaginas + '">' + $("#tr_PaginaMenu").html() + '</tr>';
+                        $("#tbl_PaginaMenu > tbody").append(tr_Pagina);
+
+                        $("#tr_PaginaMenuDinamico" + Int_ContChekPaginas).find('.i-checks-dinamic').addClass('i-checks-dinamic' + Int_ContChekPaginas);
+
+                        $('.i-checks-dinamic' + Int_ContChekPaginas).iCheck({
+                            checkboxClass: 'icheckbox_square-orange',
+                            radioClass: 'iradio_square-orange',
+                        });
+                        // Damos check por default a las acciones de regresar y filtros
+                        $("#check_Accion[cveref='Regresar']").iCheck("check");
+                        $("#check_Accion[cveref='Buscar']").iCheck("check");
+                    }
+                }
+            }
+        };
+
+        // Carga inicial
+        fn_Cargar();
+
+        $('body').tooltip({
+            selector: '[rel=tooltip]'
+        });
+    });
+
+
+    /**
+     * ***********FUNCIONES QUE OBTIENEN LOS DATOS DE LOS GRIDS PARA EL GUARDADO****************
+     */
+
+    function fn_GrabarPaginas() {
+        var lst_obj_Pagina = [];
+        var obj_Pagina = {};
+        var lst_obj_Accion = [];
+        var obj_Accion = {};
+        var int_ValidaClave = 0;
+      
+        $("#tbl_PaginaMenu > tbody > tr").each(function () {
+
+            var trPagina = $(this);
+            var int_IdPagina = trPagina.data("id");
+            var array_Accion = [];
+
+            // Por cada row, obtenemos las acciones correcpondientes
+            $(trPagina).find(" td.td_EsAccion").each(function () {
+
+                var trAccion = $(this);
+                obj_Accion = {
+                    IntIdPaginaAccion: trAccion.find('input[name="check_Accion"]').data("id"),
+                    IntIdAccion: trAccion.find('input[name="check_Accion"]').data("idaccion"),
+                    StrCveAccion: null,
+                    StrDescAccion: trAccion.find('input[class="it_DescAccion"] > .table > .tr_MovEsp').val(),
+                    IntBActivo: (trAccion.find('input[name="check_Accion"]').is(':checked')) ? 1 : 0,
+                }
+                array_Accion.push(obj_Accion);
+            })
+
+            $(trPagina).find('tr.tr_MovEsp').each(function () {
+                if ($(this).find('input[name="it_CveAccion"]').val() == "") {
+                    int_ValidaClave = 1;
+                    $(this).find('input[name="it_CveAccion"]').parent("div").addClass("has-error");
+                    return false;
+                } else {
+                    $(this).find('input[name="it_CveAccion"]').parent("div").removeClass("has-error");
+                }
+                obj_Accion = {
+                    IntIdPaginaAccion: $(this).find('input[name="check_Accion"]').data("id"),
+                    IntIdAccion: $(this).find('input[name="check_Accion"]').data("idaccion"),
+                    StrCveAccion: $(this).find('input[name="it_CveAccion"]').val(),
+                    StrDescAccion: $(this).find('input[name="it_DescAccion"]').val(),
+                    IntBActivo: ($(this).find('input[name="check_Accion"]').is(':checked')) ? 1 : 0,
+                }
+                array_Accion.push(obj_Accion);
+            });
+
+            // ¨Por cada pagina, asignamos el obj_Acciones para hacer la relacion
+            obj_Pagina = {
+                IntIdMenu: Int_IdMenu,
+                IntIdPagina: trPagina.find("#it_NombrePagina").data("id"),
+                StrDescPagina: trPagina.find("#it_NombrePagina").val(),
+                StrUrl: trPagina.find("#it_UrlPagina").val().replace("/views", "/Views"),
+                IntPaginaInicial: (trPagina.find("input[name='radio_PaginaInicial']").is(':checked')) ? 1 : 0,
+                IntBActivo: (trPagina.find('input[name="check_PaginaActivo"]').is(':checked')) ? 1 : 0,
+                LstObjAccion: array_Accion
+            }
+            if (trPagina.find("#it_NombrePagina").val() != "" && trPagina.find("#it_UrlPagina").val() != "")
+                lst_obj_Pagina.push(obj_Pagina);
+        });
+
+        if (int_ValidaClave == 1) {
+            return 0;
+        } else {
+            return lst_obj_Pagina;
+            location.reload();
+        }
+        
+    }
+
+    /**
+     * ****************TERMINAN FUNCIONES QUE OBTIENEN LOS DATOS DE LOS GRIDS PARA EL GUARDADO***********************************************************
+     */
+
+    function fn_Grabar() {
+
+        var ListaPaginas = fn_GrabarPaginas();
+
+        if (ListaPaginas === 0) {
+            toastr["error"]("La clave no puede ir vacía");
+            return false;
+        }
+        var int_cnt = 0;
+        ////validaciones
+        //if (!obj_ClaseGlobal.fn_validarDatosTabla("tbl_PaginaMenu")) {
+        //    return false;
+        //}
+
+        if ($('#tbl_PaginaMenu > tbody > tr').find('input[name="radio_PaginaInicial"]').is(':checked'))
+            int_cnt;
+        else
+            int_cnt = int_cnt + 1;
+
+        if ($('input[name="radio_PaginaInicial"]:checked').data("id") == null && int_cnt > 0 && $('#tbl_PaginaMenu tbody tr').length > 0){
+            toastr["error"]("Debe seleccionar (1) Pagina Inicial para el menú");
+            return false;
+        }
+
+        //declaramos el objeto que se le pasara al controlador
+        var obj_MenuInsertar = {
+            IntIdMenu: Int_IdMenu,
+            StrDescMenu: $("#it_NombreMenu").val(),
+            IntBActivo: $('input[name="check_Activo"]').is(':checked') ? 1 : 0,
+            IntIdPaginaInicial: $('input[name="radio_PaginaInicial"]:checked').data("id"),
+            IntOrden: $('#it_Orden').val(),
+            StrIcono: $('#it_Icono').val(),
+            IntIdMenuPadre: $("#ddl_MenuPadre option:selected").val(),
+
+            //Objetos de Grids
+            LstObjPagina: ListaPaginas
+        }
+
+        //Mandamos los datos al webmethod para guardar los datos
+        var str_Metodo = "PUT";
+        var str_Url = "";
+
+        str_Url = "@VariableGlobal.StrUrlApi/Menu";
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_MenuInsertar),
+            type: str_Metodo,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function(obj_Datos) {
+                //Se manda el mensaje de exito
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                $("#tbl_PaginaMenu > tbody").empty();
+                //recargamos el grid
+                fn_Cargar();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                toastr["error"]("Ocurrió un error al guardar los datos del formulario: " + thrownError);
+            }
+        });
+    }
+
+    //fucnion que cargara las funciones iniciales
+    //Esta funcion obtiene las acciones de catalogo, que puede tener cada pagina
+    function fn_Cargar() {
+
+        if (Int_IdMenu > 0) { // si trae id, entonces se procede a obtener los datos del controller para posteriormente llenar el form
+            $.ajax({
+                url: "@VariableGlobal.StrUrlApi/Menu/" + Int_IdMenu,
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (obj_Datos) {
+
+                    if (obj_Datos != null) {
+
+                        $("#it_IdMenu").val(obj_Datos.IntIdMenu);
+                        $("#it_NombreMenu").val(obj_Datos.StrDescMenu);
+                        $("#it_Icono").val(obj_Datos.StrIcono);
+                        //Si el menu es Modulo entonces, bloqueamos el campo
+                        if (obj_Datos.IntIdMenuPadre == 0) {
+                            $('#ddl_MenuPadre').attr('disabled', true);
+                        } else {
+                            //De igual manera removemos la opcion 0, para evitar que alguien la agregue allí
+                            $("#ddl_MenuPadre option:first").remove();
+                            $('#ddl_MenuPadre option[value=' + obj_Datos.IntIdMenuPadre + ']').prop('selected', true);
+                            $("#it_Icono").attr('disabled', true);
+                        }
+
+                        if (obj_Datos.IntBActivo > 0) {
+                            $("#check_Activo").iCheck("check");
+                        }
+                        $("#it_Orden").val(obj_Datos.IntOrden);
+
+                        $("#tbl_PaginaMenu > tbody").html("");
+                        $("#tbl_PaginaMenu thead .th_EsAccion").remove();
+                        $("#tbl_PaginaMenu thead .td_EsAccion").remove();
+                        $("#tbl_PaginaMenu thead .td_MovEspecial").remove();
+
+
+                        // obtenemos los datos de los GRID
+                        fn_CargarPaginas((obj_Datos.LstObjPagina == null) ? "" : obj_Datos.LstObjPagina,
+                            (obj_Datos.LstObjAccion == null) ? "" : obj_Datos.LstObjAccion,
+                            (obj_Datos.LstObjPaginaAccion == null) ? "" : obj_Datos.LstObjPaginaAccion
+                        );
+
+                        // seleccionamos la pagina que es la principal, esto cuando ya se alla imprimido la tabla de la pagina y sus acciones
+                        $('#radio_PaginaInicial[data-id="' + obj_Datos.IntIdPaginaInicial + '"]').iCheck("check");
+                    }
+                    else
+                        toastr["error"]("No se encotraron datos");
+
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    toastr["error"]("Ocurrió un error al obtener los datos del formulario: " + thrownError);
+                }
+            });
+        }
+
+        obj_TouchSpin = new class_touchspin();
+        obj_TouchSpin.fn_CargaInputs();
+    }
+
+        // Funcion para Pintar el Grid con las paginas
+    function fn_CargarPaginas(objListaPaginas, objListaAcciones, objListaPaginaAccion) {
+
+        //Primero conseguimos los titulos de las acciones y los imprimimos como encabezados de la tabla
+        $.each(objListaAcciones, function (index, value) {
+
+            Int_ContChekAccionesUpdate++;
+            var td_Accion = '';
+            if (value.StrCveAccion != "MovimientoEspecial") {
+                td_Accion = '<td class="td_EsAccion">' +
+                    '<div class="col-lg-8">' +
+                    '<div class="i-checks-dinamic">' +
+                    '<input type="checkbox" id="check_Accion" cveref="' + value.StrCveAccion + '" name="check_Accion" class="form-control checkbox" data-idAccion="' + value.IntIdAccion + '" value="">' +
+                    '</div>' +
+                    '</div>' +
+                    '</td >';
+            } else {
+                td_Accion = '<td class="td_MovEspecial"><div class="col-lg-12"><table id="tbl_MovEspecial_' + Int_ContChekAccionesUpdate + '" class="table table-bordered tabla-grid tbl_MovEspecial">' +
+                    '<thead>' +
+                    '<tr>' +
+                    '<th style="width: 110px;">Clave</th>' +
+                    '<th style="width: 190px;">Descripción</th>' +
+                    '<th style="width: 40px;"></th>' +
+                    '<th style="width: 40px;"></th>' +
+                    '</tr>' +
+                    '</thead>' +
+                    '<tbody></tbody>' +
+                    '<tfoot>' +
+                    '<tr>' +
+                    '<td colspan="4">' +
+                    '<button id="btn_AgregarMovEspecial" class="btn btn-primary pull-right" type="button" title="Guardar" onclick="fn_AgregarMovimientoEspecialFila(' + value.IntIdAccion + ', ' + Int_ContChekAccionesUpdate + ', this)"><i class="fa fa-plus"></i> Agregar Movimiento Especial</button>' +
+                    '</td>' +
+                    '</tr>' +
+                    '</tfoot>' +
+                    '</table></div></td>';
+            }
+
+            $("#tbl_PaginaMenu > thead > tr:last-child > th:last-child").after('<th class="th_EsAccion">' + value.StrDescAccion + '</th>');
+            $("#tbl_PaginaMenu > thead > #tr_PaginaMenu > td:last-child").after(td_Accion);
+
+            $('.i-checks-dinamic' + Int_ContChekAccionesUpdate).iCheck({
+                checkboxClass: 'icheckbox_square-orange',
+                radioClass: 'iradio_square-orange',
+            });
+
+            $(".i-checks-dinamic" + Int_ContChekAccionesUpdate).find("#check_PaginaActivo").iCheck((value.IntBActivo) === 1 ? "check" : "uncheck");
+
+        });
+
+        //Segundo imrpimimos el listado de paginas
+        $.each(objListaPaginas, function (index, value) {
+            var int_IdPagina = value.IntIdPagina;
+            Int_ContChekPaginasUpdate++;
+            Obj_ListaAcciones = {};
+
+            //Generamos el row a imprimir, con las acciones de pagina
+            var tr_Pagina = '<tr id="tr_PaginaMenu" class="" data-id="' + value.IntIdPagina + '">' +
+                        '<td width="10%" style="text-align: center;">' +
+                            '<div class="i-checks-dinamic' + Int_ContChekPaginasUpdate + '">' +
+                                '<input type="radio" id="radio_PaginaInicial" name="radio_PaginaInicial" class="form-control radio required" data-id="' + value.IntIdPagina + '">' +
+                            '</div>'+
+                        '</td>'+
+                        '<td id="td_PaginaMenu">' +
+                            '<div class="col-sm-12">' +
+                                '<div class="col-lg-12">' +
+                                    '<input class="form-control required minusculas" type="text" name="it_NombrePagina" id="it_NombrePagina" data-id="' + value.IntIdPagina + '" maxlength="100" value="' + value.StrDescPagina + '"/>' +
+                                '</div>' +
+                            '</div>' +
+                        '</td>' +
+                        '<td>' +
+                            '<div class="col-lg-12">' +
+                                '<input class="form-control required minusculas" type="text" name="it_UrlPagina" id="it_UrlPagina" maxlength="200" value="' + value.StrUrl + '"/>' +
+                            '</div>' +
+                        '</td>' +
+                        '<td>' +
+                            '<div class="col-lg-8">' +
+                                '<div class="i-checks-dinamic' + Int_ContChekPaginasUpdate + '">' +
+                                    '<input type="checkbox" id="check_PaginaActivo" name="check_PaginaActivo" class="form-control checkbox" >' +
+                                '</div>' +
+                            '</div>' +
+                '</td>';
+
+            // Buscamos en el objeto con la funcion grep, las paginas con su respectivo id
+            Obj_ListaAcciones = jQuery.grep(objListaPaginaAccion, function (element, index) {
+                return element.IntIdPagina == value.IntIdPagina;
+            });
+
+            var str_Tooltip = ''; 
+
+            // Dentro de el listado de paginas, imprimimos el listado de acciones por pagina
+            $.each(objListaAcciones, function (index, value) {  
+
+                let str_Tooltip = "";
+
+                if (value.StrCveAccion != "MovimientoEspecial") {
+
+                   if(value.StrCveAccion ===  "Ver"){
+                      str_Tooltip = "title = 'Permiso para ver en pantalla, no está relacionado con la barra de menú' "
+                    }
+
+                    tr_Pagina = tr_Pagina + '<td class="td_EsAccion" '+ str_Tooltip +' ><div class="col-lg-8"><div class="i-checks-dinamic' + Int_ContChekPaginasUpdate + '">' +
+                        '<input type="checkbox" id="check_Accion" name="check_Accion" data-idAccion="' + value.IntIdAccion + '" data-id="" bActivo="" class="form-control checkbox" >' +
+                        '</div></div></td>';
+
+                } else {
+                    tr_Pagina = tr_Pagina + '<td><div class="col-lg-12"><table id="tbl_MovEspecial_' + Int_ContChekPaginasUpdate + '" class="table table-bordered tabla-grid tbl_MovEspecial">' +
+                        '<thead>' +
+                        '<tr>' +
+                        '<th style="width: 110px;">Clave</th>' +
+                        '<th style="width: 190px;">Descripción</th>' +
+                        '<th style="width: 40px;"></th>' +
+                        '<th style="width: 40px;"></th>' +
+                        '</tr>' +
+                        '</thead>' +
+                        '<tbody></tbody>' +
+                        '<tfoot>' +
+                        '<tr>' +
+                        '<td colspan="4">' +
+                        '<button id="btn_AgregarMovEspecial" class="btn btn-primary pull-right" type="button" title="Guardar" onclick="fn_AgregarMovimientoEspecialFila(' + value.IntIdAccion + ', ' + Int_ContChekPaginasUpdate + ', this)"><i class="fa fa-plus"></i> Agregar Movimiento Especial</button>' +
+                        '</td>' +
+                        '</tr>' +
+                        '</tfoot>' +
+                        '</table></div></td>';
+                }
+            });
+
+            tr_Pagina = tr_Pagina +
+                     //   '<td class="text-center"><button type="button" class="btn btn-warning btn-lg fn_EliminarFilaGrid"><i class="fa fa-trash"></i></button></td>' +
+                    '</tr>';
+           
+            // Dibujamos el listado de opciones
+            $("#tbl_PaginaMenu > tbody").append(tr_Pagina);
+            // Agregamos los respectivos checks y ids
+            $.each(Obj_ListaAcciones, function (index, value) {
+                var str_Fila = "";
+                var str_Check = "";
+                var str_Deshabilitar = "";
+                var str_Tooltip = '';
+
+                if (value.IntBActivo == 1) {
+                    str_Check = "checked";
+                } 
+
+                if (value.IntBClaveExiste == 1) {
+                    str_Deshabilitar = "disabled";
+                    str_Tooltip = 'data-toggle="tooltip" data-placement="top" title="El permiso ya está siendo usado por lo que no se puede modificar ni borrar"'
+                }
+                if (value.IntBMovimientoEspecial == 1) {
+                    str_Fila += '<tr class="tr_MovEsp">';
+                    str_Fila += '<td><div><input type="text" class="form-control cveAccion noespacios" name="it_CveAccion" maxlength="20" value="' + value.StrCveAccionReferencia + '" ' + str_Deshabilitar + ' ' + str_Tooltip +'/></td>';
+                    str_Fila += '<td><div><input type="text" class="form-control descAccion"  name="it_DescAccion" maxlength="100" value="' + value.StrDescAccion + '" /></td>';
+                    str_Fila += '<td class="text-center"><div class="i-checks-dinamic' + Int_ContChekPaginasUpdate + '">' +
+                        '<input type="checkbox" name="check_Accion" data-idAccion="' + value.IntIdAccion + '" data-id="' + value.IntIdPaginaAccion + '" bActivo="' + value.IntBActivo + '" class="form-control checkbox" ' + str_Check + '>' +
+                        '</div></td>';
+                    str_Fila += '<td><div class="text-center"><button type="button" ' + str_Deshabilitar + ' ' + str_Tooltip +' class="btn btn-warning btn-sm" onclick="fn_EliminarMovimientoEspecial(this)"><i class="fa fa-trash"></i></button></div></td>';
+                    str_Fila += '</tr>';
+                    $("#tbl_MovEspecial_" + Int_ContChekPaginasUpdate + " > tbody").append(str_Fila);
+                }
+                $('#tr_PaginaMenu[data-id="' + value.IntIdPagina + '"] .td_EsAccion div div input[data-idaccion="' + value.IntIdAccion + '"]').attr("data-id", value.IntIdPaginaAccion);
+                $('#tr_PaginaMenu[data-id="' + value.IntIdPagina + '"] .td_EsAccion div div input[data-idaccion="' + value.IntIdAccion + '"]').attr("bActivo", value.IntBActivo);
+            });
+
+            $('.i-checks-dinamic' + Int_ContChekPaginasUpdate).iCheck({
+                checkboxClass: 'icheckbox_square-orange',
+                radioClass: 'iradio_square-orange',
+            });
+
+            $(".i-checks-dinamic" + Int_ContChekPaginasUpdate).find("#check_Accion[bActivo='1']").iCheck("check");
+            $(".i-checks-dinamic" + Int_ContChekPaginasUpdate).find("#check_Accion[bActivo='0']").iCheck("uncheck");
+            $(".i-checks-dinamic" + Int_ContChekPaginasUpdate).find("#check_PaginaActivo").iCheck((value.IntBActivo) === 1 ? "check" : "uncheck");
+
+        });
+
+        obj_TouchSpin = new class_touchspin();
+        obj_TouchSpin.fn_CargaInputs();
+
+    }
+
+    function fn_AgregarMovimientoEspecialFila(paramInt_IdAccion, Int_ContChekPaginasUpdate, element) {
+        var str_Fila = "";
+        var int_Validar = 0;
+        $("#tbl_MovEspecial_" + Int_ContChekPaginasUpdate + " > tbody > .tr_MovEsp").each(function (index, value) {
+            if ($(this).find(".cveAccion").val() == "") {
+                int_Validar = 1;
+                $(this).find(".cveAccion").parent("div").addClass("has-error");
+                return false;
+            } else {
+                $(this).find(".cveAccion").parent("div").removeClass("has-error");
+            }
+        });
+
+        if (int_Validar == 1) {
+            toastr["error"]("La clave no puede ir vacía");
+            return false;
+        }
+
+        str_Fila += '<tr class="tr_MovEsp">';
+        str_Fila += '<td><div><input type="text" class="form-control cveAccion noespacios" name="it_CveAccion" maxlength="50"/></td>';
+        str_Fila += '<td><div><input type="text" class="form-control descAccion"  name="it_DescAccion" maxlength="100" /></td>';
+        str_Fila += '<td class="text-center"><div class="i-checks-dinamic' + Int_ContChekPaginasUpdate + '">' +
+            '<input type="checkbox" name="check_Accion" data-idAccion="' + paramInt_IdAccion + '" data-id="" bActivo="1" class="form-control checkbox" checked >' +
+            '</div></td>';
+        str_Fila += '<td><div class="text-center"><button type="button" class="btn btn-warning btn-sm" onclick="fn_EliminarMovimientoEspecial(this)"><i class="fa fa-trash"></i></button></div></td>';
+        str_Fila += '</tr>';
+        $(element).parent("td").parent("tr").parent("tfoot").parent("table").find("tbody").append(str_Fila);
+        $('.i-checks-dinamic' + Int_ContChekPaginasUpdate).iCheck({
+            checkboxClass: 'icheckbox_square-orange',
+            radioClass: 'iradio_square-orange',
+        });
+    }
+
+    function fn_EliminarMovimientoEspecial(e) {
+        $(e).closest("tr").remove();
+    }
+
+</script>

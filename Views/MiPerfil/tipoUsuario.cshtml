@@ -1,0 +1,95 @@
+﻿@{
+    Page.Title = "Mi Perfilv";
+
+    Layout = "~/_SiteLayout.cshtml";
+
+    string pIdTipoUsuario = Encriptado.EncriptarDatos("pIdTipoUsuario");
+    string pIdTipoUsuarioComprador = Encriptado.EncriptarDatos("1");
+    string pIdTipoUsuarioVendedor = Encriptado.EncriptarDatos("2");
+    string pBSession = Encriptado.EncriptarDatos("pBSession");
+    string pBSession_Si = Encriptado.EncriptarDatos("1");
+    string pBSession_No = Encriptado.EncriptarDatos("0");
+
+}
+<style>
+
+    #page-wrapper {
+        padding: 0;
+    }
+</style>
+<link rel="stylesheet" href="@VariableGlobal.StrUrlSitio/css/loginProfile.css">
+@*<link rel="stylesheet" href="css/loginProfile.css">*@
+
+<div class="container master">
+    <div class="text-center" style="margin-bottom: 20px;">
+        <p class="title">¿Quién eres?</p>
+    </div>
+    <div class="containerProfile">
+        <div class="card text-center">
+            <div class="card-body">
+                <img src="@VariableGlobal.StrUrlSitio/img/dummy.png" alt="" srcset="">
+                <a id="btn_CambioProveedor" href="#" class="btn btnRef btnCambioSession">Soy @VariableGlobal.SessionStrDescUsuario Proveedor</a>
+            </div>
+        </div>
+        <div class="card text-center">
+            <div class="card-body">
+                <img src="@VariableGlobal.StrUrlSitio/img/dummy.png" alt="" srcset="">
+                <a id="btn_CambioComprador" href="#" class="btn btnRef btnCambioSession">Soy @VariableGlobal.SessionStrDescUsuario Comprador</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+     $(document).ready(function () {
+         $('#btn_CambioComprador').click(function () {
+            fn_GrabarCambioSession("@pIdTipoUsuarioComprador");
+         });
+         $('#btn_CambioProveedor').click(function () {
+             fn_GrabarCambioSession("@pIdTipoUsuarioVendedor");
+         });
+     });
+
+    
+    function fn_GrabarCambioSession(str_param_IdTipoUsuario) {
+        var obj_TipoUsuario = {
+            StrTipoUsuario: str_param_IdTipoUsuario
+        }
+
+        var str_Metodo = "";
+        var str_Url = "";
+        str_Metodo = "POST";
+        str_Url = "@VariableGlobal.StrUrlApi/TipoUsuario/VerificaTipoPerfil";
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_TipoUsuario),
+            type: str_Metodo,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (obj_Datos) {
+                debugger;
+                if (obj_Datos.IntVerificado == 1) {
+                    setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
+                        location.href = '@VariableGlobal.StrUrlSitio/Views/Default/Default.cshtml?' + '@pIdTipoUsuario' + '=' + str_param_IdTipoUsuario;
+                    }, 3500);
+                    return;
+                }
+                if (obj_Datos.IntReenvio == 1) {
+                    toastr["warning"]("Favor inscribirse como comprador")
+                    setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
+                        location.href = '@VariableGlobal.StrUrlSitio/Views/Login/registroComprador.cshtml?' + '@pIdTipoUsuario' + '=' + str_param_IdTipoUsuario;
+                    }, 3500);
+                    return
+                }
+                if (obj_Datos.IntReenvio == 2) {
+                    toastr["warning"]("Favor inscribirse como proveedor")
+                    setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
+                        location.href = '@VariableGlobal.StrUrlSitio/Views/Login/registroProveedor.cshtml?' + '@pIdTipoUsuario' + '=' + str_param_IdTipoUsuario;
+                    }, 3500);
+                    return
+                }
+            }
+        });
+    }
+</script>

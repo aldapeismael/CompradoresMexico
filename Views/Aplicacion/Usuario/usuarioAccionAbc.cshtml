@@ -1,0 +1,422 @@
+﻿
+@{
+    int IntIdEmpresaSesion = VariableGlobal.SessionIntIdEmpresa;
+    int IntIdUsuario = int.Parse(Request.QueryString["IdUsuario"]?.ToString() ?? "0");
+    string StrDescUsuario = Request.QueryString["descUsuario"]?.ToString() ?? "0";
+
+    Layout = "~/_SiteLayout.cshtml";
+
+    Page.Title = "Usuario Acción";
+
+}
+
+<link href="@VariableGlobal.StrUrlSitio/css/plugins/treetable/jquery.treetable.css" rel="stylesheet" />
+<link href="@VariableGlobal.StrUrlSitio/css/plugins/treetable/jquery.treetable.theme.default.css" rel="stylesheet" />
+<link href="@VariableGlobal.StrUrlSitio/css/plugins/iCheck/orange.css" rel="stylesheet" />
+
+<script src="@VariableGlobal.StrUrlSitio/css/plugins/treetable/jquery.treetable.js"></script>
+<script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/iCheck/icheck.min.js"></script>
+
+
+<div class="wrapper border-bottom white-bg page-heading">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <h2 class="text-center" id="lbl_TituloPagina">Usuario @StrDescUsuario - Acciones</h2>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12  text-center">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-12 text-center m-sm">
+                        <button id="btn_expandir" class="btn btn-warning m-xs" type="button" title="Expandir"><i class="fa fa-expand"></i> Expander</button>
+                        <button id="btn_contraer" class="btn btn-warning m-xs" type="button" title="Contraer"><i class="fa fa-compress"></i> Contraer</button>
+                        <button id="btn_check" class="btn btn-warning m-xs" type="button" title="Expandir"><i class="fa fa-check-square"></i> Seleccionar Todo</button>
+                        <button id="btn_uncheck" class="btn btn-warning m-xs" type="button" title="Contraer"><i class="fa fa-square"></i> Quitar Selección</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Botones de Guardar y Cancelar -->
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-12 text-center m-sm">
+                        <button id="btn_Grabar" class="btn btn-primary m-xs" type="button" title="Grabar"><i class="fa fa-check"></i> Grabar</button>
+                        <button id="btn_Cancelar" class="btn btn-danger m-xs" type="button" title="Regresar"><i class="fa fa-times"></i> Regresar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox contenido-inicial">
+        <div class="ibox-content scroll">
+            <table id="tbl_Menu" class="table table-hover menu">
+                <thead>
+                    <tr>
+                        <th>Menú</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    // Declaración de constantes
+    var IntUno = 1;
+    var obj_MenuTable;
+    var IntIdUsuario = @IntIdUsuario.ToString();
+    $("html").loading({ message: "Cargando información, espere..." });
+
+    $(document).ready(function ()
+    {
+
+        $('body').on("click", "#btn_expandir", function () {
+            $('#tbl_Menu').treetable('expandAll');
+            return false;
+        });
+
+        $('body').on("click", "#btn_contraer", function () {
+            $('#tbl_Menu').treetable('collapseAll');
+            return false;
+        });
+
+        $('body').on("click", "#btn_check", function () {
+            $('input.enabled:visible').iCheck('check');
+            return false;
+        });
+
+        $('body').on("click", "#btn_uncheck", function () {
+            $('input.enabled:visible').iCheck('uncheck');
+            return false;
+        });
+
+        $('body').on("click", "#btn_Grabar", function () {
+            fn_Grabar();
+        });
+
+        $('#btn_Cancelar, .btn_Cancelar').click(function () {
+            location.href = 'usuarioAccionLista.cshtml';
+        });
+
+        $('body').tooltip({
+            selector: '[rel=tooltip]'
+        });
+    });
+
+    $(window).load(function () {
+        fn_CargarAccionesUsuarios();
+    });
+
+    function fn_CargarAccionesUsuarios(){//obtiene las acciones del usuario
+
+        $.ajax({
+			url: "@VariableGlobal.StrUrlApi/Menu/",
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async:false,
+            data: {
+                ParamStrBuscar: IntIdUsuario,
+                ParamIntEjecuta: 4
+            },
+            success: function (obj_Datos) {
+                if (obj_Datos != null) {
+                    fn_CargarCatalogo(obj_Datos);
+
+                    // Una ves obtenida la info de los menus, se aplica el tree
+                    $("#tbl_Menu").treetable({
+                        expandable: true,
+                        onNodeCollapse: onNodeCollapse,
+                        onNodeExpand: onNodeExpand
+                    });
+                }
+                else
+                    toastr["error"]("No se encotraron las Acciones del usuario");
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                toastr["error"]("Ocurrió un error al obtner los datos del formulario: " + thrownError);
+            }
+		});
+        $("html").loading('stop');
+    }
+
+    function fn_CargarAcciones(objListaCatalogo){
+
+        $.ajax({
+            url: "@VariableGlobal.StrUrlApi/Accion/"
+            , data: {
+                ParamTipoBusqueda: 1,
+                ParamTipoFiltro: 0
+            }
+            , type: "GET"
+            , contentType: "application/json; charset=utf-8"
+            , dataType: "json"
+            , async: false
+            , success: function (obj_Datos) {
+
+                if (obj_Datos != null) {
+                    var str_headTableAccciones = '';
+                    var str_bodyTableAccciones = '';
+
+                    // Generaremos el encabezado de la tabla y el cuerpo, donde obtuvimos las acciones  y en el cuerpo, imprimiremos los checkbox
+                    $(obj_Datos).each(function (index, value) {
+                        str_headTableAccciones += '<th>' + value.StrDescAccion + '</th>';
+                        if (value.IntBMovimientoEspecial == 0) {
+                            str_bodyTableAccciones += '<td title="' + value.StrDescAccion + '"><div class="i-checks"><input type="checkbox" class="checkbox disabled" data-pa-id="0" data-ua-id="0" data-id="' + value.IntIdAccion + '" disabled="true" data-cve-accion="" data-value="0" style="display:initial !important;"></div></td>';
+                        } else {
+                            str_bodyTableAccciones += '<td id="td_' + value.IntIdAccion + '"></td>';
+                        }
+                    });
+
+                    //Imprimimos todas las acciones posibles (se maneja de manera dinamica, para que sea posible agregar mas)
+                    $("#tbl_Menu > thead > tr").each(function (index, value) {
+                        $(this).append(str_headTableAccciones);
+                    });
+
+                    //Imprimimos las acciones de las paginas (menus) por default, todos los check estan inactivados, se activaran al momento de saber el permiso del mismo
+                    $("tr.tr_PaginaAcciones").each(function (index, value) {
+                        $(this).append(str_bodyTableAccciones);
+                    });
+
+                    //var obj_icheck = new class_iCheck();
+                    //Buscamos cada una de las acciones del usuario, para cada pagina (menu), esto del listado entero
+                    $(objListaCatalogo).each(function (index, value) {
+                        var ObjPaginas = JSON.parse(value.StrPaginasMenu);
+                        if (ObjPaginas != 0) {
+                            //Buscamos ahora, por cada pagina las acciones, en caso de no tener idAccionPagina, la Accion, entonces no se habilitara o activara el check.
+                            //Esto activara solo la accion a la cual tiene el permiso a nivel pagina (OJO no a nivel usuario, esto es en base a la configuracion de la pagina)
+                            //Se activan los check, para poder hacer uso de ellos, hasta este punto aun no sabemos los permisos de el usuario
+                            $.each(ObjPaginas, function (indexPagina, valuePagina) {
+                                if (valuePagina.idAccionesPagina != "0") {
+                                    $.each(valuePagina.idAccionesPagina, function (indexAccion, valueAccion) {
+                                        if (valueAccion.bMovimientoEspecial == 0) {
+                                            $("tr.tr_PaginaAcciones[data-tt-id='p_" + valueAccion.idPagina + "']").find("input.checkbox[data-id='" + valueAccion.idAccion + "']").attr("disabled", false).removeClass("disabled").addClass("enabled");
+                                            $("tr.tr_PaginaAcciones[data-tt-id='p_" + valueAccion.idPagina + "']").find("input.checkbox[data-id='" + valueAccion.idAccion + "']").closest("div.disabled").removeClass("disabled");
+                                        } else {
+                                            var str_Fila = '<div class="i-checks" style="text-align: left;" data-toggle="tooltip" data-placement="top" title="' + valueAccion.descAccion + '"><input type="checkbox" class="checkbox enabled" data-pa-id="0" data-ua-id="0" data-id="' + valueAccion.idAccion + '" data-cve-accion="' + valueAccion.cveAccionReferencia + '" data-value="0" style="display:initial !important;"><label style="font-weight: 500; padding-left: 5px;">' + valueAccion.cveAccionReferencia + '</label></div>';
+                                            $("tr.tr_PaginaAcciones[data-tt-id='p_" + valueAccion.idPagina + "']").find("#td_" + valueAccion.idAccion).append(str_Fila);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    //Mandamos buscar las acciones que tiene asigando el perfil del usuario
+                    fn_ObtenerPerfilAccion(objListaCatalogo);
+                    // Mandamos asignar las acciones del perfil ya guardadas
+                    fn_ObtenerUsuarioAccion(objListaCatalogo);
+                    $('[data-toggle="tooltip"]').tooltip(); 
+                }
+                else
+                    toastr["error"]("No se lograron cargar las acciones del Usuario");
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                toastr["error"]("Ocurrió un error al obtner los datos del formulario: " + thrownError);
+            }
+        });
+
+    }
+
+    function fn_ObtenerPerfilAccion(objListaCatalogo) {
+        //Obtenemos las acciones guardadas para el usuario corporativo.usuarioAccion
+        //La funcionalidad es muy similar al activar o inactivar los check por el permiso de la pagina
+        //Los permisos de la pagina en base al perfil del usuario, son marcados de color, para distinguirlos
+        $(objListaCatalogo).each(function (index, value) {
+            var ObjPaginas = JSON.parse(value.StrPaginasMenu);
+            if (ObjPaginas != 0) {
+                $.each(ObjPaginas, function (indexPagina, valuePagina) {
+                    if (valuePagina.idPerfilAccionesPagina != "0") {
+                        $.each(valuePagina.idPerfilAccionesPagina, function (indexAccion, valueAccion) {
+                            if (valueAccion.idPaginaAccionPerfil != "0") {
+                                //$.each(valueAccion.idPaginaAccionPerfil, function (index, accion) {
+                                    //console.log(valueAccion.bMovimientoEspecial)
+                                    if (valueAccion.cveAccionReferencia == "") {
+                                        $("tr.tr_PaginaAcciones[data-tt-id='p_" + valueAccion.idPagina + "'] input.checkbox[data-id='" + valueAccion.idPaginaAccionPerfil + "']").iCheck("check").attr({ "data-pa-id": valueAccion.idPerfilAccion, "data-value": "1" });
+                                    } else {
+                                        $("tr.tr_PaginaAcciones[data-tt-id='p_" + valuePagina.idPagina + "'] input.checkbox[data-cve-accion='" + valueAccion.cveAccionReferencia + "']").iCheck("check").attr({ "data-pa-id": valueAccion.idPerfilAccion, "data-value": "1" });
+                                        $("tr.tr_PaginaAcciones[data-tt-id='p_" + valuePagina.idPagina + "'] input.checkbox[data-cve-accion='" + valueAccion.cveAccionReferencia + "']").next("label").css("background-color", "#7adeff2e");
+                                    }
+                                //});
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        $("tr.tr_PaginaAcciones input.checkbox[data-pa-id!='0'][data-cve-accion='']").closest("td").css("background-color", "#7adeff2e");
+    }
+
+    function fn_ObtenerUsuarioAccion(objListaCatalogo) {
+        //Obtenemos las acciones guardadas para el usuario corporativo.usuarioAccion
+        //La funcionalidad es muy similar al activar o inactivar los check por el permiso de la pagina
+        //Se diferencia que se aplica el check a los check para activarlos y se les asigna su respectivo idPaginaAccion a cada check
+        $(objListaCatalogo).each(function (index, value) {
+            var ObjPaginas = JSON.parse(value.StrPaginasMenu);
+            if (ObjPaginas != 0) {
+                $.each(ObjPaginas, function (indexPagina, valuePagina) {
+                    if (valuePagina.idUsuarioAccionesPagina != "0") {
+                        $.each(valuePagina.idUsuarioAccionesPagina, function (indexAccion, valueAccion) {
+                            if (valueAccion.idUsuarioAccionPerfil != "0") {
+                               // $.each(valueAccion.idUsuarioAccionPerfil, function (index, accion) {
+                                    if (valueAccion.cveAccionReferencia == "") {
+                                        $("tr.tr_PaginaAcciones[data-tt-id='p_" + valuePagina.idPagina + "'] input.checkbox[data-id='" + valueAccion.idUsuarioAccionPerfil + "']").iCheck((valueAccion.bActivo == 1 ? "check" : "uncheck")).attr({ "data-ua-id": valueAccion.idUsuarioAccion, "data-value": valueAccion.bActivo });
+                                    } else {
+                                        $("tr.tr_PaginaAcciones[data-tt-id='p_" + valuePagina.idPagina + "'] input.checkbox[data-cve-accion='" + valueAccion.cveAccionReferencia + "']").iCheck((valueAccion.bActivo == 1 ? "check" : "uncheck")).attr({ "data-ua-id": valueAccion.idUsuarioAccion, "data-value": valueAccion.bActivo });
+                                    }
+                             //   });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+
+    function fn_CargarCatalogo(objListaCatalogo) {
+
+        $("#tbl_Menu tbody").html("");
+
+        $.each(objListaCatalogo, function (index, value) {
+
+            //OBTENGO LA FILA
+            var row = '<tr id="' + value.IntIdMenu + '" data-tt-id="' + value.IntIdMenu + '" data-tt-parent-id="' + value.IntIdMenuPadre + '">' +
+                            '<td>' + value.StrDescMenu  + '</td > ' +
+                '</tr>';
+            //VERIFICO SI ES UN PADRE O UN HIJO Y LO PONGO EN LA POSICION CORRESPONDIENTE
+            if (value.IntIdMenuPadre == 0) {
+                $("#tbl_Menu tbody").append(row);
+            } else {
+                $("#tbl_Menu tbody [data-tt-id='" + value.IntIdMenuPadre + "']").after(row);
+            }
+
+            //VERIFICAMOS SI TRAE PAGINAS ASIGNADAS
+            if (value.StrPaginasMenu != "0") {
+                //CONVERTIMOS EL STRING A OBJETO JSON
+                var ObjPaginas = JSON.parse(value.StrPaginasMenu);
+
+                //RECORREMOS EL OBJETO Y PONEMOS LA PAGINA EN EL PADRE CORRESPONDIENTE
+                $.each(ObjPaginas, function (indexPagina, valuePagina) {
+                    var row = '<tr class="tr_PaginaAcciones" id="p_' + valuePagina.idPagina + '" data-tt-id="p_' + valuePagina.idPagina + '" data-id="' + valuePagina.idPagina+'" data-tt-parent-id="' + value.IntIdMenu + '">' +
+                        '<td>' + valuePagina.descPagina + '</td > ' +
+                        '</tr>';
+
+                    $("#tbl_Menu tbody [data-tt-id='" + value.IntIdMenu + "']").after(row);
+                })
+
+            }
+        });
+
+        fn_CargarAcciones(objListaCatalogo);
+    }
+
+    function onNodeCollapse (){
+        $("button#" + this.id + "").addClass("hidden");
+        $("#tbl_Menu").treetable("collapseNode", this.id)
+        $("tr[data-tt-parent-id='" + this.id + "']").addClass("hidden");
+    }
+    function onNodeExpand() {
+        $("button#" + this.id + "").removeClass("hidden");
+        $("#tbl_Menu").treetable("expandNode",this.id)
+        $("tr[data-tt-parent-id='" + this.id + "']").removeClass("hidden");
+    }
+
+    /**
+     * ***********FUNCIONES QUE OBTIENEN LOS DATOS DE LOS GRIDS PARA EL GUARDADO****************
+     */
+
+    function fn_GrabarUsuarioAccion() {
+        var lst_obj_PaginaAcciones = [];
+        var obj_Pagina = {};
+        var obj_Accion = {};
+        $("#tbl_Menu tbody tr.tr_PaginaAcciones").each(function () {
+
+            var trPagina = $(this);
+            var array_Accion = [];
+
+            $(trPagina).find("td input.checkbox").each(function () {
+
+                var trAccion = $(this);
+                if ($(trAccion).data("value") != (trAccion.is(':checked')) ? 1 : 0) {
+                    obj_Accion = {
+                        IntIdPagina: trAccion.closest("tr").data("id"),
+                        IntIdAccion: trAccion.data("id"),
+                        IntIdUsuarioAccion: trAccion.data("ua-id"),
+                        StrCveAccionReferencia: trAccion.data("cve-accion"),
+                        IntBActivo: (trAccion.is(':checked')) ? 1 : 0
+                    }
+                    array_Accion.push(obj_Accion);
+                }
+            });
+
+            obj_Pagina = {
+                IntIdMenu: trPagina.closest("tr.tr_PaginaAcciones").data("tt-parent-id"),
+                IntIdPagina: trPagina.closest("tr.tr_PaginaAcciones").data("id"),
+                LstObjUsuarioAccion: array_Accion
+            }
+
+            lst_obj_PaginaAcciones.push(obj_Pagina);
+        });
+        return lst_obj_PaginaAcciones;
+
+    }
+
+    /**
+     * ****************TERMINAN FUNCIONES QUE OBTIENEN LOS DATOS DE LOS GRIDS PARA EL GUARDADO***********************************************************
+     */
+
+    function fn_Grabar(element) {
+
+        var ListaUsuarioAccion = fn_GrabarUsuarioAccion();
+
+        //declaramos el objeto que se le pasara al controlador
+        var obj_UsuarioAccionInsertar = {
+            IntIdUsuario: @IntIdUsuario.ToString(),
+            //Objetos de Grids
+            LstObjPagina: ListaUsuarioAccion
+        }
+
+        //Mandamos los datos al webmethod para guardar los datos
+        var str_Metodo = "POST";
+        var str_Url = "";
+
+        str_Url = "@VariableGlobal.StrUrlApi/UsuarioAccion";
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_UsuarioAccionInsertar),
+            type: str_Metodo,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function(obj_Datos) {
+                //Se manda el mensaje de exito
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                if (obj_Datos["IntError"] > 0) {
+                    //         var int_PaginaActual = obj_MenuTable.page();//obtenemos la pagina que se encuentra el datatable
+                    //         obj_DataTable.ajax.reload();//se recarga el objeto datatable con los datos actualizados
+                    //         obj_DataTable.page(int_PaginaActual).draw("page");//se mantiene en la pagina que estava
+                    //         if (str_Metodo == "POST") $.pgwModal('close');//cerramos el modal
+                    //         alert(obj_Datos.IntIdMenu);
+                } else {
+                    setTimeout(function () {//esperamos unos segundos y redireccionamos a la lista
+                        location.reload();
+                    }, 2000);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                toastr["error"]("Ocurrió un error al grabar los datos del formulario: " + thrownError);
+            }
+        });
+
+
+    }
+
+</script>

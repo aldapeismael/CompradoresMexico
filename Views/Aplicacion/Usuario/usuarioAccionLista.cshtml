@@ -1,0 +1,212 @@
+﻿@using Newtonsoft.Json;
+@{
+
+    int IntIdEmpresaSesion = VariableGlobal.SessionIntIdEmpresa;
+    var IntBRobot = VariableGlobal.SessionIntBRobot;
+
+    Page.Title = "Usuarios";
+    var objEmpresaLista = new EmpresaController().ObtenerLista(2, 0);
+
+    ///////////////////////////////////////////////
+    //Codigo para reglas de negocio
+    ///////////////////////////////////////////////
+    string Strurl = Request.RawUrl;
+    bool urlDefault = Strurl.Contains("Default.cshtml");
+    List<Accion> objAccion = null;
+    String jsonAccionPagina = null;
+    String jsonReglasNegocio = null;
+    var int_Robot = VariableGlobal.SessionIntBRobot;
+
+    // Comienza petición de acciones para la pagina
+    var objAccesoPagina = new PaginaMenuController().Get((int_Robot == 1 ? 2 : 1), Strurl);
+
+
+    //verificamos si trae parametro para ser Popup o ventana
+    bool popUp = bool.Parse(Request.QueryString["Popup"]?.ToString() ?? "false");
+    if (!popUp)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+        // Comienza petición de acciones para la pagina
+        jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+        jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+        objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+
+    }
+    else
+    {
+        //So el usuario no es robot, no tiene acceso a la pagina y la pagina no es default
+        if (VariableGlobal.SessionIntBRobot != 1 && objAccesoPagina.Content.IntIdPagina == 0 && !urlDefault)
+        {
+            Response.Redirect("~/Views/Aplicacion/Acceso/SinAcceso.cshtml?Popup=1");
+        }
+        else
+        {
+            // Comienza petición de acciones para la pagina
+            jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+            jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+            objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+        }
+    }
+
+    ///////////////////////////////////////////////
+    //Fin Codigo para reglas de negocio
+    ///////////////////////////////////////////////
+
+
+    //Permiso para exportar datos de DataGrid
+    var BtnAccionExportar = objAccion.Where(x => x.StrCveAccion == "Exportar").ToList();
+
+}
+
+<div class="wrapper border-bottom white-bg page-heading">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <h2 class="text-center" id="lbl_TituloPagina">Usuarios</h2>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12  text-center">
+            <form role="form" id="form_Catalogo" action="" method="post" class="form-inline">
+                <div class="form-group m-r-sm">
+                    <label for="it_Cliente">Clave/Nombre</label>
+                    <input type="text" name="it_ClienteFiltro" value="" id="it_ClienteFiltro" class="form-control" />
+                </div>
+                <div class="form-group m-r-sm">
+                    <label for="ddl_EmpresaBuscar">Empresa:</label>
+                    @Html.DropDownList("ddl_EmpresaBuscar", "- SELECCIONE -", objEmpresaLista.Select(x => new SelectListItem() { Value = x.idEmpresa.ToString(), Text = x.cveEmpresa.ToString() + " | " + x.descEmpresa.ToString() }), 0, new { @class = "form-control" })
+                </div>
+
+                <div class="form-group m-r-sm hidden">
+                    <label for="ddl_ActivoBuscar">Activo:</label>
+                    <select class="form-control" id="ddl_ActivoBuscar">
+                        <option value="2">-TODOS-</option>
+                        <option value="1" selected>SI</option>
+                        <option value="0">NO</option>
+                    </select>
+                </div>
+
+                <button id="btn_Buscar" class="btn btn-warning" type="button" onclick="" title="Ver"><i class="fa fa-search"></i></button>
+                <!--
+                <button id="btn_Nuevo" name="btn_Nuevo" class="btn btn-warning" type="button" title="Nuevo"><i class="fa fa-file-o"></i></button>-->
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox contenido-inicial">
+        <div class="ibox-content scroll">
+            <table id="tbl_Lista" class="table table-striped table-bordered table-hover"></table>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+	//declaramos variables globales
+    var obj_DataTable;
+    var IdEmpresaSesion = @IntIdEmpresaSesion; //Empresa del usuario en sesion
+    var BRobot = @IntBRobot;
+
+    $(document).ready(function () {
+
+        //if (BRobot < 1) {
+            $("#ddl_EmpresaBuscar").attr("disabled", true);
+            $('#ddl_EmpresaBuscar option[value=' + IdEmpresaSesion + ']').prop('selected', true);
+        //}
+
+        $('#btn_Nuevo').click(function () {
+            fn_Nuevo();
+        });
+        $('#btn_Buscar').click(function () {
+            fn_Buscar();
+        });
+        fn_CargarDataTable();
+    });
+
+    function fn_Buscar() {
+      obj_DataTable.ajax.reload();
+    }
+
+	// Funcion para cargar los datos del datatable
+    function fn_CargarDataTable() {
+
+        var Int_IdEmpresa = parseInt($("#ddl_EmpresaBuscar").val());
+        if (Int_IdEmpresa == 0) {
+            return false;
+        }
+        //html en la opcion de los botoes de cada fila
+
+        obj_DataTable = $("#tbl_Lista").DataTable({//inicializamos el datatable
+            "language": obj_ClaseDataTable.json_LanguageDataTable,//cargamos la configuracion del lenguaje, configurado en utileria.js
+            "fnServerParams": function (oData) {//aqui van los parametros para el filtrado
+                oData.StrUsuario = $("#it_ClienteFiltro").val(),
+                oData.IntActivo = $("#ddl_ActivoBuscar option:selected").val();
+                oData.IntEmresa = $("#ddl_EmpresaBuscar option:selected").val();
+            },
+            "ajax": {//llamamos el metodo datatbale
+                url: "@VariableGlobal.StrUrlApi/UsuarioListado/ObtenerListado/0",
+                type: "POST"
+            },
+            "lengthMenu": obj_ClaseDataTable.array_Paginado,
+            "columns": [//columnas a mostrar en el datatble
+                {
+                    "data": "IntIdUsuario",
+                    "title": "Id"
+                },
+                {
+                    "data": "StrDescUsuario",
+                    "render": function (data, type, row, meta) {
+                        var str_urledit = "usuarioAccionAbc.cshtml?Popup=0&IdUsuario=" + row.IntIdUsuario + "&descUsuario=" + row.StrDescUsuario;
+                        return '<a href="' + str_urledit + '">' + data + '</a>';
+                    },
+                    "title": "Usuario",
+                },
+                {
+                    "data": "StrEmpresasUsuario",
+                    "title": "Empresa",
+                },
+                 {
+                    "data": "StrTerminalesUsuario",
+                    "title": "Terminal",
+                },
+                  {
+                    "data": "StrPerfilesUsuario",
+                    "title": "Perfil",
+                }/*,
+                {
+                    "data": "IntBActivo",
+                    "title": "Activo",
+                    "render": function (data, type, row, meta) {
+                        if (data == 1) return "Sí";
+                        else return "No";
+                    },
+                }*/
+            ],
+            "processing": true,//mensaje loadgin de procesamiento en llamada al servidor
+            "serverSide": true,//esto quiere decir que se va aconsumir desde el servidor,
+            @{
+                 if(BtnAccionExportar.Count > 0) {
+                    <TEXT>
+                    buttons: obj_ClaseDataTable.fn_CargaBotones(true),//cargamos los botones que descargan al cliente la informacion, excel, pdf, imagen
+                    dom: '<"html5buttons"B>lrftip',
+                    </TEXT>
+                }
+            }
+            pageLength: obj_ClaseDataTable.intLongitudPagina,//logitud por defaul
+            "columnDefs": [//se define la botonera de opciones del lado derecho de la tabla,
+                { "bVisible": true, "aTargets": [0, 1, 2, 3, 4] }, // <-- Muestra las columnas seleccionas empezando desde 0
+                { "bVisible": false, "aTargets": ['_all'] },        // <-- Oculta todas las demás columnas
+            ],
+            "searching": false,
+            "initComplete": function (settings, json) {//metodo para que el header flote al momento de scrollear asi abajo
+                new $.fn.dataTable.FixedHeader(obj_DataTable,
+                    {
+                        headerOffset: $('.navbar').outerHeight() + $('.page-heading').outerHeight()
+                    }
+                );
+                $('.table.fixedHeader-floating').css('width', $('#tbl_Lista').width() + "px !important");
+            }
+        });
+    }
+
+</script>

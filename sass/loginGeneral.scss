@@ -1,0 +1,78 @@
+///BREAKPOINTS
+$mobile: 600px;
+$tablet: 960px;
+$tablet-landscape: 1024px;
+$desktop: 1280px;
+$lg-desktop: 1440px;
+
+///
+//Variables
+$principalFont: "Encode Sans", sans-serif;
+$firstColor: #397eb4;
+$secondColor: #648dd3;
+
+body {
+  color: $firstColor;
+  font-family: $principalFont !important;
+}
+
+header {
+  nav {
+    background-color: white;
+
+    .container-fluid {
+      justify-content: center !important;
+    }
+    .row {
+      width: 100%;
+
+      div:nth-child(1) {
+        display: flex;
+        align-items: center;
+        text-align: start;
+        a {
+          color: $firstColor !important;
+          font-weight: 900;
+          font-size: 22px;
+        }
+      }
+      div:nth-child(2) {
+        text-align: end;
+      }
+    }
+  }
+
+  .menuUser {
+    z-index: 9999;
+    display: none;
+    background-color: white;
+    width: 100%;
+    right: 0;
+    top: 65px;
+    position: fixed;
+    box-shadow: #575d5d 0px 6px 9px 3px;
+
+    div {
+      div {
+        text-align: center;
+        font-weight: 700;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        padding: 3px;
+        border-bottom: 1px solid rgba(136, 136, 136, 0.308);
+        a {
+          text-decoration: none;
+          color: $firstColor;
+        }
+      }
+    }
+  }
+
+  i {
+    font-size: 40px !important;
+    color: $firstColor;
+  }
+
+  @media (max-width: $mobile) {
+  }
+}

@@ -1,0 +1,63 @@
+﻿/*  Esta hoja de estilo es para los plantillas de impresion */
+
+@font-face {
+    font-family: 'bc_c39_3_to_1_narrowregular';
+    src: url("../fonts/c39n3-webfont.ttf");
+    src: url('../fonts/c39n3-webfont.woff2') format('woff2'), url('../fonts/c39n3-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+/**********************************************/
+/* GENERALES                                  */
+/**********************************************/
+body {
+    font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    background-color: #FFF;
+}
+
+.bodyImpresion {
+    width: 21cm;
+    margin: auto;
+    padding: 10px;
+}
+
+.fuente-impresion {
+    font-family: 'bc_c39_3_to_1_narrowregular', Arial, sans-serif;
+    font-size: 45px;
+}
+
+.titulo-header {
+    font: 14px arial;
+}
+
+.titulo-detalle {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.titulo {
+    font: bold 20px;
+    text-transform: uppercase;
+}
+
+.contenido-header {
+    background-color: #F5F5F6;
+    font-size: 12px
+}
+
+.contenido-detalle {
+    font-size: 12px;
+}
+
+.table {
+    border-style: solid;
+}
+
+@media print {
+    .no-print, .no-print * {
+        display: none !important;
+    }
+}

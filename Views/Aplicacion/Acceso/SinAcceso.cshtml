@@ -1,0 +1,149 @@
+﻿@{
+    if (!VariableGlobal.SessionBoolActivo ||
+    VariableGlobal.SessionStrTipoMenu == "" ||
+    (VariableGlobal.SessionStrTipoMenu != "ejecutivo" && VariableGlobal.SessionStrTipoMenu != "operativo"))//si no existe la sesion entonces retornamos a login
+    {
+        Response.Redirect("~/Acceso.cshtml");
+    }
+
+    Page.Title = "SinAcceso";
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+    string StrUrl = Request.QueryString["Url"]?.ToString() ?? "";
+    string msgErrorAcceso = "";
+}
+
+<head>
+	<meta charset="utf-8" />
+	<title>@Page.Title - @VariableGlobal.StrNombreApicacion</title>
+
+	<link rel="icon" type="img/png" href="~/img/alianza-b.png" />
+
+
+	<!-- css -->
+	<link href="~/css/bootstrap.min.css" rel="stylesheet">
+	<link href="~/font-awesome/css/font-awesome.css" rel="stylesheet">
+	<link href="~/css/animate.css" rel="stylesheet">
+	<link href="~/css/style.css" rel="stylesheet">
+
+	<!-- Toast - Mensajes flotantes -->
+	<link href="~/Scripts/plugins/toastr/toastr.min.css" rel="stylesheet" />
+
+	<!-- Modificaciones de estilos al proyecto -->
+	<link href="~/css/utileria.css" rel="stylesheet">
+
+    @if (IntPopUp == 0)
+    {
+	    <!-- Mainly scripts -->
+	    <script src="~/Scripts/jquery-2.1.1.js"></script>
+	    <script src="~/Scripts/bootstrap.min.js"></script>
+
+	    <!-- Toast - Mensajes flotantes -->
+	    <script src="~/Scripts/plugins/toastr/toastr.min.js"></script>
+    }
+</head>
+
+
+<body class="gray-bg">
+	<div class="login-page sinAcceso">
+		<div class="middle-box text-center loginscreen animated fadeInDown" style="width: 350px">
+            <div>
+                <div>
+                    <cfoutput>
+                        <h1 class="logo-name">
+                            <img src="~/img/alianza.png" />
+                        </h1>
+                    </cfoutput>
+                </div>
+                <br />
+                <h3>Usuario sin permiso </h3>
+                <p>@StrUrl</p>
+                <p>Si requieres acceso, contacta a tu administrador</p>
+                <p id="ruta_Permiso"></p>
+
+                <input type="hidden" name="hblogin" value="0">
+
+                <button type="submit" class="btn btn_Regresar btn-warning block full-width m-b">Regresar</button>
+
+            </div>
+		</div>
+
+	</div>
+</body>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        fn_CargarRuta('@StrUrl');
+    });
+
+    if (@IntPopUp == 1) {
+        $(".middle-box").css("padding-top", "0px");
+        $(".modal-backdrop").hide();
+    }
+    $(".sinAcceso").find(".btn_Regresar").click(function () {
+       // var url = window.document.referrer;
+        //window.location.href = window.document.referrer;
+        if (@IntPopUp == 0) {
+            history.back();
+            return false;
+        }
+        else {
+//            $("#modalCia").addClass("hidden");
+            $.pgwModal('close');
+        }
+    });
+
+        function fn_CargarRuta(paramStr_Ruta) {
+        var str_Metodo = "GET";
+        var str_Url = "";
+        var str_UrlSegmentos;
+        var int_Index = 0;
+        var str_Ruta = "";
+            if (!paramStr_Ruta.includes("Origen")) {
+                paramStr_Ruta = paramStr_Ruta.split("?");
+                str_UrlSegmentos = paramStr_Ruta[0].split("/");
+            if (str_UrlSegmentos[1].includes("Views")) {
+                int_Index = 1;
+            } else {
+                int_Index = 2;
+            }
+            
+        } else {
+                str_UrlSegmentos = paramStr_Ruta.split("/");
+                str_Url = "@VariableGlobal.StrUrlApi/PaginaMenu?ParamIntEjecuta=3&ParamStrUrl=" + paramStr_Ruta;
+            if (str_UrlSegmentos[1].includes("Views")) {
+                int_Index = 1;
+            } else {
+                int_Index = 2;
+            }
+        }
+        for (var i = int_Index; i < str_UrlSegmentos.length; i++) {
+            str_Ruta += "/" + str_UrlSegmentos[i];
+        }
+
+        str_Url = "@VariableGlobal.StrUrlApi/PaginaMenu?ParamIntEjecuta=3&ParamStrUrl=" + str_Ruta;
+        $.ajax({
+            url: str_Url,
+           // data: JSON.stringify(obj_Pagina),
+            type: str_Metodo,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (obj_Datos) {
+                $.each(obj_Datos, function (index, value) {
+                    if (index == "StrJsonPaginaAccion") {
+                        if (value != "[]") {
+                            var lst_PaginaMenu = JSON.parse(value);
+                            $("#ruta_Permiso").html("Menú: " + lst_PaginaMenu[0].menu);
+                        }
+                    }
+                });
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                //toastr["error"]("Ocurrió un error al grabar los datos del formulario: " + thrownError);
+            }
+        });
+
+    }
+
+</script>

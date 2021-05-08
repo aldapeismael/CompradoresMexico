@@ -1,0 +1,332 @@
+﻿@{
+    Page.Title = "Cambio Contraseña";
+    //verificamos si trae parametro para ser Popup o ventana
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+
+    if (IntPopUp == 0)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+    }
+
+}
+
+<head>
+    <meta charset="utf-8" />
+    <title>@Page.Title</title>
+
+    <link rel="icon" type="img/png" href="img/alianza-b.png" />
+
+    <!-- css -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- Toast - Mensajes flotantes -->
+    <link href="~/Scripts/plugins/toastr/toastr.min.css" rel="stylesheet" />
+
+    <link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+
+    <!-- Inspinia - Estilos definidos del template -->
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- Sweet Alert - Estilos para las alertas en forma de modal con acciones-->
+    <link href="css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <!-- PGW Modal - Modales dinámicos -->
+    <link href="~/Scripts/plugins/PgwModal/pgwmodal.min.css" rel="stylesheet">
+
+    <!-- Modificaciones de estilos al proyecto -->
+    <link href="css/utileria.css" rel="stylesheet">
+
+    <!-- Mainly scripts -->
+    <script src="~/Scripts/jquery-2.1.1.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+
+    <!-- Sweet alert - Alertas en forma de modal con acciones -->
+    <script src="~/Scripts/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <!-- PGW Modal - Modales dinámicos -->
+    <script src="~/Scripts/plugins/PgwModal/pgwmodal.js"></script>
+
+    <!-- Libreria para el seleccionador de fechas en los filtros  -->
+    <script src="~/Scripts/plugins/datapicker/bootstrap-datepicker.js"></script>
+
+    <!-- Pantallas de loading -->
+    <script src="~/Scripts/jquery.loading.min.js"></script>
+
+    <script src="~/Scripts/utileria.js"></script>
+
+    <!-- Toast - Mensajes flotantes -->
+    <script src="~/Scripts/plugins/toastr/toastr.min.js"></script>
+    <script>
+        // Configuración inicial para los mensajes de alerta emergentes
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "progressBar": true,
+            "preventDuplicates": true,
+            "positionClass": "toast-top-center",
+            "onclick": null,
+            "showDuration": "400",
+            "hideDuration": "1000",
+            "timeOut": "7000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+		//obj_ClaseToastr.fn_cargaOpcionesToastr();
+    </script>
+</head>
+
+<div id="ModalAjuste" class="wrapper wrapper-content Modal_CambioContrasena">
+	<div class="login-page">
+		<div class="middle-box text-center loginscreen animated fadeInDown" style="margin: 0 auto; padding: 0">
+            <div>
+                <div>
+                    <h1 class="logo-name">
+                        <img src="img/alianza.png" />
+                    </h1>
+                </div>
+                <br />
+                @if (IntPopUp == 0)
+    {<h3>Cambio de Contraseña</h3>}
+
+                <form id="frm" class="m-t frm" role="form" action="" method="post" onsubmit="return false">
+                    <div class="form-group">
+                        <input name="it_Email" id="it_Email" type="text" class="form-control" placeholder="Email" required value="" autofocus/>
+                    </div>
+                    <div class="form-group">
+                        <input name="it_ContrasenaActual" id="it_ContrasenaActual" type="password" class="form-control" placeholder="Contraseña Actual" maxlength="24" required value=""/>
+                    </div>
+                    <div class="form-group">
+                        <input name="it_ContrasenaNueva" id="it_ContrasenaNueva" type="password" class="form-control" placeholder="Nueva Contraseña" required maxlength="24" />
+                    </div>
+                    <div class="form-group">
+                        <input name="it_ContrasenaNuevaDos" id="it_ContrasenaNuevaDos" type="password" class="form-control" placeholder="Repita Nueva Contraseña" required maxlength="24"/>
+                    </div>
+                    <button id="btn_GrabarContrasena" type="submit" class="btn btn-warning block full-width m-b">Guardar Nueva Contraseña</button>
+                    @if (IntPopUp == 0)
+        {<a href="Acceso.cshtml"><small>Regresar a Login</small></a>}
+                </form>
+
+                @*<button id="btn_Regresar" class="btn btn-danger m-xs" type="button" title="Regresar"><i class="fa fa-times"></i> Regresar</button>*@
+
+            </div>
+		</div>
+
+	</div>
+</div>
+
+<div id="pswd_info">
+    <h4>Estos son los requerimientos de la nueva contraseña:</h4>
+    <ul>
+        <li id="letter" class="invalid">
+            Minimo <strong>1 letra</strong>
+        </li>
+        <li id="capital" class="invalid">
+            Minimo <strong>1 Mayuscula</strong>
+        </li>
+        <li id="number" class="invalid">
+            Minimo <strong>1 Número</strong>
+        </li>
+        <li id="length" class="invalid">
+            Minimo <strong>8 Caracteres</strong>
+            Maximo <strong>10 Caracteres</strong>
+        </li>
+    </ul>
+</div>
+
+<style>
+    #pswd_info {
+        position: absolute;
+        bottom: 25px;
+        bottom: -115px\9;
+        /* IE Specific */
+        right: -7%;
+        width: 250px;
+        padding: 15px;
+        background: #fefefe;
+        font-size: .875em;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px #ccc;
+        border: 1px solid #ddd;
+    }
+    #pswd_info h4 {
+        margin: 0 0 10px 0;
+        padding: 0;
+        font-weight: normal;
+    }
+
+    #pswd_info::before {
+        content: "\25C0";
+        position: absolute;
+        top: 30px;
+        left: -5%;
+        font-size: 14px;
+        line-height: 14px;
+        color: #ddd;
+        text-shadow: none;
+        display: block;
+    }
+
+    .invalid {
+        padding-left: 22px;
+        line-height: 24px;
+        color: #ec3f41;
+    }
+
+    .valid {
+        padding-left: 22px;
+        line-height: 24px;
+        color: #3a7d34;
+    }
+    #pswd_info {
+        display:none;
+    }
+
+</style>
+
+<script type="text/javascript">
+    debugger;
+    $(document).ready(function () {
+
+        var longitud = false,
+            minuscula = false,
+            numero = false,
+            mayuscula = false;
+
+        $('#it_Email').focus();
+
+        $('.message a').click(function () {
+            $('form').animate({ height: "toggle", opacity: "toggle" }, "slow");
+        });
+
+        
+
+        $('#btn_GrabarContrasena').click(function () {
+            if (!longitud || !minuscula || !numero || !mayuscula) {
+                $("#pswd_info").show();
+                $("#it_ContrasenaNueva").focus();
+            } else {
+
+                debugger;
+                fn_GrabarContrasena();
+            }
+        });
+
+        $('#it_ContrasenaNueva').keyup(function () {
+            var pswd = $(this).val();
+            if (pswd.length < 8) {
+                $('#length').removeClass('valid').addClass('invalid');
+                longitud = false;
+            } else {
+                $('#length').removeClass('invalid').addClass('valid');
+                longitud = true;
+            }
+
+            //validate letter
+            if (pswd.match(/[A-z]/)) {
+                $('#letter').removeClass('invalid').addClass('valid');
+                minuscula = true;
+            } else {
+                $('#letter').removeClass('valid').addClass('invalid');
+                minuscula = false;
+            }
+
+            //validate capital letter
+            if (pswd.match(/[A-Z]/)) {
+                $('#capital').removeClass('invalid').addClass('valid');
+                mayuscula = true;
+            } else {
+                $('#capital').removeClass('valid').addClass('invalid');
+                mayuscula = false;
+            }
+
+            //validate number
+            if (pswd.match(/\d/)) {
+                $('#number').removeClass('invalid').addClass('valid');
+                numero = true;
+            } else {
+                $('#number').removeClass('valid').addClass('invalid');
+                numero = false;
+            }
+        }).focus(function () {
+            $('#pswd_info').show();
+        }).blur(function () {
+            $('#pswd_info').hide();
+        });
+    });
+
+    function fn_GrabarContrasena() {
+        //validaciones
+        var str_Email = $('#it_Email').val();
+        var str_ContrasenaActual = $('#it_ContrasenaActual').val();
+        var str_ContrasenaNueva = $('#it_ContrasenaNueva').val();
+        var str_ContrasenaNuevaDos = $('#it_ContrasenaNuevaDos').val();
+
+		var re = /^(([^<>()\[\]\\.,;:\s@@"]+(\.[^<>()\[\]\\.,;:\s@@"]+)*)|(".+"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+		if (str_Email === "" || !obj_ClaseGlobal.fn_ValidarDatosRegulares(str_Email, re)) {
+			toastr["error"]("Debe capturar un correo electrónico válido");
+			return false;
+        }
+
+        //if (str_ContrasenaActual == str_ContrasenaNueva) {
+        //    toastr["error"]("La contraseña actual no puede ser igual a la nueva contraseña");
+        //    $("#it_ContrasenaNueva").focus();
+        //    return false;
+        //}
+
+        if (str_ContrasenaNueva != str_ContrasenaNuevaDos) {
+            toastr["error"]("La nueva Contraseña no coincide");
+            $("#it_ContrasenaNuevaDos").focus();
+            return false;
+        }
+
+        //se crea un objeto
+        var obj_Contrasena = {
+            StrEmail: str_Email,
+            StrContrasena: str_ContrasenaActual,
+            StrContrasenaNueva: str_ContrasenaNueva
+        }
+
+        //Mandamos los datos al webmethod para guardar los datos
+        var str_Metodo = "";
+        var str_Url = "";
+
+        str_Metodo = "PUT";
+        str_Url = "Api/Contrasena/";
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_Contrasena),
+            type: str_Metodo,
+            contentType: "application/json; charset=utf-8",
+			async: false,
+            dataType: "json",
+            success: function (obj_Datos) {
+                //Se manda el mensaje de exito
+                debugger
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                if (obj_Datos["IntError"] == 0) {
+
+                    str_ModalContrasena = $('#it_ContrasenaNueva').val();
+                    debugger;
+                    $("#it_usuario").val(str_cveUser);
+                    $("#it_contrasena").val(str_ModalContrasena);
+                    setTimeout(
+                        function () {
+                            
+                            $("#btn_Iniciar").trigger("click");
+                    }, 1500);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                toastr["error"]("Ocurrió un error tratar de recuperar la contraseña: " + thrownError);
+            }
+        });
+    }
+</script>

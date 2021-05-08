@@ -1,0 +1,40 @@
+body {
+  color: #397eb4;
+  font-family: "Encode Sans", sans-serif !important; }
+
+.master {
+  margin: 40% auto;
+  width: 80% !important; }
+  .master .title {
+    font-size: 25px;
+    font-weight: 600;
+    color: #397eb4; }
+  .master .containerProfile {
+    width: 100%;
+    margin: 0 auto; }
+  .master .card {
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 30px; }
+    .master .card img {
+      width: 75%;
+      margin-bottom: 15px; }
+    .master .card .btnRef {
+      background-color: #397eb4;
+      color: white;
+      font-weight: 600; }
+  .master .footer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 20px; }
+    .master .footer p {
+      color: #272727;
+      margin: 0;
+      font-weight: 600; }
+    .master .footer a {
+      text-decoration: underline !important;
+      font-weight: 800;
+      color: #397eb4 !important; }
+
+/*# sourceMappingURL=login.css.map */

@@ -1,0 +1,1443 @@
+/*  Esta hoja de estilo es para los cambios que se le hagan al template */
+
+/* igarrido */
+
+/*--------------------------------------------------------------------*/
+/* Colores para skin-3 -----------------------------------------------*/
+/*--------------------------------------------------------------------*/
+
+/* Body */
+#page-wrapper {
+	overflow: hidden;
+}
+body.skin-3 {
+    background: #2b303b;
+}
+.form-control:focus,
+.single-line:focus {
+    border-color: #FF7E00 !important;
+}
+
+a {
+	color: #337ab7;
+	text-decoration: underline !important;
+	font-weight: bold;
+	cursor: pointer;
+}
+a:hover {
+   color: #71aeef;
+}
+nav a, .nav a, a.btn{
+	text-decoration: none !important;
+}
+
+.datepicker.dropdown-menu {
+    z-index: 10100 !important;
+}
+
+/* Menu Superior ******************************/
+.skin-3.fixed-nav .navbar-header > div {
+	display: inline;
+}
+
+.skin-3.fixed-nav .minimalize-styl-2:first-child {
+	margin: 14px 5px 5px 5px;
+}
+
+.skin-3.fixed-nav .minimalize-styl-2 {
+    margin: 14px 5px 5px 0;
+    background: #FF7E00;
+    border-color: #FF7E00;
+}
+
+/* Menu Flotante */
+
+.menu-operativo .dropdown-menu {
+	background-color: #ff7e00 !important;
+	color: #ffffff;
+}
+
+@media (max-width: 768px) {
+	.menu-operativo .dropdown-menu .dropdown-menu {
+		background-color: #948b96 !important;
+	}
+}
+
+
+.menu-operativo .dropdown-menu .open > a {
+	color: #ff7e00;
+}
+
+.dropdown-submenu {
+	position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+	top: 0;
+	left: 100%;
+	margin-top: -6px;
+	margin-left: -1px;
+	-webkit-border-radius: 0 6px 6px 6px;
+	-moz-border-radius: 0 6px 6px 6px;
+	border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu > a:after {
+	display: block;
+	content: " ";
+	float: right;
+	width: 0;
+	height: 0;
+	border-color: transparent;
+	border-style: solid;
+	border-width: 5px 0 5px 5px;
+	border-left-color: #cccccc;
+	margin-top: 5px;
+	margin-right: -10px;
+}
+
+.dropdown-submenu:hover > a:after {
+	border-left-color: #555;
+}
+
+.dropdown-submenu.pull-left {
+	float: none;
+}
+
+.dropdown-submenu.pull-left > .dropdown-menu {
+	left: -100%;
+	margin-left: 10px;
+	-webkit-border-radius: 6px 0 6px 6px;
+	-moz-border-radius: 6px 0 6px 6px;
+	border-radius: 6px 0 6px 6px;
+}
+
+.top-navigation .navbar-nav .open .dropdown-menu > li > a, .top-navigation .navbar-nav .open .dropdown-menu .dropdown-header {
+	padding: 5px 15px 5px 20px;
+}
+/**********************************************/
+
+/* Menu Superior Operativo ********************/
+body.top-navigation .navbar-fixed-top {
+    left: 0 !important;
+}
+
+body.top-navigation .minimalize-styl-2 {
+    margin: 5px 5px 5px 0 !important;
+}
+
+.top-navigation .navbar-brand {
+    /*background-color: #FF7E00;*/
+}
+.top-navigation .navbar-brand a {
+    color: #ffffff;
+}
+.top-navigation .nav > li a:hover, .top-navigation .nav > li a:focus {
+    color: #FF7E00;
+}
+
+.top-navigation .navbar.navbar-fixed-top .navbar-header .fa,
+.top-navigation .navbar.navbar-fixed-top .nav-operativo .fa {
+    color: #948b96 !important;
+}
+/**********************************************/
+/* Menu Lateral *******************************/
+body:not(.fixed-nav) .skin-3 .nav:not(.navbar-top-links) > li > a {
+    color: #ffffff;
+}
+
+.skin-3 .nav-header {
+	padding: 25px 25px 10px 25px;
+}
+
+.skin-3 .nav > li.active,
+.skin-3 .navbar-default .nav > li > a:hover,
+.skin-3 .navbar-default .nav > li > a:focus {
+    background: #1f4e77;
+    color: #fff;
+}
+.img-md {
+	max-width: 150px;
+	width: 100%;
+	max-height: 100%;
+	height: 64px;
+}
+/**********************************************/
+
+/* Botones *******************************/
+.minimalize-styl-2 {
+    padding: 2px 8px !important;
+}
+
+.btn-warning,
+.sweet-alert .confirm {
+    background-color: #FF7E00 !important;
+    border-color: #FF7E00 !important;
+}
+
+.btn-inForm {
+	margin-bottom: 0px;
+	padding: 4px 10px;
+}
+/**********************************************/
+
+/* Men� Dropdown ******************************/
+.top-navigation .dropdown-menu > li > a {
+    margin: 4px;
+}
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:focus, .dropdown-menu > .active > a:hover {
+    background-color: #FF7E00;
+}
+/* Fin Css Skin-3 */
+
+/* Login ********************************/
+.loginscreen h1 img {
+    width: 100%;
+}
+/**********************************************/
+
+/* Page Heading Fixed *************************/
+.page-heading {
+	transition-duration: 0.4s;
+	position: fixed;
+	z-index: 1000;
+	right: 0;
+}
+body.fixed-nav.fixed-nav-basic .page-heading {
+	left: 220px;
+}
+body.fixed-nav.fixed-nav-basic.fixed-sidebar.mini-navbar .page-heading {
+	left: 0;
+}
+@media (max-width: 768px) {
+	.page-heading {
+		position: relative;
+		width: 100% !important;
+		left: 0 !important;
+		z-index: 0;
+	}
+}
+/**********************************************/
+
+/* Tooltip botones superiores *****************/
+.tooltip {
+    z-index: 10002;
+}
+/**********************************************/
+
+/* TABLAS REPORTES ****************************/
+table.tablaReporte {
+    width: 50% !important;
+    margin: 0 auto !important;
+}
+
+@media (max-width: 1400px) {
+    table.tablaReporte {
+        width: 75% !important;
+    }
+}
+
+@media (max-width: 1200px) {
+    table.tablaReporte {
+        width: 85% !important;
+    }
+    
+}
+
+@media (max-width: 1000px) {
+    table.tablaReporte {
+        width: 100% !important;
+    }
+}
+
+@media print {
+    table.tablaReporte {
+        width: 100% !important;
+    }
+        table.tablaReporte .indenter {
+            display: none !important;
+            visibility: hidden !important;
+        }
+}
+
+    /**********************************************/
+
+    /* Datatable **********************************/
+
+    .table {
+        margin-bottom: 0px;
+    }
+
+    table.table:not(.fixedHeader-floating):not(.tablaReporte) {
+        width: 100% !important;
+    }
+
+    table.table tr td .btn:not(.btn-xs):not(.btn-sm):not(.bootstrap-touchspin-down):not(.bootstrap-touchspin-up) {
+        padding: 0 10px;
+        margin: 0;
+    }
+
+    table .dt-center {
+        text-align: center;
+    }
+
+    .dt-button-info {
+        z-index: 100001 !important;
+    }
+
+    ul.dt-button-collection.dropdown-menu {
+        z-index: 9020;
+    }
+
+    .dataTables_scrollHeadInner {
+        width: 100% !important;
+    }
+
+    div.dataTables_length select[name=tbl_Lista_length] {
+        width: 100px !important;
+    }
+    /**********************************************/
+
+    /* Menu **********************/
+    table.menu {
+    }
+
+        table.menu thead tr th:first-child {
+            width: 50%;
+        }
+
+        table.menu tbody tr td button.btn_Agregar {
+            padding: 0px 5px !important;
+            margin-Left: 5%;
+            vertical-Align: initial;
+        }
+
+        table.menu tbody tr td button.btn_Guardar,
+        table.menu tbody tr td button.btn_Cerrar {
+            padding: 6px 12px !important;
+            vertical-Align: initial;
+            margin-bottom: 5px !important;
+        }
+
+        table.menu tbody tr td div.menu {
+            display: inline-block;
+            width: 75%;
+        }
+    /**********************************************/
+    /* Paginas de Menu **********************/
+    table thead tr th.th_EsAccion {
+        background-color: #ff9929;
+        color: white;
+    }
+    /**********************************************/
+    /* Modal Plugin pgwModal **********************/
+    .pgwModal .pm-title {
+        font-size: 20px;
+        padding: 10px 0 6px;
+        background-color: #ffffff;
+        color: #575757;
+        border-bottom: none;
+        font-weight: 600;
+    }
+
+    .pgwModal {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 10010 !important;
+        overflow-x: auto;
+        overflow-y: scroll;
+        text-align: center;
+    }
+
+    @media (max-width: 1000px) {
+        .pm-body {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+    }
+
+    /**********************************************/
+
+    /* Modal Subida Archivos **********************/
+    .imagenArchivo {
+        text-align: center;
+        width: 50px;
+    }
+
+    #tbl_DetalleArchivo > tbody > tr > td, #tbl_DetalleArchivo > thead > tr > td {
+        padding: 0 !important;
+    }
+
+    .table-archivoGrabado {
+        margin-bottom: 0;
+    }
+
+    .div_bodyArchivo {
+        width: 100%;
+        height: 300px;
+        overflow: auto;
+    }
+
+    .div_bodyDocumentoMtto {
+        width: 100%;
+        height: 300px;
+        overflow: auto;
+    }
+
+    /**********************************************/
+
+
+    /*--------------------------------------------------------------------*/
+    /* Bootstrap ---------------------------------------------------------*/
+    /*--------------------------------------------------------------------*/
+    .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+        position: inherit;
+    }
+    /* Modal **************************************/
+    .modal {
+        z-index: 20500 !important;
+    }
+
+    .modal-backdrop {
+        z-index: 20400 !important;
+    }
+
+    .modal-dialog {
+        z-index: 22000 !important;
+    }
+
+    .modal-title {
+        font-size: 20px;
+        display: inline-block;
+    }
+
+    form .i-checks.form-control {
+        border: none;
+    }
+
+    .input-group-addon {
+        background-color: #eee;
+    }
+
+    .form-group {
+        margin-bottom: 3px;
+    }
+
+
+
+    /**********************************************/
+
+    /* Padding Inputs y Botones *******************/
+    .input-group-btn:first-child > .btn, .input-group-btn:first-child > .btn-group {
+        margin-right: -2px;
+    }
+
+    .input-group-btn .btn {
+        padding: 6px 5px;
+    }
+
+    .form-control {
+        padding: 6px 6px;
+    }
+
+    .input-group-btn .btn {
+        margin-bottom: 0px;
+    }
+
+    .noMargin {
+        margin: 0px;
+    }
+    /**********************************************/
+
+    /*---------------------------------------------------------------------*/
+    /* Treetable (Tabla control de permisos) ------------------------------*/
+    /*---------------------------------------------------------------------*/
+    .table.treetable {
+        font-size: 13px;
+    }
+
+        .table.treetable tbody tr[value="0"], .table.treetable tbody tr[value="0"]:hover {
+            pointer-events: none;
+            background-color: #EBEBEB;
+        }
+
+        table.treetable, .table.treetable > thead > tr > th,
+        table.treetable, .table.treetable > tbody > tr > td {
+            border: 1px solid #EBEBEB !important;
+            padding: 8px;
+        }
+
+        .table.treetable > thead > tr > th {
+            font-weight: bold;
+            color: #676a6c;
+        }
+
+            .table.treetable > thead > tr > th:not(:first-child),
+            .table.treetable > tbody > tr > td:not(:first-child) {
+                text-align: center;
+            }
+
+    table.treetable > thead > tr > th, table.treetable > thead > tr > td {
+        background-color: #ffffff;
+    }
+
+    table.treetable tr.selected {
+        background-color: #f9f9f9 !important;
+        color: #676a6c !important;
+    }
+
+    .table.treetable .file {
+        border: none;
+        padding: .2em 0 .2em 1.5em;
+        background-color: inherit;
+        position: relative;
+        margin-bottom: inherit;
+        margin-right: inherit;
+    }
+
+    table.treetable tr.collapsed.selected span.indenter a {
+        background-image: url(data:image/png;base64,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) !important;
+    }
+
+    table.treetable tr.expanded.selected span.indenter a {
+        background-image: url(data:image/png;base64,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) !important;
+    }
+
+    .icheckbox_square-orange.disabled ins {
+        cursor: not-allowed;
+    }
+
+    .i-checks.form-control {
+        padding-left: 0 !important;
+    }
+
+    /*---------------------------------------------------------------------*/
+    /* AutoComplete -------------------------------------------------------*/
+    /*---------------------------------------------------------------------*/
+    .easy-autocomplete-container {
+        z-index: 3 !important;
+    }
+
+    .easy-autocomplete {
+        width: 100% !important;
+    }
+
+        .easy-autocomplete input {
+            border: 1px solid #e5e6e7 !important;
+            border-radius: 1px !important;
+            box-shadow: none !important;
+        }
+
+    .input-group .easy-autocomplete-container {
+        top: 35px;
+    }
+
+        .input-group .easy-autocomplete-container ul {
+            background: none repeat scroll 0 0 #ffffff;
+            border-top: 1px dotted #ccc;
+            display: none;
+            margin-top: 0;
+            padding-bottom: 0;
+            padding-left: 0;
+            position: relative;
+            top: -1px;
+            max-height: 350px;
+            overflow-y: scroll;
+        }
+
+    .easy-autocomplete-container ul li, .easy-autocomplete-container ul .eac-category {
+        padding: 0px !important;
+    }
+
+    .easy-autocomplete-container ul {
+        overflow-y: scroll;
+        max-height: 300px;
+    }
+
+    .form-inline .easy-autocomplete-container {
+        text-align: left;
+    }
+
+    .div_Encabezado table thead tr th {
+        background: #ff7e00;
+        color: #fff;
+        text-align: center;
+    }
+
+    .div_Encabezado {
+        padding-right: 15px !important;
+    }
+
+    .div_CampoAnchoFijo {
+        width: 120px;
+    }
+
+
+    /*---------------------------------------------------------------------*/
+    /* DIVS TIPO TABLA -------------------------------------------------------*/
+    /*---------------------------------------------------------------------*/
+
+    .div_TipoTabla {
+        display: table !important;
+        width: -moz-available;
+        width: 100%;
+    }
+
+    .div_TipoTablaHead {
+        display: table-row !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        background: #ff7e00;
+        color: #fff;
+        text-align: center;
+        font-size: 10px;
+    }
+
+        .div_TipoTablaHead > .div_TipoTablaCell {
+            font-weight: bold !important;
+            padding: 8px;
+        }
+
+    .div_TipoTablaRow {
+        display: table-row !important;
+        font-size: 12px !important;
+    }
+
+    .div_TipoTablaCell {
+        display: table-cell !important;
+        border: 1px solid #e7e7e7 !important;
+        border-width: thin !important;
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+        /*Wrap en autocomplete grid dinamico*/
+        white-space: pre-wrap; /* CSS3 */
+        white-space: -moz-pre-wrap; /* Firefox */
+        white-space: -pre-wrap; /* Opera <7 */
+        white-space: -o-pre-wrap; /* Opera 7 */
+        word-wrap: break-word; /* IE */
+    }
+
+    .btn_BuscarTodos {
+        height: 30px;
+    }
+    /*---------------------------------------------------------------------*/
+    /* Plugin Loading Ajax ------------------------------------------------*/
+    /*---------------------------------------------------------------------*/
+    .loading-overlay {
+        position: fixed !important;
+    }
+
+    /*---------------------------------------------------------------------*/
+    /* Plugin Drope Zone   ------------------------------------------------*/
+    /*---------------------------------------------------------------------*/
+    .dropzone .dz-preview .dz-image img {
+        width: 100%;
+    }
+
+    /*---------------------------------------------------------------------*/
+    /* Clases gen�ricas para usar en el sistema ---------------------------*/
+    /*---------------------------------------------------------------------*/
+    /* Colores de fondos ---------------------------*/
+    .bg-blue {
+        background-color: #5D7A8A !important;
+        color: #ffffff;
+    }
+
+    .bg-white {
+        background-color: #ffffff !important;
+    }
+
+    .bg-azulClaro {
+        background-color: #cefcff !important;
+    }
+
+    .bg-azulClaro2 {
+        background-color: #d0eaff !important;
+    }
+
+    .bg-rojoClaro {
+        background-color: #f90b06 !important; /*#f90b0659*/
+        text-decoration: line-through;
+    }
+
+    .bg-verderClaro {
+        background-color: #E2EEDA !important;
+    }
+
+    .bg-naranjaCorpo {
+        background-color: #FF7E00 !important;
+        color: #FFF;
+    }
+
+    #tbl_Documentos .bg-azulClaro .form-control {
+        background-color: inherit;
+    }
+
+    .hr-line-solid-2 {
+        border-bottom: 20px solid #e7eaec;
+        background-color: rgba(0, 0, 0, 0);
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    .text-red {
+        color: red;
+    }
+
+    .custom-nowrap {
+        white-space: nowrap !important;
+    }
+
+    .text-grey {
+        color: #676a6c;
+    }
+
+    .legendRow {
+        font-size: 14px;
+        margin-top: 22px;
+        padding-top: 20px;
+        color: #676a6c;
+    }
+
+    .noWrap {
+        white-space: nowrap;
+    }
+
+    .no-border {
+        border: none !important;
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+
+    /* Fin Clases Gen�ricas */
+
+    /* 
+   se agrega estilo para imprmir datos especificos de pagina web
+   se agrega clase hidden-print en "div"  para no mostrar informacion en impresion
+*/
+    @media print {
+
+        .tablaMonoSpace {
+            font-family: monospace;
+        }
+
+        body, table, .contenido-detalle {
+            font-size: 9px !important;
+        }
+
+            body .fixed-nav #wrapper .navbar-static-side, body.fixed-nav #wrapper #page-wrapper, .ibox {
+                margin-top: 0 !important;
+            }
+
+        .print-border-leftRight-2 {
+            border: 0 2px solid !important;
+        }
+
+        table.treetable, .table.treetable > thead > tr > th, table.treetable, .table.treetable > tbody > tr > td {
+            border: none !important;
+        }
+
+        .row.border-bottom {
+            border: none !important;
+        }
+
+        .ibox-content {
+            border-width: 0 !important;
+        }
+
+        .panel-body, .tabs-container {
+            padding: 0 !important;
+            border: none;
+        }
+
+        .wrapper, #wrapper {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .print_cheque {
+            position: static !important;
+            border: none !important;
+            height: 24.2cm !important;
+        }
+
+        .no-border, .no-border tr, .no-border td, .no-border th {
+            border: none !important;
+        }
+
+        .print-border-bottom-2 {
+            border-bottom: 2px solid !important;
+        }
+
+        .print-border-top-2 {
+            border-top: 2px solid !important;
+        }
+
+        .print-border-top-1 {
+            border-top: 1px solid !important;
+        }
+
+        .print-border-tb-1 {
+            border-top: 1px solid !important;
+        }
+
+        .print-border-top-2 {
+            border-top: 2px solid !important;
+        }
+
+        .no-print, .no-print * {
+            display: none !important;
+        }
+
+        .add-print {
+            display: block !important;
+        }
+    }
+    /*.add-print {
+    visibility: hidden !important;
+}*/
+
+    /******************************DATEPICKER*********************************************************/
+
+    .datepicker table tr td.active:hover,
+    .datepicker table tr td.active:hover:hover,
+    .datepicker table tr td.active.disabled:hover,
+    .datepicker table tr td.active.disabled:hover:hover,
+    .datepicker table tr td.active:focus,
+    .datepicker table tr td.active:hover:focus,
+    .datepicker table tr td.active.disabled:focus,
+    .datepicker table tr td.active.disabled:hover:focus,
+    .datepicker table tr td.active:active,
+    .datepicker table tr td.active:hover:active,
+    .datepicker table tr td.active.disabled:active,
+    .datepicker table tr td.active.disabled:hover:active,
+    .datepicker table tr td.active.active,
+    .datepicker table tr td.active:hover.active,
+    .datepicker table tr td.active.disabled.active,
+    .datepicker table tr td.active.disabled:hover.active,
+    .open .dropdown-toggle.datepicker table tr td.active,
+    .open .dropdown-toggle.datepicker table tr td.active:hover,
+    .open .dropdown-toggle.datepicker table tr td.active.disabled,
+    .open .dropdown-toggle.datepicker table tr td.active.disabled:hover {
+        border-color: #FF7E00;
+        background: #FF7E00;
+        color: #FFFFFF;
+    }
+
+    /*
+    Lista de requisitos de cobranza
+    Se usa en el modulo de convenios
+*/
+    .lista-requisitos {
+        float: left;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        width: 100%;
+        height: 390px;
+    }
+    /*
+    Lista de requisitos
+    Se usa en el modulo de recuperacion de documentos
+*/
+    .lista-requisitos-modal {
+        float: left;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        width: 100%;
+        height: 150px;
+    }
+
+
+    /* ESTILOS NUEVOS */
+    body.fixed-sidebar {
+        background: #606060 !important;
+    }
+
+    body.skin-3, body.mini-navbar .nav-header {
+        /*background: #606060;*/
+        background: #f4f6fa;
+    }
+
+    .skin-3 .nav.metismenu > li.active, .skin-3 .navbar-default .nav.metismenu > li > a:focus, .skin-3.mini-navbar .nav-second-level {
+        background: #494949;
+    }
+
+    .skin-3 .navbar-default .nav.metismenu > li > a:hover {
+        background: #ff5400;
+    }
+
+        .skin-3 .navbar-default .nav.metismenu > li > a:hover .fa {
+            color: #ffffff;
+        }
+
+    .skin-3 .nav-header {
+        background-color: inherit;
+        background-image: none;
+        border-bottom: 1px solid #494949;
+    }
+
+    .skin-3 .nav.metismenu > li > a {
+        color: #ffffff;
+    }
+
+    .skin-3 .nav.metismenu .fa {
+        color: #999999;
+    }
+
+    body.fixed-nav.fixed-nav-basic.operativo .page-heading {
+        left: 0px !important;
+    }
+
+    .navbar.navbar-fixed-top.ejecutivo {
+        background-color: #ff5400 !important;
+        color: #ffffff !important;
+    }
+
+    .navbar.navbar-fixed-top.operativo {
+        background-color: #fff !important;
+    }
+
+        .navbar.navbar-fixed-top.operativo div.navbar-header {
+            width: 100%;
+            /*
+        background: #FF7E00;
+        border-color: #FF7E00;
+    */
+        }
+
+        .navbar.navbar-fixed-top.operativo .navbar-toggle {
+            /*
+        background: #FF7E00;
+        border-color: #FF7E00;
+     */
+        }
+
+        .navbar.navbar-fixed-top.operativo .cerrar-sesion,
+        .navbar.navbar-fixed-top.operativo .cerrar-sesion .fa {
+            float: right;
+            color: #fff !important;
+            padding: 9px 10px
+        }
+
+    .nav-text {
+        vertical-align: -7px
+    }
+
+    .navbar.navbar-fixed-top.operativo .navbar-toggle .fa {
+        color: #fff !important;
+    }
+
+    .navbar.navbar-fixed-top .fa, .navbar-top-links li a {
+        color: #ffffff !important;
+    }
+
+    .footer.fixed {
+        background-color: #f2f2f2;
+    }
+
+    .imagen-trac {
+        margin: 0;
+        padding: 0;
+    }
+
+        .imagen-trac > div {
+            width: 100%;
+            background: url(../img/back-truck.jpg) no-repeat center;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+            padding: 0;
+            height: 100%;
+        }
+
+    .historico {
+        padding-left: 0;
+        list-style: none;
+    }
+
+        .historico li:first-child {
+            font-weight: bolder;
+            margin-bottom: 5px;
+        }
+
+        .historico li:not(:first-child) {
+            padding-left: 10px;
+        }
+
+    .historico_concepto {
+        padding-left: 0;
+        list-style: none;
+        margin: 10px 0 0 20px;
+    }
+
+    .v-align-m {
+        vertical-align: middle !important;
+    }
+
+    /*Tablas dentro de tabs*/
+
+    .div_TablaScroll table {
+        border-collapse: collapse;
+        background: white;
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    .div_TablaScroll td {
+        padding: 7px 5px 7px 5px;
+        border: 1px solid #ddd;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .pane {
+        background: white;
+    }
+
+    .div_TablaScroll .pane-hScroll {
+        overflow: auto;
+        width: 100%;
+    }
+
+    .div_TablaScroll .pane-vScroll {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 150px;
+        width: fit-content;
+    }
+
+    .tbl_Cabecera {
+        background-color: #f8ac59;
+        color: #ffffff;
+        font-weight: bold;
+    }
+
+    .btn_Cabecera {
+        margin: 0px;
+        padding: 0px 5px 0px 5px;
+    }
+.w-500 {
+	min-width: 500px;
+}
+.w-100 {
+    width: 100px;
+}
+/*--------------------------------------------------------------------*/
+/* CSS para minimizar espacios de SIP 2020 ---------------------------*/
+/*--------------------------------------------------------------------*/
+body {
+	font-size: 12px;
+}
+.h1, .h2, .h3, h1, h2, h3{
+	margin-top: 10px;
+}
+
+    .lista-area-lavado {
+        float: left;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        width: 100%;
+        height: 300px;
+    }
+
+    .color-error-tachado {
+        background-color: #fdaaa8 !important;
+        text-decoration: line-through;
+    }
+
+    .color-blanco {
+        color: #FFFFFF !important;
+    }
+
+    .numerico {
+        text-align: right;
+    }
+
+    .w-500 {
+        min-width: 500px;
+    }
+    /*--------------------------------------------------------------------*/
+    /* CSS para minimizar espacios de SIP 2020 ---------------------------*/
+    /*--------------------------------------------------------------------*/
+    body {
+        font-size: 12px;
+    }
+
+    .h1, .h2, .h3, h1, h2, h3 {
+        margin-top: 10px;
+    }
+
+    .top-navigation .nav > li > a {
+        /*padding: 15px 10px;*/
+        padding: 15px 4px;
+    }
+
+    .nav.nav-tabs > li.active > a, .nav.nav-tabs > li.active > a:hover, .nav.nav-tabs > li.active > a:focus {
+        color: #fff !important;
+        background-color: #FF7E00;
+    }
+
+    .nav.nav-tabs > li:not(.active) > a, nav.nav-tabs > li:not(.active) > a:hover, nav.nav-tabs > li:not(.active) > a:focus {
+        background-color: #eee !important;
+    }
+
+
+
+    #tbl_Lista .dropdown-menu {
+        position: absolute;
+    }
+
+    .btn-group.open {
+        position: absolute;
+        display: block;
+    }
+
+    /* Columnas de la tabla (excepto el header de la tabla) */
+    .table > tbody > tr > th,
+    .table > tbody > tr > td,
+    .table > tfoot > tr > th,
+    .table > tfoot > tr > td {
+        padding: 3px 8px;
+    }
+    /* Botones dentro de una tabla */
+    table.table tr td .btn:not(.btn-xs):not(.btn-sm):not(.bootstrap-touchspin-down):not(.bootstrap-touchspin-up) {
+        padding: 0 5px;
+    }
+
+    table .col-lg-1,
+    table .col-lg-10,
+    table .col-lg-11,
+    table .col-lg-12,
+    table .col-lg-2,
+    table .col-lg-3,
+    table .col-lg-4,
+    table .col-lg-5,
+    table .col-lg-6,
+    table .col-lg-7,
+    table .col-lg-8,
+    table .col-lg-9,
+    table .col-md-1,
+    table .col-md-10,
+    table .col-md-11,
+    table .col-md-12,
+    table .col-md-2,
+    table .col-md-3,
+    table .col-md-4,
+    table .col-md-5,
+    table .col-md-6,
+    table .col-md-7,
+    table .col-md-8,
+    table .col-md-9,
+    table .col-sm-1,
+    table .col-sm-10,
+    table .col-sm-11,
+    table .col-sm-12,
+    table .col-sm-2,
+    table .col-sm-3,
+    table .col-sm-4,
+    table .col-sm-5,
+    table .col-sm-6,
+    table .col-sm-7,
+    table .col-sm-8,
+    table .col-sm-9,
+    table .col-xs-1,
+    table .col-xs-10,
+    table .col-xs-11,
+    table .col-xs-12,
+    table .col-xs-2,
+    table .col-xs-3,
+    table .col-xs-4,
+    table .col-xs-5,
+    table .col-xs-6,
+    table .col-xs-7,
+    table .col-xs-8,
+    table .col-xs-9 {
+        padding: 0;
+    }
+
+    .table.tabla-grid > thead > tr > th,
+    .table.tabla-grid > tbody > tr > th,
+    .table.tabla-grid > tfoot > tr > th,
+    .table.tabla-grid > thead > tr > td,
+    .table.tabla-grid > tbody > tr > td,
+    .table.tabla-grid > tfoot > tr > td {
+        padding: 4px;
+    }
+
+    /* Contenedor principal de los abc */
+    .ibox-content {
+        padding: 10px;
+        overflow: hidden;
+    }
+
+    .ibox-title {
+        padding: 9px 15px;
+        min-height: auto;
+        overflow: hidden;
+    }
+
+        .ibox-content h2,
+        .ibox-title h2 {
+            margin: 0;
+        }
+
+    /* Inputs de los ABC */
+    .form-control {
+        height: 30px;
+        font-size: 12px;
+    }
+
+    /* Inputs de con clase touchspin */
+    .input-group-btn .btn {
+        padding: 4px 3px;
+    }
+
+    .page-heading:not(.imagen-trac) {
+        padding: 0 10px 10px 10px;
+    }
+
+    .tbl_seleccion_tr tbody tr {
+        cursor: pointer;
+    }
+
+    .tbl_seleccion_tr tr:hover {
+        background-color: #F5F5F6;
+    }
+
+    .dx-datagrid-filter-panel-text, .dx-icon-filter, .dx-datagrid-filter-panel > .dx-datagrid-filter-panel-left > .dx-widget {
+        display: none;
+    }
+
+    /*Para tabla DataGrid de DevExtreme*/
+    .page-heading-devextreme {
+        position: unset !important; /*inherit !important;*/
+    }
+
+    .div-container-devextreme {
+        margin-top: 15px !important;
+    }
+
+    select[multiple], select[size] {
+        height: 150px;
+    }
+
+    .form-Margin {
+        display: inline-block;
+        margin-bottom: 15px;
+        vertical-align: middle;
+    }
+
+    .total-filas {
+        width: 250px;
+    }
+
+    .monoSpace {
+        font-family: monospace;
+    }
+
+    /**********************PIVOT GRID*************************/
+    /*.dx-fieldchooser-popup {
+        z-index: 2031 !important;
+    }*/
+
+    #reset {
+        color: white !important;
+        background-color: #1ab394 !important;
+        border-color: #1ab394 !important;
+    }
+
+    .dx-pivotgrid-fields-container .dx-area-field.dx-area-box {
+        background: #FF7E00 !important;
+        color: #fff !important;
+        border-radius: 5px !important;
+        border: 1px solid #FF7E00 !important;
+    }
+
+    .dx-pivotgrid-fields-container .dx-header-filter-empty {
+        color: #fff !important;
+    }
+    /**********************PIVOT GRID*************************/
+
+    /**********************LINKS DATAGRID*************************/
+    .dx-link {
+        color: #337ab7;
+        text-decoration: underline;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+        .dx-link:hover {
+            color: #71aeef !important;
+            text-decoration: underline !important;
+        }
+    /**********************LINKS DATAGRID*************************/
+
+    /**********************ROW SELECCIONADO/DESELECIONADO*************************/
+    .filaFondoSeleccionado {
+        background-color: #e6e6e6 !important;
+        color: inherit !important;
+    }
+    /* SE PUEDE USAR */
+    .filaFondoDesSeleccionado {
+    }
+    /**********************ROW SELECCIONADO/DESELECIONADO*************************/
+
+    /**********************Drag Event*************************/
+    .onDragStart {
+        background-color: #1ab394 !important;
+    }
+    /**********************Drag Event*************************/
+
+    /**Grid Expandir boton*/
+    .btn_Cabecera {
+        font-size: 12px;
+        font-weight: 400;
+    }
+
+    .tbl_Cabecera .collapse-link > i {
+        color: white;
+    }
+
+    /**********************POP UP*************************/
+    .popupOverflow_600 {
+        overflow-y: auto;
+        height: 600px;
+    }
+
+    /******************* FIN POP UP*************************/
+
+    .displayBlock {
+        display: inline-block;
+    }
+
+    .textoBold {
+        font-weight: bold !important;
+    }
+
+    .textoAzul {
+        color: #1c84c6 !important;
+    }    
+    
+    .textoAzulOscuro {
+        color: #0000ff !important;
+    }
+
+    .fondoAzul {
+        color: white !important;
+        background: #1c84c6 !important;
+        background-color: #1c84c6 !important;
+    }
+
+    .textoVerde {
+        color: #23c6c8 !important;
+    }
+
+    .fondoVerde {
+        color: white !important;
+        background: #23c6c8 !important;
+        background-color: #23c6c8 !important;
+    }
+
+    .textoAmarillo {
+        color: #f8ac59 !important;
+    }
+
+    .fondoAmarillo {
+        color: white !important;
+        background: #f8ac59 !important;
+        background-color: #f8ac59 !important;
+    }
+
+    .textoRojo {
+        color: #f90b06 !important;
+    }
+
+    .textoRojoOscuro {
+        color: #FF0000 !important;
+    }
+
+    .fondoRojo {
+        color: white !important;
+        background: #f90b06 !important;
+        background-color: #f90b06 !important;
+    }
+
+    .btn-lr5 {
+        padding: 0 5px;
+    }
+
+    /**/
+    @keyframes flickerAnimation {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @-o-keyframes flickerAnimation {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @-moz-keyframes flickerAnimation {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @-webkit-keyframes flickerAnimation {
+        0% {
+            opacity: 1;
+        }
+
+        f 50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .animacion-visibilidad {
+        -webkit-animation: flickerAnimation 3s infinite;
+        -moz-animation: flickerAnimation 3s infinite;
+        -o-animation: flickerAnimation 3s infinite;
+        animation: flickerAnimation 3s infinite;
+    }
+
+    .td_alignRigth {
+        text-decoration: none !important;
+        text-align: right !important;
+    }

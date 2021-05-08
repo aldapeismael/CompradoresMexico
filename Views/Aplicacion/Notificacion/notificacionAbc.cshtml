@@ -1,0 +1,181 @@
+﻿@using Newtonsoft.Json;
+@{
+    /**/
+    Page.Title = "ABC Grupo Usuario";
+
+    //verificamos si trae parametro para ser Popup o ventana
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+    int IntIdNotificacion = int.Parse(Request.QueryString["pIdNotificacion"]?.ToString() ?? "0");
+
+
+    ///////////////////////////////////////////////
+    //Codigo para reglas de negocio
+    ///////////////////////////////////////////////
+    string Strurl = Request.RawUrl;
+    bool urlDefault = Strurl.Contains("Default.cshtml");
+    List<Accion> objAccion = null;
+    String jsonAccionPagina = null;
+    String jsonReglasNegocio = null;
+    var int_Robot = VariableGlobal.SessionIntBRobot;
+
+    // Comienza petición de acciones para la pagina
+    var objAccesoPagina = new PaginaMenuController().Get((int_Robot == 1 ? 2 : 1), Strurl);
+
+
+    if (IntPopUp == 0)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+        // Comienza petición de acciones para la pagina
+        jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+        jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+        objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+
+    }
+    else
+    {
+        //So el usuario no es robot, no tiene acceso a la pagina y la pagina no es default
+        if (VariableGlobal.SessionIntBRobot != 1 && objAccesoPagina.Content.IntIdPagina == 0 && !urlDefault)
+        {
+            Response.Redirect("~/Views/Aplicacion/Acceso/SinAcceso.cshtml?Popup=1");
+        }
+        else
+        {
+            // Comienza petición de acciones para la pagina
+            jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+            jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+            objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+        }
+
+    }
+
+    //////////////////////////////////////////////
+    ////////////////Historico/////////////////////
+    //////////////////////////////////////////////
+
+    Notificacion objNotificacion = new Notificacion(IntIdNotificacion);
+    objNotificacion.ObtenerPorId();
+
+}
+
+<div class="wrapper wrapper-content">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            @{
+                if (IntPopUp == 0)
+                {
+                    <div class="ibox-title text-center">
+                        <h2>@Page.Title</h2>
+                    </div>
+                }
+            }
+            <div class="ibox-content" style="border-width: 0px !important">
+                <form action="" method="post" class="form-horizontal">
+                    <div class="panel-body">
+                        <div class="col-lg-12 col-xs-12">
+                            <div class="mail-box-header">
+                                <div class="pull-right tooltip-demo">
+                                    <button type="button" class="btn btn-warning btn-sm fn_EliminarAbc"><i class="fa fa-trash"></i></button>
+                                </div>
+                                <div class="mail-tools tooltip-demo m-t-md">
+                                    <h3>
+                                        <span class="font-noraml">Titulo: </span>@objNotificacion.StrTituloNotificacion
+                                    </h3>
+                                    <h5>
+                                        <span class="pull-right font-noraml">@objNotificacion.DtFechaNotificacion.ToString("dd/MM/yyyy HH:mm")</span>
+                                        <span class="font-noraml">Proceso: </span>@objNotificacion.StrDescMultilista_Proceso
+                                    </h5>
+                                </div>
+                            </div>
+                            <div class="mail-box">
+
+
+                                <div class="mail-body">
+                                    <p>
+                                        @objNotificacion.StrDescNotificacion
+                                    </p>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12 text-center m-sm">
+                            @{
+                                var BtnAccionGrabar = objAccion.Where(x => x.StrCveAccion == "Editar").ToList();
+                                if (BtnAccionGrabar.Count != 0)
+                                {
+                                    <button id="@BtnAccionGrabar[0].StrObjetoId" class="@BtnAccionGrabar[0].StrObjetoClase" type="button" title="@BtnAccionGrabar[0].StrObjetoNombre"><i class="@BtnAccionGrabar[0].StrObjetoIcono"></i> @BtnAccionGrabar[0].StrObjetoNombre</button>
+                                }
+                                var BtnAccionRegresar = objAccion.Where(x => x.StrCveAccion == "Regresar").ToList();
+                                if (BtnAccionRegresar.Count != 0)
+                                {
+                                    <button id="@BtnAccionRegresar[0].StrObjetoId" class="@BtnAccionRegresar[0].StrObjetoClase" type="button" title="@BtnAccionRegresar[0].StrObjetoNombre"><i class="@BtnAccionRegresar[0].StrObjetoIcono"></i> @BtnAccionRegresar[0].StrObjetoNombre</button>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var IntIdNotificacion = @IntIdNotificacion;
+    $(document).ready(function () {
+        if (@IntPopUp == 1) {
+            fn_ObtenerDataGrid();
+        }
+        $(".fn_EliminarAbc").click(function () {
+            fn_EliminarNotificacionAbc(IntIdNotificacion);
+        });
+    });
+
+    
+    function fn_EliminarNotificacionAbc(paramInt_IdNotificacion) {
+        swal(
+            {//metodo para el mensage de confirm
+                title: "ALERTA",
+                text: "¿Desea eliminar la notificación?",
+                type: "warning",//tipo de mensage =>  opciones: warning, error, info y success
+                showCancelButton: true,//mostrar boton de cancelacion
+                confirmButtonColor: hex_str_ColorBotonConfirmar,//color de boton de confirmacion
+                confirmButtonText: "Sí!",//texto en el boton de confirmacion
+                cancelButtonText: "No!",//texto en el boton de cancelacion
+                closeOnConfirm: true,//la ventana de cerrara al momento de seleccionar la opcion de confirmacion
+                closeOnCancel: true,//la ventana de cerrara al momento de seleccionar la opcion de cancelacion
+            },
+            function (isConfirm) {
+                if (isConfirm) {//si el usuario confirma
+                    fn_EliminarAbc(paramInt_IdNotificacion);
+                }
+            }
+        );
+    }
+
+    function fn_EliminarAbc(paramInt_IdNotificacion) {
+        setTimeout(function () {
+        $.ajax({
+            url: "@VariableGlobal.StrUrlApi/Notificacion/" + paramInt_IdNotificacion
+            , async: false
+            , type: "DELETE" //tipo de accion
+            , contentType: "application/json; charset=utf-8"
+            , dataType: "json"
+            , success: function (obj_Datos) {
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                if (obj_Datos["IntError"] == 0) {
+                    fn_ObtenerDataGrid();
+                    $.pgwModal('close');
+                }
+            }, error: function (xhr, ajaxOptions, thrownError) {
+                $("html").loading('stop');
+                toastr["error"]("Ocurrió un error obtener: " + thrownError);
+            }
+
+        }).done(function () {
+            $("html").loading('stop');
+                });
+        }, 500);
+    }
+</script>

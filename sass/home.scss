@@ -1,0 +1,70 @@
+///BREAKPOINTS
+$mobile: 600px;
+$tablet: 960px;
+$tablet-landscape: 1024px;
+$desktop: 1280px;
+$lg-desktop: 1440px;
+
+//Variables
+$principalFont: "Encode Sans", sans-serif;
+$WeightTitle: 600;
+$WeightSubTitle: 400;
+$WeightNormal: 100;
+$firstColor: #397eb4;
+$secondColor: #648dd3;
+
+//Estilos HOME
+
+.container.post {
+  height: 400px;
+  padding: 20px 20px;
+  border-bottom: $secondColor solid 5px;
+  .header {
+    p {
+      margin: 0;
+      margin-left: 5px;
+    }
+    img {
+      width: 50px;
+      height: 50px;
+    }
+    .title {
+      font-weight: $WeightTitle;
+    }
+    .subTitle {
+      font-weight: $WeightSubTitle;
+      font-size: 12px;
+    }
+  }
+  .post-img {
+    margin-top: 25px;
+    img {
+      height: 170px;
+    }
+  }
+  .body {
+    margin-top:10px;
+    p {
+      margin: 0;
+    }
+    .productName{
+      font-size:18px;
+      font-weight: $WeightTitle;
+    }
+    .productDesc{
+      font-size: 16px;
+      font-weight: $WeightSubTitle;
+    }
+  }
+  .footer{
+    margin-top: 20px;
+    div{
+      display: flex;
+      justify-content: flex-end;
+      i{
+        color: $firstColor;
+        font-size: 30px;
+      }
+    }
+  }
+}

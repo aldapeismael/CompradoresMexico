@@ -1,0 +1,114 @@
+body {
+  color: #397eb4;
+  font-family: "Encode Sans", sans-serif !important; }
+
+.containerCarusel {
+  margin-top: 22%;
+  min-height: 300px;
+  background-color: green; }
+  .containerCarusel .exit {
+    padding: 10px;
+    position: fixed;
+    color: white; }
+  .containerCarusel img {
+    width: 100%; }
+
+.containerTittle {
+  padding: 20px; }
+  .containerTittle .tittle {
+    color: #272727;
+    font-weight: 600;
+    font-size: 25px;
+    margin: 0; }
+  .containerTittle .category {
+    font-weight: 400; }
+    .containerTittle .category span {
+      font-weight: 600;
+      margin-left: 10px; }
+  .containerTittle .containerPrice {
+    color: #272727;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; }
+    .containerTittle .containerPrice p {
+      font-size: 25px;
+      font-weight: 600; }
+    .containerTittle .containerPrice .btn {
+      background-color: #397eb4;
+      color: white;
+      border-radius: none;
+      font-weight: 600;
+      width: 40%; }
+
+.ContainerDesc {
+  margin: 0;
+  font-size: 14px;
+  padding: 15px;
+  line-height: 20px;
+  font-weight: 600; }
+
+.ContactModal {
+  z-index: 9999;
+  display: block !important;
+  background-color: rgba(2, 2, 2, 0.815);
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  position: fixed;
+  box-shadow: #bdbdbdcc 0px 6px 9px 3px; }
+  .ContactModal h2 {
+    color: #272727;
+    font-weight: 600; }
+  .ContactModal .containerForm {
+    background-color: white;
+    width: 90%;
+    padding: 10px;
+    margin: 0 auto;
+    margin-top: 10%; }
+    .ContactModal .containerForm .containerNav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center; }
+    .ContactModal .containerForm .containerProfile p {
+      margin: 0; }
+    .ContactModal .containerForm .containerProfile .user {
+      margin-bottom: 20px;
+      font-weight: 900;
+      color: #272727;
+      font-size: 18px; }
+    .ContactModal .containerForm .containerProfile .userDetail {
+      font-weight: 600;
+      font-size: 15px; }
+    .ContactModal .containerForm .containerProfile .btn {
+      color: #397eb4; }
+  .ContactModal .containerProduct p {
+    margin: 0; }
+  .ContactModal .containerProduct .productName {
+    font-size: 20px;
+    font-weight: 600; }
+  .ContactModal .containerProduct .productDesc {
+    font-size: 16px;
+    font-weight: 400; }
+  .ContactModal .containerProduct .productCost {
+    font-size: 20px;
+    font-weight: 600; }
+  .ContactModal .containerProduct img {
+    margin-top: 20px;
+    border-radius: 15px; }
+  .ContactModal .containerProduct .containerChat {
+    margin-top: 20px; }
+    .ContactModal .containerProduct .containerChat input {
+      border-radius: 15px;
+      border: 1px solid #a5a4a4;
+      width: 100%;
+      padding: 5px;
+      padding-left: 10px;
+      color: #a5a4a4; }
+    .ContactModal .containerProduct .containerChat button {
+      background-color: #397eb4;
+      color: white;
+      font-size: 25px;
+      border: none;
+      width: 40px; }
+
+/*# sourceMappingURL=productDetail.css.map */

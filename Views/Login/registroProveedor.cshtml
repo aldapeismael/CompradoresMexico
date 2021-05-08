@@ -1,0 +1,221 @@
+﻿@{
+
+    string pBSession = Encriptado.EncriptarDatos("pBSession");
+    string pBSession_Si = Encriptado.EncriptarDatos("1");
+    string pBSession_No = Encriptado.EncriptarDatos("0");
+
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="@VariableGlobal.StrUrlSitio/css/cssCompradores/loginGeneral.css">
+    <link rel="stylesheet" href="@VariableGlobal.StrUrlSitio/css/cssCompradores/loginForm.css">
+
+
+    <link rel="stylesheet" href="@VariableGlobal.StrUrlSitio/css/bootstrap.min.css">
+    <link href="@VariableGlobal.StrUrlSitio/Scripts/plugins/toastr/toastr.min.css" rel="stylesheet" />
+    <!-- Muestra una pantalla de loading mientras procesamos algo -->
+
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/jquery-2.1.1.js"></script>
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="@VariableGlobal.StrUrlSitio/js/bootstrap.bundle.min.js">
+
+    <link href="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/datatables.min.css" rel="stylesheet">
+    <link href="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/FixedHeader-3.1.3/fixedHeader.bootstrap.min.css" rel="stylesheet">
+
+
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/toastr/toastr.min.js"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+            crossorigin="anonymous"></script>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+          crossorigin="anonymous">
+    <!-- FONTS only -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@100;400;500;600;900&display=swap"
+          rel="stylesheet">
+    <title>Document</title>
+
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/datatables.min.js"></script>
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/visible/buttons.colVis.min.js"></script>
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/FixedHeader-3.1.3/dataTables.fixedHeader.min.js"></script>
+    <!-- Muestra una pantalla de loading mientras procesamos algo -->
+    <!-- Estilos de bootstrap -->
+    <link href="@VariableGlobal.StrUrlSitio/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Estilos de awesome - Se encarga de generar los iconos del sitio web -->
+    <link href="@VariableGlobal.StrUrlSitio/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <!-- Animate - Genera las animaciones del sitio cuando se colocan las propias clases de animaciones -->
+    @*<link href="@VariableGlobal.StrUrlSitio/css/animate.css" rel="stylesheet">*@
+
+    <!-- Estilos de Datatable - PLugin para controlar las tablas dinámicas -->
+    <link href="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/datatables.min.css" rel="stylesheet">
+    <link href="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/FixedHeader-3.1.3/fixedHeader.bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilos de DatePicke - Para el seleccionado de las fechas en un input date -->
+    <link href="@VariableGlobal.StrUrlSitio/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+
+
+    <!-- Sweet Alert - Estilos para las alertas en forma de modal con acciones-->
+    <link href="@VariableGlobal.StrUrlSitio/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <!-- PGW Modal - Modales dinámicos -->
+    <link href="@VariableGlobal.StrUrlSitio/Scripts/plugins/PgwModal/pgwmodal.min.css" rel="stylesheet">
+
+    <!-- Toast - Mensajes flotantes -->
+    <link href="@VariableGlobal.StrUrlSitio/Scripts/plugins/toastr/toastr.min.css" rel="stylesheet" />
+
+    <!-- TouchSpinner - Plugin para validar los campos de tipos numericos -->
+    <link href="@VariableGlobal.StrUrlSitio/css/plugins/touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet">
+
+    <!------------------------------------------->
+    <!-- Declaracion de librerias de Javascript  -->
+    <!------------------------------------------->
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/jquery-2.1.1.js"></script>
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+
+    <!-- Librerias para Datatable y sus funcionalidades  -->
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/datatables.min.js"></script>
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/visible/buttons.colVis.min.js"></script>
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/FixedHeader-3.1.3/dataTables.fixedHeader.min.js"></script>
+
+    <!-- Libreria para el seleccionador de fechas en los filtros  -->
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/datapicker/bootstrap-datepicker.js"></script>
+
+    <!-- Sweet alert - Alertas en forma de modal con acciones -->
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <!-- Mensajes de alertas del sistema -->
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/toastr/toastr.min.js"></script>
+
+    <!-- Pantallas de loading -->
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/jquery.loading.min.js"></script>
+
+    <!-- TouchSpinner - Plugin para validar los campos de tipos numericos -->
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/touchspin/jquery.bootstrap-touchspin.min.js"></script>
+
+    <!-- Utilerias desarrolladas por el equipo de SIP 2020 - Siempre deben de ir al final -->
+    <script src="@VariableGlobal.StrUrlSitio/Scripts/utileria.js?id=@Guid.NewGuid()"></script><!---carga de script custom para la configuraciones globales --->
+
+    <script src="@VariableGlobal.StrUrlSitio/js/functions.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="navbar fixed-top">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-10">
+                        <a href="~/Views/Default/Default.cshtml" style="text-decoration: none;"><img width="100px" class="" src="@VariableGlobal.StrUrlSitio/img/logo.png" alt=""></a>
+                    </div>
+                    <div class="col-2" id="menuProfile">
+                        <a class="navbar-brand" href="#">
+                            <i class="material-icons md-48">menu</i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="menuUser" id="menuUser">
+            <div>
+                <div><a href="#">Términos y condiciones</a></div>
+                <div><a href="">Aviso de privacidad</a></div>
+                <div style="border-bottom: none;"><a href="#">Acerca de</a></div>
+            </div>
+        </div>
+    </header>
+    <div class="container master">
+        <div class="text-center" style="margin-bottom: 20px;">
+            <p class="title">Hola!</p>
+        </div>
+        <div class="containerForm">
+            <form action="" method="post">
+                <input type="text" class="form-control"
+                       id="it_usuario"
+                       placeholder="Usuario" aria-label="usuario">
+                <input type="password" class="form-control"
+                       id="it_contrasena"
+                       placeholder="Contraseña" aria-label="Contraseña">
+                <input type="email" class="form-control"
+                       id="it_correo"
+                       placeholder="Correo" aria-label="correo">
+                <input type="number" class="form-control"
+                       id="it_telefono" maxlength="10"
+                       placeholder="Teléfono" aria-label="telefono">
+                <input type="text" class="form-control required"
+                       id="it_Nombre" maxlength="20"
+                       placeholder="Nombre" aria-label="Nombre">
+                <input type="text" class="form-control required"
+                       id="it_Apellido" maxlength="20"
+                       placeholder="Apellido" aria-label="Nombre">
+                <input type="text" class="form-control"
+                       id="it_RFC" maxlength="20"
+                       placeholder="RFC" aria-label="RFC">
+                <input type="text" class="form-control"
+                       id="it_Empresa" maxlength="20"
+                       placeholder="Nombre de Compañia" aria-label="Empresa">
+                <button id="btn_RegistraProveedor" type="button" class="btn btnRef">Registrar</button>
+            </form>
+        </div>
+        <div class="container footer">
+            <a href="registroComprador.cshtml" class="pass">¿Eres Comprador?</a>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+        $("#btn_RegistraProveedor").click(function () {
+            fn_RegistroProveedor(this);
+        });
+    });
+
+
+    function fn_RegistroProveedor(btnClick) {
+        if (!obj_ClaseGlobal.fn_ValidarDatosFormulario()) {
+            return false;
+        }
+        var obj_Proveedor = {
+            StrCveProveedor: $("#it_usuario").val(),
+            StrContrasena: $("#it_contrasena").val(),
+            StrCorreo: $("#it_correo").val(),
+            StrTelefono: $("#it_telefono").val(),
+            StrNombreUsuario: $("#it_Nombre").val(),
+            StrApellidoUsuario: $("#it_Apellido").val(),
+            StrRfc: $("#it_RFC").val(),
+            StrDescEmpresa: $("#it_Empresa").val(),
+        }
+
+        var str_Metodo = "";
+        var str_Url = "";
+        str_Metodo = "POST";
+        str_Url = "@VariableGlobal.StrUrlApi/Proveedor";
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_Proveedor),
+            type: str_Metodo,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (obj_Datos) {
+
+                //Se manda el mensaje de exito
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
+                    location.href = '@VariableGlobal.StrUrlSitio/Acceso.cshtml';
+                }, 3500);
+            }
+        });
+    }
+</script>

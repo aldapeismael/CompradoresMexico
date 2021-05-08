@@ -1,0 +1,62 @@
+///BREAKPOINTS
+$mobile: 600px;
+$tablet: 960px;
+$tablet-landscape: 1024px;
+$desktop: 1280px;
+$lg-desktop: 1440px;
+
+///
+//Variables
+$principalFont: "Encode Sans", sans-serif;
+$firstColor: #397eb4;
+$secondColor: #648dd3;
+
+body {
+  color: $firstColor;
+  font-family: $principalFont !important;
+}
+
+.master {
+  margin: 40% auto;
+  width: 80% !important;
+  .title {
+    font-size: 25px;
+    font-weight: 600;
+    color: $firstColor;
+  }
+
+  .containerProfile {
+    width: 100%;
+    margin: 0 auto;
+  }
+  .card {
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 30px;
+    img {
+      width: 75%;
+      margin-bottom: 15px;
+    }
+    .btnRef {
+      background-color: #397eb4;
+      color: white;
+      font-weight: 600;
+    }
+  }
+  .footer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 20px;
+    p{
+      color: rgb(39, 39, 39);
+      margin: 0;
+      font-weight: 600;
+    }
+    a{
+      text-decoration: underline !important;
+      font-weight: 800;
+      color: $firstColor !important;
+    }
+  }
+}

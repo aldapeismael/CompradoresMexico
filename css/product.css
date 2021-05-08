@@ -1,0 +1,44 @@
+.containerForm {
+  border-radius: 5px;
+  background-color: white;
+  width: 90%;
+  padding: 10px;
+  margin: 0 auto;
+  margin-top: 30%; }
+  .containerForm .containerNav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; }
+  .containerForm h2 {
+    color: #397eb4;
+    font-weight: 600; }
+  .containerForm form {
+    margin: auto 0; }
+    .containerForm form label {
+      color: #648dd3;
+      font-weight: 600; }
+    .containerForm form select, .containerForm form option {
+      background-color: transparent;
+      color: #272727;
+      font-weight: 600; }
+    .containerForm form textarea {
+      width: 100%;
+      height: 100px; }
+    .containerForm form .formMix {
+      font-weight: 600;
+      font-size: 14px; }
+    .containerForm form div {
+      margin-bottom: 20px; }
+    .containerForm form .containerNavFooter {
+      display: flex;
+      justify-content: space-between;
+      align-items: center; }
+      .containerForm form .containerNavFooter button {
+        background-color: #397eb4;
+        border: none; }
+      .containerForm form .containerNavFooter a {
+        color: #272727 !important;
+        font-weight: 600;
+        font-size: 16px; }
+
+/*# sourceMappingURL=product.css.map */

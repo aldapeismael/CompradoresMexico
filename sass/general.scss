@@ -1,0 +1,222 @@
+///BREAKPOINTS
+$mobile: 600px;
+$tablet: 960px;
+$tablet-landscape: 1024px;
+$desktop: 1280px;
+$lg-desktop: 1440px;
+
+///
+//Variables
+$principalFont: "Encode Sans", sans-serif;
+$WeightTitle: 600;
+$WeightSubTitle: 400;
+$WeightNormal: 100;
+$firstColor: #397eb4;
+$secondColor: #648dd3;
+$thirdColor: #272727;
+$fourthColor: #a5a4a4;
+
+body {
+  color: $firstColor;
+  font-family: $principalFont !important;
+}
+
+header {
+  nav {
+    background-color: white;
+    box-shadow: #575d5d -1px -1px 9px 3px;
+
+    .container-fluid {
+      justify-content: center !important;
+    }
+    .row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+
+      div:nth-child(1) {
+        display: flex;
+        align-items: center;
+        text-align: start;
+        a {
+          color: $firstColor !important;
+          font-weight: 700;
+          font-size: 22px;
+        }
+      }
+      div:nth-child(2) {
+        text-align: center;
+      }
+
+      div:nth-child(3) {
+        text-align: end;
+      }
+    }
+  }
+
+  i {
+    font-size: 40px !important;
+    color: $firstColor;
+  }
+  .menuUser {
+    z-index: 9999;
+    display: none;
+    background-color: white;
+    width: 35%;
+    height: auto;
+    top: 74px;
+    position: fixed;
+    box-shadow: #575d5d 0px 6px 9px 3px;
+
+    div {
+      font-weight: 700;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      padding: 3px;
+      border-bottom: 1px solid rgba(136, 136, 136, 0.308);
+      a {
+        text-decoration: none;
+        color: $firstColor;
+      }
+    }
+  }
+  .menuSerchAd {
+    z-index: 9999;
+    display: none;
+    background-color: rgba(2, 2, 2, 0.815);
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    position: fixed;
+    box-shadow: #bdbdbdcc 0px 6px 9px 3px;
+
+    h2 {
+      color: $firstColor;
+      font-weight: $WeightTitle;
+    }
+    .containerForm {
+      background-color: white;
+      width: 90%;
+      padding: 10px;
+      margin: 0 auto;
+      margin-top: 10%;
+      .containerNav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      form {
+        margin: auto 0;
+        label {
+          color: $secondColor;
+        }
+        div {
+          margin-bottom: 20px;
+        }
+        .containerNavFooter {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          button {
+            background-color: $firstColor;
+            border: none;
+          }
+          a {
+            color: #272727 !important;
+            font-weight: $WeightTitle;
+            font-size: 16px;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: $mobile) {
+  }
+}
+
+footer {
+  nav {
+    background-color: white;
+    box-shadow: 0px -2px 5px 0px #63646469;
+    border-top: 1px solid rgba(87, 86, 86, 0.432);
+  }
+  i {
+    font-size: 40px !important;
+    color: $firstColor;
+  }
+  .container {
+    justify-content: space-evenly !important;
+  }
+  .row {
+    div {
+      text-align: center;
+    }
+  }
+  .menuProductModal {
+    z-index: 9999;
+    display: none;
+    background-color: rgba(2, 2, 2, 0.815);
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    position: fixed;
+    box-shadow: #bdbdbdcc 0px 6px 9px 3px;
+
+    h2 {
+      color: $firstColor;
+      font-weight: $WeightTitle;
+    }
+    .containerForm {
+      border-radius: 5px;
+      background-color: white;
+      width: 90%;
+      padding: 10px;
+      margin: 0 auto;
+      margin-top: 10%;
+      .containerNav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      form {
+        margin: auto 0;
+        label {
+          color: $secondColor;
+          font-weight: $WeightTitle;
+        }
+        select,option{
+          background-color: transparent;
+          color:$thirdColor;
+          font-weight: $WeightTitle;
+        }
+        textarea{
+          width: 100%;
+          height: 100px;
+        }
+        .formMix{
+          font-weight: $WeightTitle;
+          font-size: 14px;
+        }
+        div {
+          margin-bottom: 20px;
+        }
+        .containerNavFooter {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          button {
+            background-color: $firstColor;
+            border: none;
+          }
+          a {
+            color: #272727 !important;
+            font-weight: $WeightTitle;
+            font-size: 16px;
+          }
+        }
+      }
+    }
+  }
+}

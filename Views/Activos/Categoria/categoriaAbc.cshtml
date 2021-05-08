@@ -1,0 +1,227 @@
+﻿@using Newtonsoft.Json;
+@using System.Web.WebPages.Html
+@{
+
+    //verificamos si trae parametro para ser Popup o ventana
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+    int IdCategoria = int.Parse(Request.QueryString["IdCategoria"]?.ToString() ?? "0");
+
+    ///////////////////////////////////////////////
+    //Codigo para reglas de negocio
+    ///////////////////////////////////////////////
+    string Strurl = Request.RawUrl;
+    bool urlDefault = Strurl.Contains("Default.cshtml");
+    List<Accion> objAccion = null;
+    String jsonAccionPagina = null;
+    String jsonReglasNegocio = null;
+    var int_Robot = VariableGlobal.SessionIntBRobot;
+
+    // Comienza petición de acciones para la pagina
+    var objAccesoPagina = new PaginaMenuController().Get((int_Robot == 1 ? 2 : 1), Strurl);
+
+
+    if (IntPopUp == 0)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+        // Comienza petición de acciones para la pagina
+        jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+        jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+        objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+
+    }
+    else
+    {
+        // Comienza petición de acciones para la pagina
+        jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+        jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+        objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+
+    }
+
+    ///////////////////////////////////////////////
+    //Fin Codigo para reglas de negocio
+    ///////////////////////////////////////////////
+
+    Page.Title = "Categoria";
+
+}
+<div id="ModalAjuste" class="wrapper wrapper-content">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            @{
+                if (IntPopUp == 0)
+                {
+                    <div class="ibox-title text-center">
+                        <h2>@Page.Title</h2>
+                    </div>
+                }
+            }
+            <div class="ibox-content">
+                <form method="get" class="form-horizontal">
+                    <div>
+                        <div class="col-sm-6 col-xs-12">
+                            <div id="div_Id" class="form-group hidden">
+                                <label for="it_Id" class="col-lg-4 control-label">Id:</label>
+                                <div class="col-lg-8">
+                                    <input class="form-control required" type="text" name="it_Id" id="it_Id" disabled="true" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="it_DescCategoria" class="col-lg-4 control-label">Descripcion:</label>
+                                <div class="col-lg-8">
+                                    <input class="form-control required" type="text" name="it_DescCategoria" id="it_DescCategoria" placeholder="" maxlength="200" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="i-checks">
+                                    <label for="check_Activo" class="col-sm-4 control-label">Activo:</label>
+                                    <div class="col-lg-8">
+                                        <div class="i-checks form-control">
+                                            <input type="checkbox" id="check_Activo" name="check_Activo" class="form-control checkbox" value="" checked="true">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-12 text-center m-sm">
+                                @{
+                                    var BtnAccioGrabar = objAccion.Where(x => x.StrCveAccion == "Editar").ToList();
+                                    if (BtnAccioGrabar.Count != 0)
+                                    {
+                                        <button id="@BtnAccioGrabar[0].StrObjetoId" name="@BtnAccioGrabar[0].StrObjetoId" class="@BtnAccioGrabar[0].StrObjetoClase" type="button" title="@BtnAccioGrabar[0].StrObjetoNombre"><i class="@BtnAccioGrabar[0].StrObjetoIcono"></i> @BtnAccioGrabar[0].StrObjetoNombre</button>
+                                    }
+                                }
+                                @{
+                                    var BtnAccioCancelar = objAccion.Where(x => x.StrCveAccion == "Regresar").ToList();
+                                    if (BtnAccioCancelar.Count != 0)
+                                    {
+                                        <button id="@BtnAccioCancelar[0].StrObjetoId" name="@BtnAccioCancelar[0].StrObjetoId" class="@BtnAccioCancelar[0].StrObjetoClase" type="button" title="@BtnAccioCancelar[0].StrObjetoNombre"><i class="@BtnAccioCancelar[0].StrObjetoIcono"></i> @BtnAccioCancelar[0].StrObjetoNombre</button>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    //pasamos el valor Razor a variable de javascript
+    var int_IdCategoria = @IdCategoria; //valor de la tabla campo 'id'
+
+    $(document).ready(function () {
+
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-orange',
+            radioClass: 'iradio_square-orange',
+        });
+        $("#btn_Grabar").click(function () {
+            fn_Grabar();
+        });
+        $("#btn_Regresar").click(function () {
+            fn_Cancelar();
+        });
+
+        fn_Cargar();
+    });
+
+    function fn_Cancelar() {
+        location.href = 'categoriaLista.cshtml';
+    }
+
+
+    function fn_Grabar() {
+
+        //validaciones
+        if (!obj_ClaseGlobal.fn_ValidarDatosFormulario()) {
+            return false;
+        }
+
+        // Descripcion
+        if ($("#it_DescCategoria").val().trim() == ''){
+            toastr["warning"]("Debe especificar la descripcion");
+            $("#it_DescCategoria").focus();
+            return false;
+        }
+
+        //declaramos el objeto que se le pasara al controlador
+        var obj_Insertar = {
+              IntIdCategoria: int_IdCategoria
+            , StrDescCategoria: $("#it_DescCategoria").val()
+            , IntBActivo: ($('#check_Activo').is(':checked')) ? 1 : 0
+        }
+
+        //Mandamos los datos al webmethod para guardar los datos
+        var str_Metodo = "";
+        var str_Url = "";
+
+        if (int_IdCategoria > 0) {
+            str_Metodo = "PUT";
+        } else {
+            str_Metodo = "POST";
+        }
+
+        str_Url = "@VariableGlobal.StrUrlApi/Categoria";
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_Insertar),
+            type: str_Metodo,
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(obj_Datos) {
+                //Se manda el mensaje de exito
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                if (int_IdCategoria > 0 && obj_Datos["IntError"] === 0) {
+                    setTimeout(function () {
+                        location.href = "categoriaAbc.cshtml?IdCategoria=" + int_IdCategoria;
+                    }, 1500);
+                } else if (int_IdCategoria === 0 && obj_Datos["IntError"] === 0) {
+                    setTimeout(function() {
+                        location.href = "categoriaLista.cshtml";
+                    }, 1500);
+                }
+            }
+        });
+    }
+
+    //fucnion que cargara las funciones iniciales
+    function fn_Cargar() {
+
+        if (int_IdCategoria > 0
+        ) { // si trae id, entonces se procede a obtener los datos del controller para posteriormente llenar el form
+            $.ajax({
+                url: "@VariableGlobal.StrUrlApi/Categoria/" + int_IdCategoria,
+                type: "GET",
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (obj_Datos) {
+
+                    $("#div_Id").removeClass("hidden");
+                    $("#it_Id").val(obj_Datos.IntIdCategoria);
+                    $("#it_DescCategoria").val(obj_Datos.StrDescCategoria);
+                    if (obj_Datos.IntBactivo > 0) {
+						$("#check_Activo").iCheck("check");
+                    } else {
+						$("#check_Activo").iCheck("uncheck");
+
+                    }
+                }
+            });
+        }
+
+        obj_TouchSpin = new class_touchspin();
+        obj_TouchSpin.fn_CargaInputs();
+    }
+
+
+</script>

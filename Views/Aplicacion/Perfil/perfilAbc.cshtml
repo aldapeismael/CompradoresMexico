@@ -1,0 +1,251 @@
+﻿@using System.Web.WebPages.Html
+@using Newtonsoft.Json;
+@{
+
+    //verificamos si trae parametro para ser Popup o ventana
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+    int IntIdPerfil = int.Parse(Request.QueryString["IdPerfil"]?.ToString() ?? "0");
+    int IntIdEmpresaSesion = VariableGlobal.SessionIntIdEmpresa;
+
+    Page.Title = "Perfiles";
+    var objEmpresaLista = new EmpresaController().ObtenerLista(1, 0);
+
+
+    ///////////////////////////////////////////////
+    //Codigo para reglas de negocio
+    ///////////////////////////////////////////////
+    string Strurl = Request.RawUrl;
+    bool urlDefault = Strurl.Contains("Default.cshtml");
+    List<Accion> objAccion = null;
+    String jsonAccionPagina = null;
+    String jsonReglasNegocio = null;
+    var int_Robot = VariableGlobal.SessionIntBRobot;
+
+    // Comienza petición de acciones para la pagina
+    var objAccesoPagina = new PaginaMenuController().Get((int_Robot == 1 ? 2 : 1), Strurl);
+
+    //Si no es modal
+    if (IntPopUp == 0)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+        // Comienza petición de acciones para la pagina
+        jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+        jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+        objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+    }
+    else
+    {
+        //So el usuario no es robot, no tiene acceso a la pagina y la pagina no es default
+        if (VariableGlobal.SessionIntBRobot != 1 && objAccesoPagina.Content.IntIdPagina == 0 && !urlDefault)
+        {
+            Response.Redirect("~/Views/Aplicacion/Acceso/SinAcceso.cshtml?Popup=1");
+        }
+        else
+        {
+            // Comienza petición de acciones para la pagina
+            jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+            jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+            objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+        }
+    }
+
+    ///////////////////////////////////////////////
+    //Fin Codigo para reglas de negocio
+    ///////////////////////////////////////////////
+
+
+}
+
+<div id="ModalAjuste" class="wrapper wrapper-content Modal_Perfil">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            @{
+                if (IntPopUp == 0)
+                {
+                    <div class="ibox-title text-center">
+                        <h2>@Page.Title</h2>
+                    </div>
+                }
+            }
+            <div class="ibox-content">
+                <form method="get" class="form-horizontal">
+                    <div>
+
+                        <div id="div_IdPerfil" class="form-group hidden">
+                            <label for="lbl_IdPerfil" class="col-lg-4 control-label">Id:</label>
+                            <div class="col-lg-8">
+                                <input class="form-control required" type="text" name="it_IdPerfil" id="it_IdPerfil" maxlength="100" disabled="true"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lbl_NombrePerfil" class="col-lg-4 control-label">Nombre:</label>
+                            <div class="col-lg-8">
+                                <input class="form-control required" type="text" name="it_NombrePerfil" id="it_NombrePerfil" maxlength="40"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lbl_EmpresaPerfil" class="col-lg-4 control-label">Empresa:</label>
+                            <div class="col-lg-8">
+                                <select id="ddl_Empresa" class="form-control">
+                                    <option value="0" selected>-TODOS-</option>
+                                    @foreach (var x in objEmpresaLista)
+                                    {
+                                        <text>
+                                            <option value="@x.idEmpresa.ToString()">@x.cveEmpresa.ToString() | @x.descEmpresa.ToString() </option>
+                                        </text>
+                                    }
+                                </select>
+                                @*@Html.DropDownList("ddl_Empresa", "- TODOS -", objEmpresaLista.Select(x => new SelectListItem() { Value = x.idEmpresa.ToString(), Text = x.cveEmpresa.ToString() + " | " + x.descEmpresa.ToString() }), 0, new { @class = "form-control" })*@
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="i-checks">
+                                <label for="check_Activo" class="col-sm-4 control-label">Activo:</label>
+                                <div class="col-lg-8">
+                                    <div class="i-checks form-control">
+                                        <input type="checkbox" id="check_Activo" name="check_Activo" class="form-control checkbox" value="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            @{
+                                var BtnAccionGrabar = objAccion.Where(x => x.StrCveAccion == "Editar").ToList();
+                                if (BtnAccionGrabar.Count != 0)
+                                {
+                                    <button id="@BtnAccionGrabar[0].StrObjetoId" class="@BtnAccionGrabar[0].StrObjetoClase" type="button" title="@BtnAccionGrabar[0].StrObjetoNombre"><i class="@BtnAccionGrabar[0].StrObjetoIcono"></i> @BtnAccionGrabar[0].StrObjetoNombre</button>
+                                }
+
+                                var BtnAccionRegresar = objAccion.Where(x => x.StrCveAccion == "Regresar").ToList();
+                                if (BtnAccionRegresar.Count != 0)
+                                {
+                                    <button id="@BtnAccionRegresar[0].StrObjetoId" class="@BtnAccionRegresar[0].StrObjetoClase" type="button" title="@BtnAccionRegresar[0].StrObjetoNombre"><i class="@BtnAccionRegresar[0].StrObjetoIcono"></i> @BtnAccionRegresar[0].StrObjetoNombre</button>
+                                }
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    //pasamos el valor Razor a variable de javascript
+    var int_IdPerfil = @IntIdPerfil; //valor de la tabla campo 'id'
+    var IdEmpresaSesion = @IntIdEmpresaSesion; //Empresa del usuario en sesion
+    var Int_BRobot = '@VariableGlobal.SessionIntBRobot';
+
+    $(document).ready(function () {
+
+        if (Int_BRobot == 0) {
+            $("#ddl_Empresa").attr("disabled", true);
+            $('#ddl_Empresa option[value=' + IdEmpresaSesion + ']').prop('selected', true);
+        }
+
+        $(".Modal_Perfil").find('#btn_Regresar, .btn_Regresar').click(function() {
+            $.pgwModal('close'); //cerramos el modal
+        });
+
+        $(".Modal_Perfil").find('#btn_Grabar, .btn_Grabar').click(function() {
+            fn_Grabar();
+        });
+
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-orange',
+            radioClass: 'iradio_square-orange',
+        });
+
+        fn_Cargar();
+    });
+
+    //fucnion que cargara las funciones iniciales
+
+    function fn_Grabar() {
+        //validaciones
+        if (!obj_ClaseGlobal.fn_ValidarDatosFormulario()) {
+            return false;
+        }
+
+        //declaramos el objeto que se le pasara al controlador
+        var obj_PerfilInsertar = {
+            IntIdPerfil: int_IdPerfil,
+            StrDescPerfil: $("#it_NombrePerfil").val(),
+            IntBActivo: $('input[name="check_Activo"]').is(':checked') ? 1 : 0,
+            IntIdEmpresa: $("#ddl_Empresa option:selected").val()
+        }
+
+        //Mandamos los datos al webmethod para guardar los datos
+        var str_Metodo = "";
+        var str_Url = "";
+
+        if (int_IdPerfil > 0) {
+            str_Metodo = "PUT";
+        } else {
+            str_Metodo = "POST";
+        }
+
+        str_Url = "@VariableGlobal.StrUrlApi/Perfil";
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_PerfilInsertar),
+            type: str_Metodo,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function(obj_Datos) {
+                //Se manda el mensaje de exito
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                if (obj_Datos["IntError"] > 0) {
+                    var int_PaginaActual = obj_DataTable.page();//obtenemos la pagina que se encuentra el datatable
+                    obj_DataTable.ajax.reload();//se recarga el objeto datatable con los datos actualizados
+                    obj_DataTable.page(int_PaginaActual).draw("page");//se mantiene en la pagina que estava
+                    if (str_Metodo == "POST") $.pgwModal('close');//cerramos el modal
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                toastr["error"]("Ocurrió un error al obtner los datos del formulario: " + thrownError);
+            }
+        });
+    }
+
+    //fucnion que cargara las funciones iniciales
+    function fn_Cargar() {
+
+        if (int_IdPerfil > 0) { // si trae id, entonces se procede a obtener los datos del controller para posteriormente llenar el form
+            $.ajax({
+                url: "@VariableGlobal.StrUrlApi/Perfil/" + int_IdPerfil,
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (obj_Datos) {
+                    $("#div_IdPerfil").removeClass("hidden");
+
+                    $("#it_IdPerfil").val(obj_Datos.IntIdPerfil);
+                    $("#it_NombrePerfil").val(obj_Datos.StrDescPerfil);
+                    $('#ddl_Empresa option[value=' + obj_Datos.IntIdEmpresa + ']').prop('selected', true);
+                    if (obj_Datos.IntBActivo > 0) {
+                        $("#check_Activo").iCheck("check");
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    toastr["error"]("Ocurrió un error al obtner los datos del formulario: " + thrownError);
+                }
+            });
+        }
+
+        obj_TouchSpin = new class_touchspin();
+        obj_TouchSpin.fn_CargaInputs();
+    }
+</script>

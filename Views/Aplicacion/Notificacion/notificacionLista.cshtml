@@ -1,0 +1,456 @@
+﻿@using System.Web.WebPages.Html
+@using Newtonsoft.Json;
+@{
+    //verificamos si trae parametro para ser Popup o ventana
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+    if (IntPopUp == 0)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+    }
+    Page.Title = "Notificaciones";
+
+    ///////////////////////////////////////////////
+    //Codigo para reglas de negocio y Obtener botones
+    ///////////////////////////////////////////////
+
+    string Strurl = Request.RawUrl;
+    bool urlDefault = Strurl.Contains("Default.cshtml");
+    List<Accion> objAccion = null;
+    String jsonAccionPagina = null;
+    String jsonReglasNegocio = null;
+    var int_Robot = VariableGlobal.SessionIntBRobot;
+
+    // Comienza petición de acciones para la pagina
+    var objAccesoPagina = new PaginaMenuController().Get((int_Robot == 1 ? 2 : 1), Strurl);
+    jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+    jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+    objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+
+    //Permiso para exportar datos de DataGrid
+
+    var BtnAccionImprimir = objAccion.Where(x => x.StrCveAccion == "Imprimir").ToList();
+    var BtnAccionExportar = objAccion.Where(x => x.StrCveAccion == "Exportar").ToList();
+
+    ///////////////////////////////////////////////
+    //Fin de Codigo para reglas de negocio y Obtener botones
+    ///////////////////////////////////////////////
+
+    int IntIdMultilista_EstatusNotificacion_Eliminado = 0;
+    var Obj_Multilista_EstatusNotificacion = new MultiListaController().ObtenerLista(2, 0, "ESTATUSNOTIFICACION");
+    if (Obj_Multilista_EstatusNotificacion.Where(w => w.valor1char == "ELIMINADO").Count() > 0)
+    {
+        IntIdMultilista_EstatusNotificacion_Eliminado = Obj_Multilista_EstatusNotificacion.Where(w => w.valor1char == "ELIMINADO").First().idMultiLista;
+    }
+    var ddl_MultiListaEstatus = new MultiListaController().ObtenerLista(2, 0, "ESTATUSNOTIFICACION");
+}
+<!-- Utileria devExtreme para reportes-->
+<link href="@VariableGlobal.StrUrlSitio/css/plugins/devExtreme/dx.common.css" rel="stylesheet">
+<link href="@VariableGlobal.StrUrlSitio/css/plugins/devExtreme/dx.light.css" rel="stylesheet">
+<!-- Utileria devExtreme para reportes-->
+<script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/devExtreme/dx.all.js"></script>
+<script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/devExtreme/jszip.min.js"></script>
+<script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/devExtreme/localization.es.js"></script>
+<div class="wrapper border-bottom white-bg page-heading">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <h2 class="text-center" id="lbl_TituloPagina">@Page.Title</h2>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+            <form role="form" id="form_Catalogo" action="" method="post" class="form-inline">
+                <div class="form-group m-r-sm">
+                    <label for="ddl_MultiListaEstatusFiltro">Estatus:</label>
+                    <select id="ddl_MultiListaEstatusFiltro" class="form-control">
+                        <option value="0" selected>-TODOS-</option>
+                        @foreach (var x in ddl_MultiListaEstatus)
+                        {
+                            <text>
+                                <option value="@x.idMultiLista.ToString()" valor1Char="@x.valor1char.ToString()">@x.descMultiLista.ToString()</option>
+                            </text>
+                        }
+                    </select>
+                </div>
+                @{
+                    var BtnAccioBuscar = objAccion.Where(x => x.StrCveAccion == "Buscar").ToList();
+                    if (BtnAccioBuscar.Count != 0)
+                    {
+                        <button id="@BtnAccioBuscar[0].StrObjetoId" name="@BtnAccioBuscar[0].StrObjetoId" class="@BtnAccioBuscar[0].StrObjetoClase" type="button" title="@BtnAccioBuscar[0].StrObjetoNombre"><i class="@BtnAccioBuscar[0].StrObjetoIcono"></i></button>
+                    }
+                }
+                @{
+                    var BtnAccioNuevo = objAccion.Where(x => x.StrCveAccion == "Nuevo").ToList();
+                    if (BtnAccioNuevo.Count != 0)
+                    {
+                        <button id="@BtnAccioNuevo[0].StrObjetoId" name="@BtnAccioNuevo[0].StrObjetoId" class="@BtnAccioNuevo[0].StrObjetoClase" type="button" title="@BtnAccioNuevo[0].StrObjetoNombre"><i class="@BtnAccioNuevo[0].StrObjetoIcono"></i></button>
+                    }
+                }
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox contenido-inicial">
+        <div class="ibox-content scroll">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            <div class="demo-container" id="div_Tbl">
+                                <div id="gridContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var str_JsonNotificacion = [];
+    DevExpress.localization.locale(navigator.language || navigator.browserLanguage);
+    var int_AltoInicial = 0;
+    var int_AltoIncremental = 0;
+
+    var int_DataGridInicializado = 0;
+    $(document).ready(function () {
+        //evento a formulario para nueva Negocio
+
+        $("#btn_Buscar").click(function () {
+            fn_ObtenerDataGrid();
+        });
+        fn_ObtenerDataGrid();
+    });
+
+    function fn_AbrirModal(par_str_linkedit) {
+        if ($.pgwModal('isOpen') == true) { return }
+
+        $.pgwModal({
+            url: par_str_linkedit,
+            loadingContent: '<span style="text-align:center">Loading in progress</span>',
+            closeOnBackgroundClick: false,
+            title: "Notificación",
+            maxWidth: "60%"
+        });
+
+    };
+
+
+
+    function fn_CargarDataGrid() {
+        var dt = new Date();
+        var date = dt.getDay() + "" + dt.getMonth() + "" + dt.getYear() + "_" + dt.getHours() + "" + dt.getMinutes() + "" + dt.getSeconds();
+        var int_IdMovimientoAnterior = 0, int_Contador = 0;
+         $("#gridContainer").dxDataGrid({
+             dataSource: str_JsonNotificacion,
+             columnsAutoWidth: true,
+             columnResizingMode: "widget",
+             allowColumnResizing: true,
+             rowAlternationEnabled: true,
+             filterRow: { visible: true },
+             filterPanel: { visible: true, texts: { createFilter: "Crear Filtro", clearFilter: "Limpiar Filtros" } },
+             headerFilter: { visible: true },
+             height: function () {
+                 return window.innerHeight / 1.5;
+             },
+             columnChooser: { enabled: true, mode: "select" },
+             @{
+                 if(BtnAccionExportar.Count > 0) {
+                    <TEXT>
+                        "export": {
+                        enabled: true,
+                            fileName: "NotificacionLista_" + date,
+                                allowExportSelectedData: false
+                        },
+                    </TEXT>
+                }
+             }
+             filterBuilder: { visible: false },
+             summary: {
+                 totalItems: [
+                     {
+                         column: "idNotificacion",
+                         summaryType: "count",
+                         customizeText: function (data) {
+                             return "Registros: " + data.value;
+                         },
+                         alignment: "left",
+                         cssClass: "total-filas"
+                     }
+                 ]
+             },
+             scrolling: { mode: "infinite" },
+             showBorders: true,
+             columns: [
+                 {
+                     caption: "Id",
+                     dataField: "idNotificacion",
+                     dataType: "int",
+                     allowHeaderFiltering: false,
+                     cellTemplate: function (container, info) {
+                         $('<a/>').addClass('dx-link')
+                             .text(info.data.idNotificacion)
+                             .on('dxclick', function () {
+                                 var str_urledit = "notificacionAbc.cshtml?Popup=1&pIdNotificacion=" + info.data.idNotificacion;
+                                 fn_AbrirModal(str_urledit);
+                             })
+                             .appendTo(container);
+                     },
+                     width: 50
+                 },
+                 {
+                     caption: "Titulo",
+                     dataField: "tituloNotificacion",
+                     dataType: "string",
+                     //width: 250
+                 },
+                 {
+                     caption: "Descripcion",
+                     dataField: "descNotificacion",
+                     dataType: "string",
+                     //width: 250
+                 },
+                 {
+                     caption: "Estatus",
+                     dataField: "descMultiLista_Estatus",
+                     dataType: "string",
+                     //width: 150
+                 },
+                 {
+                     caption: "Proceso",
+                     dataField: "descMultiLista_Proceso",
+                     dataType: "string",
+                     //width: 150
+                 },
+                 {
+                     caption: "Categoria",
+                     dataField: "descMultiLista_Categoria",
+                     dataType: "string",
+                     //width: 150
+                 },
+                 {
+                     caption: "Fecha Notificacion",
+                     dataField: "fechaNotificacion",
+                     dataType: "date",
+                     format: 'dd/MM/yyyy HH:mm',
+                     //width: 150
+                 },
+                 {
+                     caption: "Opciones",
+                     dataField: "NULL",
+                     dataType: "string",
+                     allowSorting: false,
+                     allowHeaderFiltering: false,
+                     width: 100,
+                    cellTemplate: function (container, info) {
+                        container.css("padding-top", "0px");
+                        container.css("padding-bottom", "0px");
+                        if (info.data.idMultilista_estatusNotificacion_db_erp != @IntIdMultilista_EstatusNotificacion_Eliminado) {
+                            container.html('<button title="Eliminar" type="button" onclick="fn_EliminarNotificacion(' + info.data.idNotificacion + ',' + info.rowIndex + ')" data-rowindex="' + info.rowIndex + '" data-id="' + info.data.idNotificacion + '" class="btn btn-warning btn-sm fn_EliminarNotificacion"><i class="fa fa-trash"></i></button>');
+                        }
+                    }
+                },
+             ],
+             onToolbarPreparing: function (e) {
+                 var dataGrid = e.component;
+
+                 e.toolbarOptions.items.unshift({
+                     location: "before",
+                     template: ""
+                 }, {
+                         location: "after",
+                         widget: "dxButton",
+                         options: {
+                             hint: "Decrementa alto de tabla",
+                             icon: "fa fa-minus",
+                             onClick: function (e) {
+                                 e.event.preventDefault();
+                                 obj_ClaseGlobal.fn_DecrementarAltoDataGrid("#gridContainer");
+                             }
+                         }
+                     }, {
+                         location: "after",
+                         widget: "dxButton",
+                         options: {
+                             icon: "fa fa-plus",
+                             hint: "Incrementa alto de tabla",
+                             onClick: function (e) {
+                                 e.event.preventDefault();
+                                 obj_ClaseGlobal.fn_IncrementarAltoDataGrid("#gridContainer");
+                             }
+                         }
+                     }, {
+                         location: "after",
+                         widget: "dxButton",
+                         options: {
+                             icon: "arrowup",
+                             hint: "Ir al incio de la lista",
+                             onClick: function (e) {
+                                 e.event.preventDefault();
+                                 $("#gridContainer").dxDataGrid("instance").getScrollable().scrollTo(0);
+                             }
+                         }
+                     }, {
+                         location: "after",
+                         widget: "dxButton",
+                         options: {
+                             icon: "arrowdown",
+                             hint: "Ir al final de la lista",
+                             onClick: function (e) {
+                                 e.event.preventDefault();
+                                 $("#gridContainer").dxDataGrid("instance").getScrollable().scrollTo($("#gridContainer").dxDataGrid("instance").getScrollable().scrollHeight());
+                             }
+                         }
+                     },
+                     @{
+                         if (BtnAccionImprimir.Count > 0)
+                         {
+                            <text>
+                             {
+                                 location: "after",
+                                 widget: "dxButton",
+                                 options: {
+                                     icon: "fa fa-print",
+                                     hint: "Imprimir",
+                                     onClick: function (e) {
+                                         var str_Html = obj_ClaseGlobal.fn_DataGridGenericoImprimir('#gridContainer', str_JsonNotificacion, []);
+                                         fn_ImpresionGenerica(str_Html, str_JsonNotificacion.length, "Usuario Grupo Lista");
+                                         e.event.preventDefault();
+                                     }
+                                 }
+                             }
+                            </text>
+                        }
+                    }
+                );
+            },
+            onContentReady: function (e) {
+                var feature_DG = e.component;
+
+                var gridRows = feature_DG.getVisibleRows();
+                if (typeof gridRows[0] === 'undefined') {
+                    return
+                }
+
+                var columnas = gridRows[0].values;
+                var string = 'La(s) columna(s), no se encontraron para mostrar: <br>';
+                var contIndefinidos = 0;
+
+                $(columnas).each(function (index, value) {
+                    if (typeof value === 'undefined' && value != null) {
+                        string += $(".dx-header-row > td[aria-colindex=" + (index + 1) + "].dx-datagrid-action").text();
+                        string += '<br>';
+                        contIndefinidos++;
+                    }
+                });
+
+                if (contIndefinidos > 0) {
+                    toastr["error"](string);
+                }
+            }
+         });
+         $("html").loading('stop');
+         int_AltoInicial = $("#gridContainer").height();
+         int_AltoIncremental = $("#gridContainer").height();
+    }
+
+    function fn_ObtenerDataGrid() {
+        if (!obj_ClaseGlobal.fn_ValidarDatosFormulario()) {
+            return false;
+        }
+
+        //$("html").loading({ message: "Cargando información, espere..." });
+        var obj_Filtros = {
+            IntIdMultilista_estatusNotificacion_db_erp: $('#ddl_MultiListaEstatusFiltro').val()
+        }
+
+        //setTimeout(function () {
+        $.ajax({
+            url: "@VariableGlobal.StrUrlApi/NotificacionListado/ObtenerListado/0/"
+            , async: false
+            , type: "POST" //tipo de accion
+            , data: JSON.stringify(obj_Filtros)
+            , contentType: "application/json; charset=utf-8"
+            , dataType: "json"
+            , success: function (obj_Datos) {
+                $.each(obj_Datos, function (index, value) {
+                            if (value.StrJsonNotificacionListado != "") {
+                                str_JsonNotificacion = $.parseJSON(value.StrJsonNotificacionListado);
+                            } else {
+                                str_JsonNotificacion = '';
+                            }
+
+                            if (int_DataGridInicializado == 0) {
+                                fn_CargarDataGrid();
+                                int_DataGridInicializado = 1;
+                            } else {
+                                var dataGrid = $('#gridContainer').dxDataGrid('instance');
+                                dataGrid.option("dataSource", str_JsonNotificacion);
+                            }
+                });
+
+            }, error: function (xhr, ajaxOptions, thrownError) {
+                $("html").loading('stop');
+                toastr["error"]("Ocurrió un error, por favor intente de nuevo: " + thrownError);
+            }
+        }).done(function () {
+            $("html").loading('stop');
+                });
+        //}, 500);
+    }
+
+    function fn_EliminarNotificacion(paramInt_IdNotificacion) {
+        swal(
+            {//metodo para el mensage de confirm
+                title: "ALERTA",
+                text: "¿Desea eliminar la notificación?",
+                type: "warning",//tipo de mensage =>  opciones: warning, error, info y success
+                showCancelButton: true,//mostrar boton de cancelacion
+                confirmButtonColor: hex_str_ColorBotonConfirmar,//color de boton de confirmacion
+                confirmButtonText: "Sí!",//texto en el boton de confirmacion
+                cancelButtonText: "No!",//texto en el boton de cancelacion
+                closeOnConfirm: true,//la ventana de cerrara al momento de seleccionar la opcion de confirmacion
+                closeOnCancel: true,//la ventana de cerrara al momento de seleccionar la opcion de cancelacion
+            },
+            function (isConfirm) {
+                if (isConfirm) {//si el usuario confirma
+                    fn_Eliminar(paramInt_IdNotificacion);
+                }
+            }
+        );
+    }
+
+    function fn_Eliminar(paramInt_IdNotificacion) {
+        setTimeout(function () {
+        $.ajax({
+            url: "@VariableGlobal.StrUrlApi/Notificacion/" + paramInt_IdNotificacion
+            , async: false
+            , type: "DELETE" //tipo de accion
+            , contentType: "application/json; charset=utf-8"
+            , dataType: "json"
+            , success: function (obj_Datos) {
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                if (obj_Datos["IntError"] == 0) {
+                    fn_ObtenerDataGrid();
+                }
+            }, error: function (xhr, ajaxOptions, thrownError) {
+                $("html").loading('stop');
+                toastr["error"]("Ocurrió un error obtener: " + thrownError);
+            }
+
+        }).done(function () {
+            $("html").loading('stop');
+                });
+        }, 500);
+    }
+
+    function fn_ImpresionGenerica(str_TablaImprimir, p_int_TotalRegistros, p_str_TituloImpresion) {
+        if (typeof OpenWindow !== 'undefined' && OpenWindow != null) {
+            OpenWindow.close();
+        }
+        OpenWindow = window.open("@VariableGlobal.StrUrlSitio/Views/Utileria/ImpresionGenerica/ImpresionGenerica.cshtml", 'Impresion', 'width=1000, height=500,resizable=0,scrollbars=1,location=0,menubar=0');
+        OpenWindow.str_TablaImprimir = str_TablaImprimir;
+        OpenWindow.int_TotalRegistros = p_int_TotalRegistros;
+        OpenWindow.str_TituloImpresion = p_str_TituloImpresion;
+    }
+</script>

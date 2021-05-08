@@ -1,0 +1,135 @@
+﻿@{
+    Page.Title = "Acceso";
+
+}
+
+<head>
+	<meta charset="utf-8" />
+	<title>@Page.Title - @VariableGlobal.StrNombreApicacion</title>
+
+	<link rel="icon" type="img/png" href="img/alianza-b.png" />
+
+	<!-- css -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+	<link href="css/animate.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+
+	<!-- Toast - Mensajes flotantes -->
+	<link href="~/Scripts/plugins/toastr/toastr.min.css" rel="stylesheet" />
+
+	<link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+
+	<!-- Modificaciones de estilos al proyecto -->
+	<link href="css/utileria.css" rel="stylesheet">
+
+	<!-- Mainly scripts -->
+	<script src="~/Scripts/jquery-2.1.1.js"></script>
+	<script src="~/Scripts/bootstrap.min.js"></script>
+
+	<!-- Libreria para el seleccionador de fechas en los filtros  -->
+	<script src="~/Scripts/plugins/datapicker/bootstrap-datepicker.js"></script>
+
+	<!-- Pantallas de loading -->
+	<script src="~/Scripts/jquery.loading.min.js"></script>
+
+	<script src="~/Scripts/utileria.js"></script>
+
+	<!-- Toast - Mensajes flotantes -->
+	<script src="~/Scripts/plugins/toastr/toastr.min.js"></script>
+	<script>
+		// Configuración inicial para los mensajes de alerta emergentes
+		toastr.options = {
+			"closeButton": true,
+			"debug": false,
+			"progressBar": true,
+			"preventDuplicates": true,
+			"positionClass": "toast-top-center",
+			"onclick": null,
+			"showDuration": "400",
+			"hideDuration": "1000",
+			"timeOut": "7000",
+			"extendedTimeOut": "1000",
+			"showEasing": "swing",
+			"hideEasing": "linear",
+			"showMethod": "fadeIn",
+			"hideMethod": "fadeOut"
+		}
+		obj_ClaseToastr.fn_cargaOpcionesToastr();
+	</script>
+</head>
+
+<body class="gray-bg">
+	<div class="login-page">
+		<div class="middle-box text-center loginscreen animated fadeInDown">
+			<div>
+				<br />
+				<h3>Recuperación de Contraseña</h3>
+
+				<p>Introduce tu correo del sistema. Te enviaremos a tu correo la contraseña</p>
+
+				<form id="frm" class="m-t frm" role="form" action="" method="post">
+					<div class="form-group">
+						<input name="it_Email" id="it_Email" type="text" class="form-control" placeholder="Email" required value="" autofocus>
+					</div>
+					<button id="btn_EnviarContrasena" type="button" class="btn btn-warning block full-width m-b">Enviar Contraseña</button>
+					<a href="Acceso.cshtml"><small>Regresar a Login</small></a>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</body>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		$('#it_Email').focus();
+
+        $('.message a').click(function () {
+            $('form').animate({ height: "toggle", opacity: "toggle" }, "slow");
+        });
+
+        $('#btn_EnviarContrasena').click(function () {
+            fn_EnviarContrasena();
+        });
+    });
+
+	function fn_EnviarContrasena() {
+        //validaciones
+		var str_Email = $('#it_Email').val();
+		var re = /^(([^<>()\[\]\\.,;:\s@@"]+(\.[^<>()\[\]\\.,;:\s@@"]+)*)|(".+"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+		if (str_Email === "" || !obj_ClaseGlobal.fn_ValidarDatosRegulares(str_Email, re)) {
+			toastr["error"]("Debe capturar un correo electrónico válido");
+			return false;
+		}
+
+        //se crea un objeto
+        var obj_Contrasena = {
+            StrEmail: str_Email
+        }
+
+        //Mandamos los datos al webmethod para guardar los datos
+        var str_Metodo = "";
+        var str_Url = "";
+        str_Metodo = "POST";
+
+		str_Url = "Api/Contrasena/ValidarUsuario";
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_Contrasena),
+            type: str_Metodo,
+            contentType: "application/json; charset=utf-8",
+			async: false,
+            dataType: "json",
+            success: function (obj_Datos) {
+                //Se manda el mensaje de exito
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                toastr["error"]("Ocurrió un error tratar de recuperar la contraseña: " + thrownError);
+            }
+        });
+    }
+</script>

@@ -1,0 +1,273 @@
+﻿@using System.Web.WebPages.Html
+@{
+
+    //verificamos si trae parametro para ser Popup o ventana
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+    int IdOpcion = int.Parse(Request.QueryString["IdOpcion"]?.ToString() ?? "0");
+
+    //Multilistas
+    var ddl_MultiListaAplicacionOpcion = new MultiListaController().ObtenerLista(5, 0, "APLICACIONOPCION");
+
+    //Combos
+    var objTerminalesLista = new TerminalController().ObtenerLista(4, VariableGlobal.SessionIntIdEmpresa);
+    var objMenuLista = new MenuController().ObtenerLista(3, 0);
+
+    if (IntPopUp == 0)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+    }
+
+    Page.Title = "Opción [menu/terminal]";
+}
+<link href="~/css/plugins/jsoneditor/jsoneditor.css" rel="stylesheet" type="text/css">
+<link href="~/css/plugins/jsoneditor/customtheme.css" rel="stylesheet" type="text/css">
+<script src="~/Scripts/plugins/jsoneditor/jsoneditor.js"></script>
+
+<div id="ModalAjuste" class="wrapper wrapper-content">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title text-center">
+                <h2>Opción [menu/terminal]</h2>
+            </div>
+            <div class="ibox-content">
+                <form method="get" class="form-horizontal">
+                    <div>
+                        <div id="div_Id" class="form-group hidden">
+                            <label for="it_Id" class="col-lg-4 control-label">Id:</label>
+                            <div class="col-lg-8">
+                                <input class="form-control required" type="text" name="it_Id" id="it_Id" disabled="true" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ddl_Pagina" class="col-sm-4 control-label">Opción menú (pagina):</label>
+                            <div class="col-lg-8">
+                                <select id="ddl_Pagina" class="form-control required">
+                                    <option value="0" selected>-SELECCIONAR-</option>
+                                    @foreach (var x in objMenuLista)
+                                    {
+                                        <text>
+                                            <option data-idmenu="@x.idMenu.ToString()" data-idpagina="@x.idPagina.ToString()" value="@x.idPagina.ToString()">@x.descMenu.ToString() : @x.ruta.ToString() </option>
+                                        </text>
+                                    }
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ddl_Terminales" class="col-sm-4 control-label"> <span class="text-red">* </span> Terminal:</label>
+                            <div class="col-lg-8">
+                                <select id="ddl_Terminales" class="form-control ">
+                                    <option value="-1" selected>- SELECCIONAR -</option>
+                                    <option value="0" selected>-TODAS-</option>
+                                    @foreach (var x in objTerminalesLista)
+                                    {
+                                        <text>
+                                            <option data-bpermiso="@x.idTerminal.ToString()" value="@x.idTerminal.ToString()">@x.cveTerminal.ToString() - @x.descTerminal.ToString() </option>
+                                        </text>
+                                    }
+                                </select>
+
+
+                                @*<option value="-1" selected>-SELECCIONE-</option>
+                                    @Html.DropDownList("ddl_Terminales", "- TODOAS -", objTerminalesLista.Select(x => new SelectListItem() { Value = x.idTerminal.ToString(), Text = x.cveTerminal.ToString() + " - " + x.descTerminal.ToString() }), 0, new { @class = "form-control required" })*@
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ddl_MultilistaJson" class="col-sm-4 control-label">Opción aplicación:</label>
+                            <div id="div_MultilistaJson" class="col-lg-8" disable="false">
+                                <select class="form-control" id="ddl_MultilistaJson" disable="false">
+                                    <option>-SELECCIONE-</option>
+                                    @foreach (var fila in ddl_MultiListaAplicacionOpcion)
+                                    {
+                                        <option value="@fila.idMultiLista" data-json="@fila.valor1json" data-id="">@(fila.descMultiLista) </option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="divJson" class="form-group hidden">
+                            <label for="ddl_TipoCombustible" class="col-sm-4 control-label">Json:</label>
+                            <div class="col-lg-8">
+                                <div id="jsoneditor" style="height: 400px"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="i-checks">
+                                <label for="check_Activo" class="col-sm-4 control-label">Activo:</label>
+                                <div class="col-lg-8">
+                                    <div class="i-checks form-control">
+                                        <input type="checkbox" id="check_Activo" name="check_Activo" class="form-control checkbox" value="" checked="true">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <button id="btn_Cancelar" onclick="location.href = 'opcionLista.cshtml';" class="btn btn-danger pull-right m-xs" type="button" title="Regresar">
+                                <i class="fa fa-times"></i> Regresar
+                            </button>
+                            <button id="btn_Guardar" onclick="javascript: fn_Grabar();" class="btn btn-primary pull-right m-xs" type="button" title="Grabar">
+                                <i class="fa fa-check"></i> Grabar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    //pasamos el valor Razor a variable de javascript
+    var int_IdOpcion = @IdOpcion; //valor de la tabla campo 'id'
+    // create the editor
+    var container = document.getElementById("jsoneditor");
+    var options = {};
+    var editor = new JSONEditor(container, options);
+    var json = {};
+
+    $(document).ready(function () {
+
+        $('#ddl_MultilistaJson').change(function () {
+            if (parseInt($("#ddl_MultilistaJson option:selected").val()) > 0) {
+                json = $(this).find(':selected').data('json');
+
+                if (!jQuery.isEmptyObject(json)) {
+
+                    $("#divJson").removeClass("hidden");
+
+                    //set json
+                    editor.set(json);
+                }
+            } else
+                $("#divJson").addClass("hidden");
+        });
+
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-orange',
+            radioClass: 'iradio_square-orange',
+        });
+
+        fn_Cargar();
+    });
+
+    function fn_Grabar() {
+
+        //validaciones
+        if (!obj_ClaseGlobal.fn_ValidarDatosFormulario()) {
+            return false;
+        }
+
+        //if (jQuery.isEmptyObject(json)) {
+        //    toastr["warning"]("No se ha seleccionado ninguna regla");
+        //    $("#ddl_MultilistaJson").focus();
+        //    return false;
+        //}
+        // Tamaño de los json
+        //if (Object.keys(json).length === Object.keys(editor.get()).length) {
+        //    toastr["warning"]("No se puede cambiar el tamaño del json");
+        //    $("#jsoneditor").focus();
+        //    return false;
+        //}
+        //Verifica que los json no sean iguales
+        if (_.isEqual(json, editor.get())) {
+            toastr["warning"]("Por favor introduzca los nuevos valores de las reglas");
+            $("#jsoneditor").focus();
+            return false;
+        }
+
+        var idTermialSeleccionada = $("#ddl_Terminales option:selected").val();
+
+        if (idTermialSeleccionada == -1) {
+
+            toastr["error"]("Debe seleccionr una terminal");
+            $("#ddl_Terminales").focus();
+            return false;
+        }
+        //declaramos el objeto que se le pasara al controlador
+        var obj_Insertar = {
+              IntIdOpcion: int_IdOpcion
+            , IntIdTerminal: idTermialSeleccionada
+            , IntIdMenu: $("#ddl_Pagina option:selected").data("idmenu")
+            , IntIdPagina: $("#ddl_Pagina option:selected").val()
+            , IntIdMultilista_AplicacionOpcion: $("#ddl_MultilistaJson option:selected").val()
+            , IntBActivo: ($('#check_Activo').is(':checked')) ? 1 : 0
+            , StrValor1Json: JSON.stringify(editor.get())
+        }
+
+        //Mandamos los datos al webmethod para guardar los datos
+        var str_Metodo = "";
+        var str_Url = "";
+
+        if (int_IdOpcion > 0) {
+            str_Metodo = "PUT";
+        } else {
+            str_Metodo = "POST";
+        }
+
+        str_Url = "@VariableGlobal.StrUrlApi/Opcion";
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_Insertar),
+            type: str_Metodo,
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(obj_Datos) {
+                //Se manda el mensaje de exito
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                if (int_IdOpcion > 0 && obj_Datos["IntError"] === 0) {
+                    setTimeout(function () {
+                        location.href = "opcionAbc.cshtml?IdOpcion=" + int_IdOpcion;
+                    }, 1500);
+                } else if (int_IdOpcion === 0 && obj_Datos["IntError"] === 0) {
+                    setTimeout(function () {
+                        location.href = "opcionLista.cshtml";
+                    }, 1500);
+                }
+            }
+        });
+    }
+    //fucnion que cargara las funciones iniciales
+    function fn_Cargar() {
+
+        if (int_IdOpcion > 0
+        ) { // si trae id, entonces se procede a obtener los datos del controller para posteriormente llenar el form
+            $.ajax({
+                url: "@VariableGlobal.StrUrlApi/Opcion/" + int_IdOpcion,
+                type: "GET",
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (obj_Datos) {
+                    $("#div_Id").removeClass("hidden");
+                    $("#it_Id").val(obj_Datos.IntIdOpcion);
+                    $('#ddl_Terminales option[value=' + obj_Datos.IntIdTerminal + ']').prop('selected', true);
+                    $('#ddl_Pagina option[value=' + obj_Datos.IntIdPagina + ']').prop('selected', true);
+                    $('#ddl_MultilistaJson option[value=' + obj_Datos.IntIdMultilista_AplicacionOpcion + ']').prop('selected', true);
+                    //$("#ddl_MultilistaJson").prop("disabled", true);
+                    $("#divJson").removeClass("hidden");
+                    //set json
+                    editor.set($.parseJSON(obj_Datos.StrValor1Json));
+                    if (obj_Datos.IntBActivo > 0) {
+                        $("#check_Activo").iCheck("check");
+                    } else {
+                        $("#check_Activo").iCheck("uncheck");
+                    }
+                }
+            });
+        }
+
+        obj_TouchSpin = new class_touchspin();
+        obj_TouchSpin.fn_CargaInputs();
+    }
+</script>

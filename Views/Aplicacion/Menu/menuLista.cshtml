@@ -1,0 +1,364 @@
+﻿@using System.Web.WebPages.Html
+@{
+    int IntIdEmpresaSesion = VariableGlobal.SessionIntIdEmpresa;
+    Layout = "~/_SiteLayout.cshtml";
+
+    Page.Title = "Menus";
+
+}
+
+<link href="@VariableGlobal.StrUrlSitio/css/plugins/treetable/jquery.treetable.css" rel="stylesheet" />
+<link href="@VariableGlobal.StrUrlSitio/css/plugins/treetable/jquery.treetable.theme.default.css" rel="stylesheet" />
+
+<script src="@VariableGlobal.StrUrlSitio/css/plugins/treetable/jquery.treetable.js"></script>
+
+
+<div class="wrapper border-bottom white-bg page-heading">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <h2 class="text-center" id="lbl_TituloPagina">Menus</h2>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12  text-center">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-12 text-center m-sm">
+                        <button id="btn_expandir" class="btn btn-warning m-xs" type="button" title="Expandir" ><i class="fa fa-expand"></i> Expander</button>
+                        <button id="btn_contraer" class="btn btn-warning m-xs" type="button" title="Contraer" ><i class="fa fa-compress"></i> Contraer</button>
+                    </div>
+                </div>
+            </div>
+            <!--            <form role="form" id="form_Catalogo" action="" method="post" class="form-inline">
+                            <div class="form-group m-r-sm">
+                                <label for="lbl_FiltroMenu">Menú:</label>
+                                <input class="form-control" id="it_FiltroMenu" name="it_FiltroMenu" type="text" value="" />
+                            </div>
+
+                            <button id="btn_MenuFiltro" class="btn btn-warning" type="button" onclick="" title="Ver"><i class="fa fa-search"></i></button>
+                        </form>
+            -->
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox contenido-inicial">
+        <div class="ibox-content scroll">
+            <table id="tbl_Menu" class="table table-hover menu">
+                @*<caption>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <a class="btn btn-warning btn-block" href="#" onclick="jQuery('#tbl_Menu').treetable('expandAll'); return false;">Expandir</a>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <a class="btn btn-warning btn-block" href="#" onclick="jQuery('#tbl_Menu').treetable('collapseAll'); return false;">Contraer</a>
+                        </div>
+                    </caption>*@
+                <thead>
+                    <tr>
+                        <th>Menú</th>
+                        <th>Acciones</th>       <!-- Esto se llenara desde la tabla acciones un check por cada accion-->
+                    </tr>
+                </thead>
+                <tbody class="tb_MenuOpcion"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    // Declaración de constantes
+    var IntUno = 1;
+    var obj_MenuTable;
+    $("html").loading({ message: "Cargando información, espere..." });
+    $(document).ready(function ()
+    {
+
+        //$('#btn_MenuFiltro').click(function () {
+        //    fn_Cargar(0,0);
+        //});
+
+        //$("#it_FiltroMenu").keypress(function (e) {
+        //    if (e.which == 13) {
+        //        fn_Cargar(0,0);
+        //        return false;
+        //    }
+        //});
+
+        //Expandir
+        $('body').on("click", "#btn_expandir", function () {
+            $('#tbl_Menu').treetable('expandAll');
+            return false;
+        });
+
+        $('body').on("click", "#btn_contraer", function () {
+            $('#tbl_Menu').treetable('collapseAll');
+            return false;
+        });
+
+        $('body').on("click", ".btn_Guardar", function () {
+            fn_Grabar(this);
+        });
+
+        $('body').on("click", ".btn_Cerrar", function () {
+            $("tr[id='0'][idPadre='" + $(this).data("tt-parent-id") + "']").remove();
+        });
+
+        
+
+    });
+
+    $(window).load(function () {
+        //Carga inicial de Menús
+        fn_Cargar(0, 0);
+    });
+
+    function fn_Cargar(Carga,Expandir){
+
+        $.ajax({
+				url: "@VariableGlobal.StrUrlApi/Menu/",
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    ParamStrBuscar:  '', //$("#it_FiltroMenu").val(),
+                    ParamIntEjecuta: Carga,
+                    ParamIntUsuario: 0
+                },
+                async: false,
+                success: function (obj_Datos) {
+                    if (obj_Datos != null)
+                        fn_CargarCatalogo(obj_Datos, Expandir);
+                    else
+                        toastr["error"]("No se encotraron datos");
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    toastr["error"]("Ocurrió un error al obtener los datos del formulario: " + thrownError);
+                }
+			});
+        $("html").loading('stop');
+    }
+
+    function fn_CargarCatalogo(objListaCatalogo, Expandir) {
+        $("#tbl_Menu tbody").html("");
+
+        var json_MenuAcciones = '[]';
+
+
+        // Comenzamos recorrido del ObjListaCatalogo, el cual contiene todos los menus a dibujar
+        $.each(objListaCatalogo, function (index, value) {
+            var str_urledit = "menuAbc.cshtml?Popup=0&IdMenu=" + value.IntIdMenu;
+            var int_sister = value.IntIdMenu - 1;
+            var str_btnAgregar = '';
+            var tbl_Paginas = '';
+            var tbl_Acciones = '';
+            var tbl_TablaAcciones = '';
+
+            // De cada menu, obtenemos las acciones del mismo
+            json_MenuAcciones = JSON.parse(objListaCatalogo[index].StrJsonAcciones);
+
+            //Creamos la tabla del listado de acciones por pagina
+            //Estas son las paginas y las acciones disponibles del menu
+            //Solo obtenemos, no dibujamos de momento
+            $.each(json_MenuAcciones, function (index, value) {
+
+                if (value.StrJsonAcciones != "[]") {
+
+                    tbl_Acciones =
+                        '<td class="accion">' +
+                        value.acciones +
+                        '</td>';
+
+                    tbl_Paginas = tbl_Paginas +
+                        '<tr class="accion">' +
+                        '<td class="accion">' +
+                        value.pagina + ': ' + value.ruta+
+                        '</td>' +
+                        tbl_Acciones +
+                        '</tr>';
+                }
+            });
+
+            // Siempre y cuando el menu tenga Acciones
+            // Crearemos una tabla, que contiene las paginas y las acciones que anteriormente obtuvimos
+            if (value.StrJsonAcciones != "[]") {
+                tbl_TablaAcciones += '<table class="accion"">' +
+                                '<thead class="accion">' +
+                                    '<tr class="accion">' +
+                                        '<th class="accion">Pagina</th>' +
+                                        '<th class="accion">Acción</th>' +
+                                    '</tr > ' +
+                                '</thead>' +
+                                '<tbody class="accion">' +
+                                        tbl_Paginas +
+                                '</tbody>' +
+                                '</table>';
+            }
+            //Si y solo si el menu, NO contiene paginas relacionadas, asignaremos un boton, para que pueda agregar mas menus hijos
+            if (value.IntPaginasMenu < 1 )
+                str_btnAgregar = '<button class="btn btn-warning btn_Agregar" type="button" onclick="fn_AgregarDetalle(this);" title="Nuevo" id="' + value.IntIdMenu + '"><i class="fa fa-plus"></i></button>';
+
+            //Creamos el row o tr del menu que vamos a imprimir (que estamos recorriendo)
+            // A este se le integra el boton agregar, en caso que aplique por lo anterior
+            // Al row, le colocamos el data-tt-id = id del menu, data-tt-parent-id = id del menu padre
+            var row = '<tr id="' + value.IntIdMenu + '"data-tt-orden="'+value.IntOrden+'" data-tt-id="' + value.IntIdMenu + '" data-tt-parent-id="' + value.IntIdMenuPadre + '">' +
+                            '<td><a href="' + str_urledit + '" data-id=' + value.IntIdMenuPadre + '>' + value.StrDescMenu + '</a>' +
+                                str_btnAgregar  +
+                            '</td >' +
+                            '<td>' +
+                                tbl_TablaAcciones +
+                            '</td >' +
+                '</tr>';
+            // Si el menu NO tiene menu padre
+            //Imprimimos
+            //if (value.IntIdMenuPadre == 0) {
+
+                //GEG como ahora mandamos ordenado el menú, desde la BD, ya no es necesario aplicar este ordenamiento
+                $("#tbl_Menu tbody.tb_MenuOpcion").append(row);
+            //} else {
+                ////En caso de NO ser menu padre, comienza el dibujado de los menus
+                ////En el cual se busca dibujar hacia tu respectivo padre, siempre y cuando el exista, se insertara el row, como el ultimo hijo
+                //if ($("#tbl_Menu tbody.tb_MenuOpcion").find("tr[data-tt-parent-id='" + value.IntIdMenuPadre + "']").length) {         // ESTE ES EL SHOW
+
+                 
+                //    $(row).insertBefore($("#tbl_Menu tbody tr[data-tt-parent-id='" + value.IntIdMenuPadre + "']:first"));
+                //    //if (value.IntOrden <= 0) {
+                //    //    $(row).insertBefore($("#tbl_Menu tbody tr[data-tt-parent-id='" + value.IntIdMenuPadre + "']:first"));
+                //    //} else {
+                //    //    $(row).insertAfter($("#tbl_Menu tbody tr[data-tt-parent-id='" + value.IntIdMenuPadre + "']:last"));
+                //    //}
+                    
+                //} else {
+                //    // En caso de que no exista el menu padre, significa que tu seras el menu padre
+
+                  //}
+            //}
+        });
+
+        // Una ves obtenida la info de los menus, se aplica el tree
+        $("#tbl_Menu").treetable({
+            expandable: true,
+            onNodeCollapse: onNodeCollapse,
+            onNodeExpand: onNodeExpand
+        });
+        if (Expandir > 0) {
+            while (Expandir > 0) {
+                $('#tbl_Menu').treetable('expandNode', Expandir);
+                Expandir = $('#tbl_Menu tbody').find("tr[id='" + Expandir + "']").data("tt-parent-id");          //Obtenemos al proximo padre a expandir
+            }
+
+        }
+
+    }
+
+
+    function onNodeCollapse (){
+        $("button#" + this.id + "").addClass("hidden");
+        $("#tbl_Menu").treetable("collapseNode", this.id)
+        $("tr[data-tt-parent-id='" + this.id + "']").addClass("hidden");
+    }
+    function onNodeExpand() {
+        $("button#" + this.id + "").removeClass("hidden");
+        $("#tbl_Menu").treetable("expandNode",this.id)
+        $("tr[data-tt-parent-id='" + this.id + "']").removeClass("hidden");
+    }
+
+
+    //Funcion llamada cuando se da click en el boton + ó Nuevo
+    function fn_AgregarDetalle(element) {
+
+       var str_urledit = "menuAbc.cshtml?Popup=1&IdMenu=" + element.IntIdMenu;
+
+        // Generamos el row, que contendra la info del nuevo menu
+
+        var rows = '<tr id="0" data-tt-id="0" data-tt-parent-id="' + element.id + '" idPadre="' + element.id+'">' +
+            '<td><div class="form-group m-r-sm menu"><label for="it_NombreMenu" > Nombre:</label ><input class="form-control required minusculas" id="it_NombreMenu" name="it_NombreMenu" type="text" value="" /></div >' +
+            '<button class="btn btn-warning btn_Guardar" type="button" title="Nuevo" data-tt-parent-id="' + element.id + '"><i class="fa fa-save"></i></button> ' +
+            '<button class="btn btn-warning btn_Cerrar" type="button" title="Nuevo" data-tt-parent-id="' + element.id + '"><i class="fa fa-close"></i></button>' +
+            '</td > ' +
+            '</tr>';
+
+        // Imprimimos el row, en tu respectivo padre
+        $("#tbl_Menu tbody [data-tt-id='" + element.id + "']").after(rows);
+
+        var node = $("#tbl_Menu").treetable("node", element.id);
+
+    }
+
+    function fn_Grabar(element) {
+
+        //Al grabar obtenemos el idMenuPadre que tendra el nuevo menu y su descripcion
+        var idMenuPadre =   $(element).data("tt-parent-id");
+        var descMenu    =   $("tr[id='0'][idPadre='" + idMenuPadre + "'] td div input#it_NombreMenu").val();
+
+        //validaciones
+        if (!obj_ClaseGlobal.fn_ValidarDatosFormulario()) {
+            return false;
+        }
+
+        //declaramos el objeto que se le pasara al controlador
+        var obj_MenuInsertar = {
+            StrDescMenu: descMenu,
+            IntIdMenuPadre: idMenuPadre,
+            IntBActivo: IntUno
+        }
+
+        //Mandamos los datos al webmethod para guardar los datos
+        var str_Metodo = "POST";
+        var str_Url = "";
+
+        str_Url = "@VariableGlobal.StrUrlApi/Menu";
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_MenuInsertar),
+            type: str_Metodo,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function(obj_Datos) {
+                if (obj_Datos["IntError"] > 0) {           // Si existe error..
+                    toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                } else {                                    // Si no exister error..
+                    toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"])
+                    $('#tbl_Menu').treetable('destroy');
+                    fn_Cargar(0, idMenuPadre);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                toastr["error"]("Ocurrió un error al guardar los datos del formulario: " + thrownError);
+            }
+        });
+
+    }
+
+</script>
+
+
+<style>
+    table.accion {
+        width: 100%;
+    }
+
+    thead.accion {
+        background: #d0d0d0 !important;
+    }
+
+    tr.accion {
+        text-align: center;
+        color: #272727;
+    }
+
+    th.accion {
+        border: 1px solid #888;
+        text-align: center !important;
+        font-size: 14px;
+        font-weight: bolder;
+    }
+
+    td.accion {
+        border: 1px solid #888;
+        text-align: left;
+        font-size: 12px;
+    }
+</style>

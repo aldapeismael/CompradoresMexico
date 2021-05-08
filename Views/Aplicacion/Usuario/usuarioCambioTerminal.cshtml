@@ -1,0 +1,102 @@
+﻿@{
+    Page.Title = "Cambio de terminal";
+    var ddl_TerminalUsuario = new TerminalController().ObtenerLista(7, VariableGlobal.SessionIntIdUsuario);
+}
+
+
+<div id="ModalAjuste" class="wrapper wrapper-content">
+	<div class="col-lg-12">
+		<div class="ibox float-e-margins">
+			<div class="ibox-content">
+				<form method="get" class="form-horizontal" id="form_CambioTerminal">
+					<div>
+						<div class="form-group">
+							<label for="ddl_TerminalUsuario" class="col-lg-2 col-xs-4 control-label">Terminal:</label>
+							<div class="col-lg-10 col-xs-8">
+								<select class="form-control required" id="ddl_TerminalUsuario">
+									@foreach (var fila in ddl_TerminalUsuario)
+									{
+										<option value="@fila.idTerminal" data-descripcion="@fila.descTerminal.ToString()" data-clave="@fila.cveTerminal.ToString()">@fila.cveTerminal - @fila.descTerminal.ToString()</option>
+									}
+								</select>
+							</div>
+						</div>
+					</div>
+					<!-- Botones de Guardar y Cancelar -->
+					<div class="form-group">
+						<div class="row">
+							<div class="col-sm-12 text-center m-sm">
+								<button id="btn_GrabarCambioTerminal" class="btn btn-primary m-xs" type="button" title="Guardar"><i class="fa fa-check"></i> Guardar</button>
+								<button id="btn_CancelarCambioTerminal" class="btn btn-danger m-xs" type="button" title="Cancelar"><i class="fa fa-times"></i> Regresar</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	var int_Terminal = $("#ddl_TerminalUsuario").val();
+
+    $(document).ready(function () {
+        $('#btn_CancelarCambioTerminal').click(function () {
+            $.pgwModal('close');
+        });
+
+        $('#btn_GrabarCambioTerminal').click(function () {
+            fn_GrabarCambioTerminal();
+        });
+
+		$("#ddl_TerminalUsuario option[value='" + @VariableGlobal.SessionIntIdTerminal + "']").prop('selected', true);
+		
+    });
+    function fn_GrabarCambioTerminal() {
+
+        if (!obj_ClaseGlobal.fn_ValidarDatosFormulario("#form_CambioTerminal")) {
+            return false;
+        }
+
+        //Mandamos los datos al webmethod para guardar los datos
+        var str_Metodo = "";
+        var str_Url = "";
+        str_Metodo = "GET";
+        str_Url = "@VariableGlobal.StrUrlApi/Acceso/CambiarTerminal/0";
+
+        $.ajax({
+            url: str_Url,
+			async: false,
+            data: {
+				Param_IntIdTerminal : parseInt($("#ddl_TerminalUsuario").val())||0,
+				Param_StrDescTerminal : $("#ddl_TerminalUsuario option:selected").data("descripcion"),
+				Param_StrCveTerminal : $("#ddl_TerminalUsuario option:selected").data("clave")
+            },
+            type: str_Metodo,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (obj_Datos) {
+               
+                if (obj_Datos.ObjRespuestaBdValidar != undefined && obj_Datos.ObjRespuestaBdValidar.IntError == 1) {
+                    toastr["error"](obj_Datos.ObjRespuestaBdValidar.StrMensajeError);
+                    return;
+                }
+
+				if (int_Terminal > 0 && obj_Datos.BoolValido === 1 && int_Terminal !== obj_Datos.IntIdTerminalDefault) {
+					toastr["success"]("El cambió a la terminal " + obj_Datos.StrDescTerminal + " se hizo correctamente");
+                    $("#span_footerDescTerminal").text(obj_Datos.StrDescTerminal);
+				    location.href = "http://"+"@VariableGlobal.StrUrlProyecto/Views/Default/Default.cshtml";
+				}
+
+                $.pgwModal('close');//cerramos el modal
+            }
+			, error: function (xhr, ajaxOptions, thrownError) {
+				toastr["error"]("Ocurrió un error al cambiar la terminal: " + thrownError);
+			}
+        });
+
+    }
+</script>
+

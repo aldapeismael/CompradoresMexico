@@ -1,0 +1,227 @@
+﻿@using System.Web.WebPages.Html
+@{
+
+    //verificamos si trae parametro para ser Popup o ventana
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+    int IdAccion = int.Parse(Request.QueryString["IdAccion"]?.ToString() ?? "0");
+
+    if (IntPopUp == 0)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+    }
+
+    Page.Title = "Acciones";
+}
+
+<div id="ModalAjuste" class="wrapper wrapper-content">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            @{
+                if (IntPopUp == 0)
+                {
+                    <div class="ibox-title text-center">
+                        <h2>@Page.Title</h2>
+                    </div>
+                }
+            }
+            <div class="ibox-content">
+                <form method="get" class="form-horizontal">
+                    <div>
+                        <div id="div_Id" class="form-group hidden">
+                            <label for="it_Id" class="col-lg-4 control-label">Id:</label>
+                            <div class="col-lg-8">
+                                <input class="form-control required" type="text" name="it_Id" id="it_Id" disabled="true"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="it_CveAccion" class="col-lg-4 control-label">Cve Acción:</label>
+                            <div class="col-lg-8">
+                                <input class="form-control required" type="text" name="it_CveAccion" id="it_CveAccion" placeholder="" maxlength="30"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="it_Accion" class="col-lg-4 control-label">Acción:</label>
+                            <div class="col-lg-8">
+                                <input class="form-control required" type="text" name="it_Accion" id="it_Accion" placeholder="" maxlength="30"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="it_Funcion" class="col-lg-4 control-label">Función:</label>
+                            <div class="col-lg-8">
+                                <input class="form-control required" type="text" name="it_Funcion" id="it_Funcion" placeholder="" maxlength="30"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="it_Objeto" class="col-lg-4 control-label">Nombre objeto(en el Form):</label>
+                            <div class="col-lg-8">
+                                <input class="form-control required" type="text" name="it_Objeto" id="it_Objeto" placeholder="" maxlength="30"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="it_IdObjeto" class="col-lg-4 control-label">Id objeto(en el Form):</label>
+                            <div class="col-lg-8">
+                                <input class="form-control required" type="text" name="it_IdObjeto" id="it_IdObjeto" placeholder=""/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="it_ClaseObjeto" class="col-lg-4 control-label">Clase objeto(en el Form):</label>
+                            <div class="col-lg-8">
+                                <input class="form-control required" type="text" name="it_ClaseObjeto" id="it_ClaseObjeto" placeholder=""/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="it_IconoObjeto" class="col-lg-4 control-label">Icono objeto(en el Form):</label>
+                            <div class="col-lg-8">
+                                <input class="form-control required" type="text" name="it_IconoObjeto" id="it_IconoObjeto" placeholder=""/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="i-checks">
+                                <label for="check_Activo" class="col-sm-4 control-label">Activo:</label>
+                                <div class="col-lg-8">
+                                    <div class="i-checks form-control">
+                                        <input type="checkbox" id="check_Activo" name="check_Activo" class="form-control checkbox" value="" checked="true">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <button id="btn_Cancelar" class="btn btn-danger pull-right m-xs" type="button" title="Regresar">
+                                <i class="fa fa-times"></i> Regresar
+                            </button>
+                            <button id="btn_Guardar" onclick="" class="btn btn-primary pull-right m-xs" type="button" title="Guardar">
+                                <i class="fa fa-check"></i> Grabar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    //pasamos el valor Razor a variable de javascript
+    var int_IdAccion = @IdAccion; //valor de la tabla campo 'id'
+
+    $(document).ready(function () {
+
+        $('#btn_Cancelar, .btn_Cancelar').click(function() {
+            $.pgwModal('close'); //cerramos el modal
+        });
+
+        $('.i-checks').iCheck({
+            checkboxClass: 'icheckbox_square-orange',
+            radioClass: 'iradio_square-orange',
+        });
+
+        $("#btn_Guardar").click(function () {
+            fn_Grabar();
+        });
+
+        fn_Cargar();
+    });
+
+    function fn_Grabar() {
+
+        //validaciones
+        if (!obj_ClaseGlobal.fn_ValidarDatosFormulario()) {
+            return false;
+        }
+
+        //declaramos el objeto que se le pasara al controlador
+        var obj_Insertar = {
+            IntIdAccion: int_IdAccion
+            , StrDescAccion: $("#it_Accion").val()
+            , StrCveAccion: $("#it_CveAccion").val()
+            , StrObjetoFuncion: $("#it_Funcion").val()
+            , StrObjetoNombre: $("#it_Objeto").val()
+            , StrObjetoId: $("#it_IdObjeto").val()
+            , StrObjetoClase: $("#it_ClaseObjeto").val()
+            , StrObjetoIcono: $("#it_IconoObjeto").val()
+            ,IntBActivo: ($('#check_Activo').is(':checked')) ? 1: 0
+        }
+
+        //Mandamos los datos al webmethod para guardar los datos
+        var str_Metodo = "";
+
+        if (int_IdAccion > 0) {
+            str_Metodo = "PUT";
+        } else {
+            str_Metodo = "POST";
+        }
+
+        $.ajax({
+            url: "@VariableGlobal.StrUrlApi/Accion",
+            data: JSON.stringify(obj_Insertar),
+            type: str_Metodo,
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(obj_Datos) {
+                //Se manda el mensaje de exito
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                if (obj_Datos["IntError"] > 0) {
+                    var int_PaginaActual = obj_DataTable.page();//obtenemos la pagina que se encuentra el datatable
+                    obj_DataTable.ajax.reload();//se recarga el objeto datatable con los datos actualizados
+                    obj_DataTable.page(int_PaginaActual).draw("page");//se mantiene en la pagina que estava
+                    if (str_Metodo == "POST") $.pgwModal('close');//cerramos el modal
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                toastr["error"]("Ocurrió un error al guardar los datos del formulario: " + thrownError);
+            }
+        });
+    }
+
+    //fucnion que cargara las funciones iniciales
+    function fn_Cargar() {
+
+        if (int_IdAccion > 0
+        ) { // si trae id, entonces se procede a obtener los datos del controller para posteriormente llenar el form
+            $.ajax({
+                url: "@VariableGlobal.StrUrlApi/Accion/" + int_IdAccion,
+                type: "GET",
+                async: false,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (obj_Datos) {
+                    $("#div_Id").removeClass("hidden");
+                    $("#it_Id").val(obj_Datos.IntIdAccion);
+                    $("#it_Accion").val(obj_Datos.StrDescAccion);
+                    $("#it_CveAccion").val(obj_Datos.StrCveAccion);
+                    $("#it_Funcion").val(obj_Datos.StrObjetoFuncion);
+                    $("#it_Objeto").val(obj_Datos.StrObjetoNombre);
+                    $("#it_IdObjeto").val(obj_Datos.StrObjetoId);
+                    $("#it_ClaseObjeto").val(obj_Datos.StrObjetoClase);
+                    $("#it_IconoObjeto").val(obj_Datos.StrObjetoIcono);
+                    if (obj_Datos.IntBActivo > 0) {
+                        $("#check_Activo").iCheck("check");
+                    } else {
+                        $("#check_Activo").iCheck("uncheck");
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    toastr["error"]("Ocurrió un error al obtener los datos del formulario: " + thrownError);
+                }
+            });
+        }
+
+        obj_TouchSpin = new class_touchspin();
+        obj_TouchSpin.fn_CargaInputs();
+    }
+</script>

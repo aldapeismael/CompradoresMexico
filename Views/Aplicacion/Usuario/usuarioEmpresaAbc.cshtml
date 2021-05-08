@@ -1,0 +1,791 @@
+﻿@using System.Web.WebPages.Html
+@using Newtonsoft.Json;
+@{
+    Page.Title = "Usuario Empresa";
+    int intIdSolicitudInversion = int.Parse(Request.QueryString["idSolicitudInversion"]?.ToString() ?? "0");
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+    int IntIdUsuarioEmpresa = int.Parse(Request.QueryString["IdUsuarioEmpresa"]?.ToString() ?? "0");
+    int IntIdUsuario = int.Parse(Request.QueryString["IdUsuario"]?.ToString() ?? "0");
+
+
+    ///////////////////////////////////////////////
+    //Codigo para reglas de negocio y Obtener botones
+    ///////////////////////////////////////////////
+
+    string Strurl = Request.RawUrl;
+    bool urlDefault = Strurl.Contains("Default.cshtml");
+    List<Accion> objAccion = null;
+    String jsonAccionPagina = null;
+    String jsonReglasNegocio = null;
+    var int_Robot = VariableGlobal.SessionIntBRobot;
+
+    // Comienza petición de acciones para la pagina
+    var objAccesoPagina = new PaginaMenuController().Get((int_Robot == 1 ? 2 : 1), Strurl);
+
+
+    if (IntPopUp == 0)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+        // Comienza petición de acciones para la pagina
+        jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+        jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+        objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+    }
+    else
+    {
+        //So el usuario no es robot, no tiene acceso a la pagina y la pagina no es default
+        if (VariableGlobal.SessionIntBRobot != 1 && objAccesoPagina.Content.IntIdPagina == 0 && !urlDefault)
+        {
+            Response.Redirect("~/Views/Aplicacion/Acceso/SinAcceso.cshtml?Popup=1");
+        }
+        else
+        {
+            // Comienza petición de acciones para la pagina
+            jsonAccionPagina = objAccesoPagina.Content.StrJsonPaginaAccion;
+            jsonReglasNegocio = objAccesoPagina.Content.StrJsonReglasNegocio;
+            objAccion = JsonConvert.DeserializeObject<List<Accion>>(jsonAccionPagina ?? "");
+        }
+
+    }
+
+    ///////////////////////////////////////////////
+    //Fin de Codigo para reglas de negocio y Obtener botones
+    ///////////////////////////////////////////////
+
+    //Listas
+    var ddl_Empresas = new EmpresaController().ObtenerLista(3, IntIdUsuario);
+    var ddl_Terminales = new TerminalController().ObtenerLista(4, VariableGlobal.SessionIntIdEmpresa);
+    var ddl_MultiListaTipoUsuario = new MultiListaController().ObtenerLista(14, 0, "TipoUsuario");
+}
+<script src="@VariableGlobal.StrUrlSitio/Scripts/EasyAutocomplete/jquery.easy-autocomplete.js"></script>
+<link href="@VariableGlobal.StrUrlSitio/Scripts/EasyAutocomplete/easy-autocomplete.css" rel="stylesheet" />
+
+<div class="wrapper wrapper-content Modal_UsuarioEmpresa" id="">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            @{
+                if (IntPopUp == 0)
+                {
+                    <div class="ibox-title text-center">
+                        <h2>@Page.Title</h2>
+                    </div>
+                }
+            }
+            <div class="ibox-content">
+                <form action="" method="post" class="form-horizontal" id="form_altaDocumento">
+                    <div class="col-lg-12">
+                        <div class="col-lg-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="ddl_Empresa" class="col-lg-4 control-label">Empresa:</label>
+                                <div class="col-sm-8">
+                                    @Html.DropDownList("ddl_Empresa",
+                                        "- SELECCIONE -",
+                                        ddl_Empresas.Select(x => new SelectListItem() {Value = x.idEmpresa.ToString(), Text = x.cveEmpresa.ToString() + " - " + x.descEmpresa.ToString()}),
+                                        0,
+                                        new {@class = "form-control required"})
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ddl_Empresa" class="col-lg-4 control-label">Terminal Predeterminada:</label>
+                                <div class="col-sm-8 div_TerminalPredeterminada">
+                                    <select id="ddl_TerminalesPredeterminada" name="ddl_TerminalesPredeterminada" class="form-control required"><option value="0">- SELECCIONE -</option></select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="check_AccesoRemoto" class="col-lg-4 col-sm-6 col-xs-6 control-label">Acceso Remoto:</label>
+                                <div class="col-lg-8 col-sm-6 col-xs-6">
+                                    <div class="i-checks form-control">
+                                        <input type="checkbox" id="check_AccesoRemoto" name="check_AccesoRemoto" class="" value="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="check_ActivoUsuarioEmpresa" class="col-lg-4 col-sm-6 col-xs-6 control-label">Activo:</label>
+                                <div class="col-lg-8 col-sm-6 col-xs-6">
+                                    <div class="i-checks form-control">
+                                        <input type="checkbox" id="check_ActivoUsuarioEmpresa" name="check_ActivoUsuarioEmpresa" class="" value="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-xs-12">
+                            <div class="form-group">
+                                <label for="ddl_Perfil" class="col-lg-4 control-label">Perfil:</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="ddl_Perfil"></select>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="form-group">
+                                <label for="ddl_TipoUsuarioEmpresa" class="col-sm-4 control-label">Tipo usuario:</label>
+                                <div class="col-sm-8">
+                                    @Html.DropDownList("ddl_TipoUsuarioEmpresa",
+                                        "- SELECCIONE -",
+                                        ddl_MultiListaTipoUsuario.Select(x => new SelectListItem() {Value = x.valor1num.ToString(), Text = x.descMultiLista.ToString()}),
+                                        0,
+                                        new {@class = "form-control required"})
+                                </div>
+                            </div>
+
+
+                            <div class="form-group has-feedback hidden" id="div_TipoUsuario">
+                                <label for="it_cveTipo" class="col-lg-4 col-sm-12 col-xs-12 control-label" id="lbl_TipoUsuario">Tipo Usuario:</label>
+                                <div class="col-lg-8 col-sm-12 col-xs-12">
+                                    <input class="form-control autocompletePosicionAbsoluta" type="text" id="it_cveTipo" name="it_cveTipo" placeholder="" data-id="" maxlength="20" />
+                                    <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+                                    <input class="form-control" type="text" id="it_DescTipoUsuario" name="it_DescTipoUsuario" placeholder="" data-id="" maxlength="20" readonly />
+                                </div>
+                            </div>
+                            @*<div id="TipoEmpleado" style="display:none">
+                                    <div class="form-group has-feedback">
+                                        <label for="selectIdEmpleado" class="col-sm-4 control-label">Empleado</label>
+                                        <div class="col-sm-8">
+                                            <div class="form-inline">
+                                                <input class="form-control" type="text" id="it_Empleado" name="it_Empleado" data-id="">
+                                                <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group has-feedback">
+                                        <label for="selectIdEmpleado" class="col-sm-4 control-label">Empleado</label>
+                                        <div class="col-sm-8">
+                                            <div class="form-inline">
+                                                <label id="it_NomEmpleado" name="it_NomEmpleado"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="TipoOperador" style="display:none">
+                                    <div class="form-group has-feedback">
+                                        <label for="selectIdOperador" class="col-sm-4 control-label">Operador</label>
+                                        <div class="col-sm-8">
+                                            <div class="form-inline">
+                                                <input class="form-control" type="text" id="it_Operador" name="it_Operador" data-id="">
+                                                <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group has-feedback">
+                                        <label for="selectIdEmpleado" class="col-sm-4 control-label">Operador</label>
+                                        <div class="col-sm-8">
+                                            <div class="form-inline">
+                                                <label id="it_NomOperador" name="it_NomOperador"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>*@
+                            <div class="form-group has-feedback">
+                                <label for="it_PuestoRH" class="col-lg-4 col-sm-12 col-xs-12 control-label">Puesto RH:</label>
+                                <div class="col-lg-8 col-sm-12 col-xs-12">
+                                    <input class="form-control autocompletePosicionAbsoluta" type="text" id="it_PuestoRH" name="it_PuestoRH" placeholder="" data-id="" maxlength="20" />
+                                    <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+                                    <input class="form-control" type="text" id="it_NomPuestoRH" name="it_NomPuestoRH" placeholder="" data-id="" maxlength="20" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <div class="hr-line-solid-2"></div>
+
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="tabs-container">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a data-toggle="tab" href="#tab_TerminalesUsuario"> Terminales</a></li>
+                                <li class=""><a data-toggle="tab" href="#tab_AplicacionesUsuario">Aplicaciones</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <!-- Tab 1 - Terminales -->
+                                <div id="tab_TerminalesUsuario" class="tab-pane active">
+                                    <div class="panel-body">
+                                    </div>
+                                </div>
+
+                                <!-- Tab 2 - Aplicaciones -->
+                                <div id="tab_AplicacionesUsuario" class="tab-pane ">
+                                    <div class="panel-body">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Guardar y Cancelar -->
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-12 text-center m-sm">
+                                @{
+                                    var BtnAccioGrabar = objAccion.Where(x => x.StrCveAccion == "Editar").ToList();
+                                    if (BtnAccioGrabar.Count != 0)
+                                    {
+                                        <button id="@BtnAccioGrabar[0].StrObjetoId" name="@BtnAccioGrabar[0].StrObjetoId" class="@BtnAccioGrabar[0].StrObjetoClase" type="button" title="@BtnAccioGrabar[0].StrObjetoNombre"><i class="@BtnAccioGrabar[0].StrObjetoIcono"></i> @BtnAccioGrabar[0].StrObjetoNombre</button>
+                                    }
+                                }
+                                @{
+                                    var BtnAccionRegresar = objAccion.Where(x => x.StrCveAccion == "Regresar").ToList();
+                                    if (BtnAccionRegresar.Count != 0)
+                                    {
+                                        <button id="@BtnAccionRegresar[0].StrObjetoId" class="@BtnAccionRegresar[0].StrObjetoClase" type="button" title="@BtnAccionRegresar[0].StrObjetoNombre"><i class="@BtnAccionRegresar[0].StrObjetoIcono"></i> @BtnAccionRegresar[0].StrObjetoNombre</button>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var int_IdUsuarioEmpresa = @IntIdUsuarioEmpresa;
+    var int_IdUsuario = @IntIdUsuario;
+    var int_Cabecera = 0;
+    var str_cveTipoProceso = "";
+
+    $(document).ready(function () {
+
+        obj_ClaseGlobal.fn_CargarAutocompletePosicionAbsoluta();
+        obj_ClaseGlobal.fn_PintarAsteriscosCamposObligatorios();
+
+        fn_CargaEventos();
+        fn_CargaAutocomplete();
+        fn_Cargar();
+
+    });
+
+    function fn_CargaEventos() {
+
+        $(".Modal_UsuarioEmpresa").find("#btn_Grabar").on("click", function () {
+            fn_GrabarUsuarioEmpresa();
+        });
+
+        $('#btn_Regresar, .btn_Regresar').click(function () {
+            if (@IntPopUp === 0) {
+                setTimeout(function() {
+                        location.href = "razonEliminaLista.cshtml";
+                    },
+                    1500);
+            } else {
+                $.pgwModal('close');//cerramos el modal
+            }
+        });
+
+        $("#ddl_Empresa").on("change", function () {
+            var idEmpresa = $(this).val();
+
+            if (idEmpresa == 0) {
+                $("#tab_TerminalesUsuario > .panel-body ").html("");
+                $("#tab_AplicacionesUsuario > .panel-body ").html("");
+                return false
+            }
+
+            fn_ObtenerPerfiles(idEmpresa);
+            fn_ObtenerTerminales(idEmpresa);
+        });
+
+        $("body").on("blur", "#it_PuestoRH", function (e) {
+            if ($('#it_NomPuestoRH').data("id") === 0 || $('#it_NomPuestoRH').data("vSel") !== $('#it_PuestoRH').val()) {
+                $('#it_PuestoRH').val("").data("id", 0).data("vSel", "");
+                $('#it_NomPuestoRH').val("").data("id", 0).data("vSel", "");
+            }
+        });
+
+        //Obtiene la clave para cargar el autocomplete correcto
+        $("#ddl_TipoUsuarioEmpresa").change(function () {
+            str_cveTipoProceso = $("#ddl_TipoUsuarioEmpresa option:selected").text();     
+            $('#div_TipoUsuario').removeClass('hidden');
+            $('#lbl_TipoUsuario').text(str_cveTipoProceso + ": ");
+            fnLimpiarAutocomplete();
+        });
+
+        $("body").on("blur", "#it_cveTipo", function (e) {
+            if ($('#it_DescTipoUsuario').data("vsel") !== "" && ($('#it_DescTipoUsuario').data("id") == 0 || $('#it_DescTipoUsuario').data("vsel") != $('#it_cveTipo').val())) {
+                fnLimpiarAutocomplete();
+            };
+        });
+    }
+
+    function fnLimpiarAutocomplete() {
+        $('#it_cveTipo').val("").data("id", 0).data("vsel", "");
+        $('#it_DescTipoUsuario').val("").data("id", 0).data("vsel", "");
+    }
+
+    function fn_CargaAutocomplete() {
+        //------------------------------------------------------------------------------------------------------
+        //---- AUTOCOMPLETE DE TIPO DE USUARIO
+        //------------------------------------------------------------------------------------------------------
+        var obj_opcionesAutoCompleteTipoUsuario = {
+            url: function (str_Buscar) {
+                int_Cabecera = 0;
+                return "@VariableGlobal.StrUrlApi/" + str_cveTipoProceso + "Listado/ObtenerAutoComplete/0";//le pasa la frase tecleada
+            },
+            ajaxSettings: {
+                dataType: "json",
+                method: "POST",
+                data: {
+                    dataType: "json"
+                }
+            },
+            preparePostData: function (data) {
+                data.IntLimite = 20;
+                data.IntTipoBusqueda = 0;
+                data.StrBuscar = $("#it_cveTipo").val();
+                return data;
+            },
+            getValue: "Text",
+            requestDelay: 300, //EL TIEMPO que esperara el plugin para iniciar la busqueda
+            theme: "round",
+            listLocation: "listResults",//le indicamos de que objeto obtendra el texto a mostrar
+            matchResponseProperty: "inputPhrase",
+            list: {
+                onSelectItemEvent: function () {
+
+                    var objSeleccionado = $("#it_cveTipo").getItemData($("#it_cveTipo").getSelectedItemIndex());
+                    var intIdSeleccionado = objSeleccionado.Value;
+                    $("#it_cveTipo").data("id", intIdSeleccionado);
+
+                    switch (str_cveTipoProceso) {
+                        case 'Empleado':
+                            $("#it_DescTipoUsuario").data("vsel", objSeleccionado.Text);
+                            $("#it_DescTipoUsuario").data("id", objSeleccionado.Value);
+                            $("#it_DescTipoUsuario").val(objSeleccionado.Value + " - " + objSeleccionado.Text);
+                            break;
+                        case 'Operador':
+                            $("#it_DescTipoUsuario").data("vsel", objSeleccionado.Text);
+                            $("#it_DescTipoUsuario").data("id", objSeleccionado.Value);
+                            $("#it_DescTipoUsuario").val(objSeleccionado.IdRef1 + " - " + objSeleccionado.Text);
+                            break;
+                    }
+
+                },
+                onHideListEvent: function () {
+                    $("#div_Encabezado").hide();
+                },
+                onShowListEvent: function () {
+                    $("#div_Encabezado").show();
+                },
+                onLoadEvent: function() {
+                    if ($('#ddl_TipoUsuarioEmpresa').val() <= 0) {
+                        toastr["warning"]("Debe seleccionar un tipo de usuario");
+                        $('#ddl_TipoUsuarioEmpresa').focus();
+                        return false;
+                    }
+                },
+                maxNumberOfElements: 10000
+            },
+            template: {
+                type: "custom",
+                method: function (value, item) {
+                    var str_encabezado = '';
+                    $("#div_Encabezado").remove();
+                    int_Cabecera = 0;
+
+                    switch (str_cveTipoProceso) {
+                        case 'Empleado':
+                            //return item.Text; //aqui va el html que se mostrara en la lista
+                            if (int_Cabecera == 0) {
+                                int_Cabecera++;
+                                if (!$("#div_Encabezado").length)
+                                    $("#eac-container-it_cveTipo").append("<div id='div_Encabezado' class='div_Encabezado eac-item'>" +
+                                        "<table class='table table-bordered tabla-grid' style='margin-bottom:0px;font-size:10px;'>" +
+                                        "<thead><tr><th class='col-md-6 text-center'>Id</th><th class='col-md-6 text-center'>Nombre</th></tr></thead></table></div>");
+                            }
+                            return "<table class='table table-bordered tabla-grid' style='margin-bottom:0px;font-size:10px;'><tr><td class='col-md-6'>" + item.Value + "</td><td class='col-md-6'>" + item.Text + "</td></tr></table>";
+                            break;
+                        case 'Operador':
+                            if (int_Cabecera == 0) {
+                                int_Cabecera++;
+                                if (!$("#div_Encabezado").length)
+                                    $("#eac-container-it_cveTipo").append("<div id='div_Encabezado' class='div_Encabezado eac-item'>" +
+                                        "<table class='table table-bordered tabla-grid' style='margin-bottom:0px;font-size:10px;'>" +
+                                        "<thead>" +
+                                        "<tr>" +
+                                        "<th class='col-md-6'>Num. Nomina</th>" +
+                                        "<th class='col-md-6'>Nombre</th></tr></thead></table></div>");
+                            }
+                            return "<table class='table table-bordered tabla-grid' style='margin-bottom:0px;font-size:10px;'><tr><td class='col-md-6'>" + item.IdRef1 + "</td><td class='col-md-6'>" + item.Text + "</td></tr></table>";
+                        break;
+                    }
+                }
+            }
+        }
+        $("#it_cveTipo").easyAutocomplete(obj_opcionesAutoCompleteTipoUsuario);
+
+        //------------------------------------------------------------------------------------------------------
+        //---- AUTOCOMPLETE DE PUESTO RH
+        //------------------------------------------------------------------------------------------------------
+
+        var obj_opcionesAutoComplete = {
+            url: function (str_Buscar)
+                {
+                    int_Cabecera = 0;
+
+                    if (str_Buscar !== "") {
+                        return "@VariableGlobal.StrUrlApi/PuestoListado?IntLimite=20&IntTipoBusqueda=0&StrBuscar=" + str_Buscar;//le pasa la frase tecleada
+                    } else {
+                        return "@VariableGlobal.StrUrlApi/PuestoListado?IntLimite=20&IntTipoBusqueda=0&StrBuscar=empty";// manda vacio
+                    }
+                },
+                getValue: "Text",
+                requestDelay: 300, //EL TIEMPO que esperara el plugin para iniciar la busqueda
+                theme: "round",
+                listLocation: "listResults",//le indicamos de que objeto obtendra el texto a mostrar
+                matchResponseProperty: "inputPhrase",
+                list: {
+                    onChooseEvent: function () {
+                        var objSeleccionado = $("#it_PuestoRH").getItemData($("#it_PuestoRH").getSelectedItemIndex());
+                        console.log(objSeleccionado.Value);
+                        $("#it_NomPuestoRH").data("id", objSeleccionado.Value);
+                        $("#it_NomPuestoRH").data("vSel", objSeleccionado.Text);
+                        $("#it_NomPuestoRH").val(objSeleccionado.Text);
+                    },
+                    maxNumberOfElements: 10000,// numero de resultados que mostrara
+                    onHideListEvent: function () {              // Requerido para tabla en autocomplete
+                        $("#div_Encabezado").hide();
+                    },
+                    onShowListEvent: function () {
+                        $("#div_Encabezado").show();    // Requerido para tabla en autocomplete
+                    },
+                },
+                template: {
+                    type: "custom",
+                    method: function (value, item) {
+                        $("#div_Encabezado").remove();
+                        int_Cabecera = 0;
+
+                        if (int_Cabecera == 0) {            //Comienza dibujo de encabezado
+                            int_Cabecera++;
+                            if (!$("#div_Encabezado").length)       // Si no existe el encabezado, lo dibujamos, en el encabezado cada th se colocan las clases para el tamaño
+                                $("#eac-container-it_PuestoRH").append("<div id='div_Encabezado' class='div_Encabezado eac-item'>" +
+                                    "<table class='table table-bordered tabla-grid' style='margin-bottom:0px;font-size:10px;'>" +
+                                    "<thead>" +
+                                    "<tr>" +
+                                    "<th class='col-md-4 text-center'>Id</th>" +
+                                    "<th class='col-md-4 text-center'>Puesto</th>" +
+                                    "</tr></thead></table></div>");
+                        }
+                        return "<table class='table table-bordered tabla-grid' style='margin-bottom:0px;font-size:10px;'><tr><td class='col-md-4'>" + item.Value + "</td><td class='col-md-4'>" + item.Text + "</td></tr></table>";
+                    }
+                }
+            }
+        $("#it_PuestoRH").easyAutocomplete(obj_opcionesAutoComplete);
+    }
+
+    function fn_ObtenerTerminales(idEmpresa) {
+
+        $.ajax({
+            url: "@VariableGlobal.StrUrlApi/Terminal/"
+            , data: {
+                ParamTipoBusqueda: 4,
+                ParamTipoFiltro: idEmpresa
+            }
+            , type: "GET"
+            , contentType: "application/json; charset=utf-8"
+            , dataType: "json"
+            , async: false
+            , success: function (obj_Datos) {
+
+                //console.log(obj_Datos);
+
+                var str_Opciones = '';
+                var str_TerminalesPredeterminada = '';
+
+                str_TerminalesPredeterminada += '<select id="ddl_TerminalesPredeterminada" name="ddl_TerminalesPredeterminada" class="form-control required">';
+                str_TerminalesPredeterminada += '<option value="0">- SELECCIONE -</option>';
+                $(obj_Datos).each(function (index, value) {
+
+                    str_TerminalesPredeterminada += '<option value="' + value.IntIdTerminal+'">' + value.StrCveTerminal + ' - ' + value.StrDescTerminal +'</option>';
+
+                    str_Opciones += '<div class="form-group">' +
+                        ' <label for="" class="col-sm-6 col-xs-6 control-label">' + value.StrCveTerminal + ' - ' + value.StrDescTerminal +':</label>' +
+                        ' <div class="col-sm-6 col-xs-6">' +
+                        '     <div class="i-checks">' +
+                        '         <input class="form-control cehckTerminales" id="cehckTerminal_' + value.IntIdTerminal + '" name="cehckTerminal_' + value.IntIdTerminal + '" value="' + value.IntIdTerminal +'" type="checkbox" /> <i></i>' +
+                        '     </div>' +
+                        ' </div>' +
+                        '</div>';
+                });
+                str_TerminalesPredeterminada += '</select>';
+
+                //console.log(str_TerminalesPredeterminada)
+
+                $(".div_TerminalPredeterminada").html(str_TerminalesPredeterminada);
+                $("#tab_TerminalesUsuario > .panel-body ").html(str_Opciones);
+
+                fn_ObtenerAplicaciones(idEmpresa);
+            }
+        });
+    }
+    function fn_ObtenerAplicaciones(idEmpresa) {
+
+        $.ajax({
+            url: "@VariableGlobal.StrUrlApi/AplicacionComplementaria/"
+            , data: {
+                ParamTipoBusqueda: 2,
+                ParamTipoFiltro: idEmpresa
+            }
+            , type: "GET"
+            , contentType: "application/json; charset=utf-8"
+            , dataType: "json"
+            , async: false
+            , success: function (obj_Datos) {
+
+                var str_Opciones = '';
+                $(obj_Datos).each(function (index, value) {
+                    str_Opciones += '<div class="form-group ">' +
+                        ' <label for="" class="col-sm-6 col-xs-6 col-lg-4 control-label">' + value.StrDescAplicacionComp + ':</label>' +
+                        ' <div class="col-sm-6 col-xs-6 col-lg-8">' +
+                        '     <div class="i-checks">' +
+                        '         <input class=" cehckAplicaciones" id="cehckAplicacion_' + value.IntIdAplicacionComp + '" name="cehckAplicacion_' + value.IntIdAplicacionComp + '" value="' + value.IntIdAplicacionComp + '" type="checkbox" /> <i></i>' +
+                        '     </div>' +
+                        ' </div>' +
+                        '</div>';
+                });
+
+                $("#tab_AplicacionesUsuario > .panel-body ").html(str_Opciones);
+
+                var obj_icheck = new class_iCheck();
+            }
+        });
+    }
+
+
+    function fn_ObtenerPerfiles(idEmpresa) {
+
+        $.ajax({
+            url: "@VariableGlobal.StrUrlApi/Perfil/"
+            , data: {
+                ParamTipoBusqueda: 2,
+                ParamTipoFiltro: idEmpresa
+            }
+            , type: "GET"
+            , contentType: "application/json; charset=utf-8"
+            , dataType: "json"
+            , async: false
+            , success: function (obj_Datos) {
+                //console.log(obj_Datos)
+                var str_Opciones = '';
+                $(obj_Datos).each(function (index, value) {
+                    str_Opciones += '<option value="' + value.IntIdPerfil + '">' + value.StrDescPerfil.toUpperCase() +'</option>'
+                });
+
+                $("#ddl_Perfil").html(str_Opciones);
+            }
+        });
+    }
+
+    //fucnion que cargara las funciones iniciales
+    function fn_Cargar() {
+        
+        if (int_IdUsuarioEmpresa > 0) {// si trae id, entonces se procede a obtener los datos del controller para posteriormente llenar el form
+            $.ajax({
+                url: "@VariableGlobal.StrUrlApi/UsuarioEmpresa/" + int_IdUsuarioEmpresa
+                , type: "GET"
+                , contentType: "application/json; charset=utf-8"
+                , dataType: "json"
+                , async: false
+                , success: function (obj_Datos ) {
+
+                    console.log(obj_Datos);
+
+                    fn_ObtenerPerfiles(obj_Datos.IntIdEmpresa);
+                    fn_ObtenerTerminales(obj_Datos.IntIdEmpresa);
+
+                    $('#ddl_Perfil option[value="' + obj_Datos.IntIdPerfil + '"]').prop('selected', true);
+                    $('#ddl_TipoUsuarioEmpresa option[value="' + obj_Datos.intIdTipoUsuario + '"]').prop('selected', true);
+
+                    //-----------------------------------------
+                    //----SE CARGAN LOS AUTOCOMPLETE
+                    //-----------------------------------------
+                    $('#ddl_TipoUsuarioEmpresa option[value="' + obj_Datos.intIdTipoUsuario + '"]').prop('selected', true).trigger('change');
+
+                    if (obj_Datos.intIdTipoUsuario == "1") {
+                        str_cveTipoProceso = 'Empleado';
+
+                    }
+                    else if (obj_Datos.intIdTipoUsuario == "2") {
+                        str_cveTipoProceso = 'Operador';
+                    }
+
+                    $("#it_DescTipoUsuario").data("id", obj_Datos.intIdPersonaRH);
+                    $("#it_DescTipoUsuario").text("vsel", obj_Datos.DescPersona);
+                    $("#it_DescTipoUsuario").val(obj_Datos.DescPersona);
+
+                    $("#it_NomPuestoRH").data("id", obj_Datos.intIdPuestoRH);
+                    $("#it_NomPuestoRH").data("vsel", obj_Datos.DescPuesto);
+                    $("#it_NomPuestoRH").val(obj_Datos.DescPuesto);
+
+                    $('#ddl_TerminalesPredeterminada option[value="' + obj_Datos.IntIdTerminal_Predeterminada + '"]').prop('selected', true);
+
+                    obj_ClaseIcheck.fn_ActivaDesactivaIcheck("check_ActivoUsuarioEmpresa", obj_Datos.IntBActivo)
+                    obj_ClaseIcheck.fn_ActivaDesactivaIcheck("check_AccesoRemoto", obj_Datos.IntBAccesoRemoto)
+
+                    fn_SeleccionarTerminales((obj_Datos.LstObjUsuarioTerminal == null) ? "" : obj_Datos.LstObjUsuarioTerminal)
+                    //console.log("******************************************");
+                    fn_SeleccionarAplicaciones((obj_Datos.LstObjUsuarioAplicacionComplementaria == null) ? "" : obj_Datos.LstObjUsuarioAplicacionComplementaria)
+
+                    $("#ddl_Empresa").html("<option value='" + obj_Datos.IntIdEmpresa +"' selected>"+obj_Datos.StrNomEmpresa+"</option>");
+
+                }
+            });
+
+            $("#ddl_Empresa").prop("disabled", true)
+
+        } else {
+            $("#check_ActivoUsuarioEmpresa").iCheck("check");
+        }
+
+        var obj_icheck = new class_iCheck();
+    };
+
+    function fn_SeleccionarTerminales(objTerminales) {
+        $(objTerminales).each(function (index, value) {
+            //console.log(value);
+            obj_ClaseIcheck.fn_ActivaDesactivaIcheck("cehckTerminal_" + value.IntIdTerminal, 1)
+        });
+    }
+
+    function fn_SeleccionarAplicaciones(objAplicaciones) {
+        $(objAplicaciones).each(function (index, value) {
+            //console.log(value);
+        });
+    }
+
+    function fn_ObtenerTerminalesSeleccionadas() {
+
+        var lst_obj_Terminales = [];
+        var obj_Terminal = {};
+
+        $(".cehckTerminales").each(function (index, value) {
+            if ($(this).is(':checked')) {
+                //console.log($(this).val());
+                obj_Terminal = {
+                    IntIdUsuarioTerminal: 0,
+                    IntIdUsuario: int_IdUsuario,
+                    IntIdTerminal: $(this).val(),
+                    IntIdEmpresa: $("#ddl_Empresa").val(),
+                    IntBActivo: 1
+                }
+                lst_obj_Terminales.push(obj_Terminal);
+            }
+        });
+
+        return lst_obj_Terminales;
+    }
+
+    function fn_ObtenerAplicacionesSeleccionadas() {
+
+        var lst_obj_Aplicaciones = [];
+        var obj_Aplicacion = {};
+
+        $(".cehckAplicaciones").each(function (index, value) {
+            if ($(this).is(':checked')) {
+                obj_Aplicacion = {
+                    IntIdUsuarioAplicacionComplementaria: 0,
+                    IntIdUsuario: int_IdUsuario,
+                    IntIdAplicacionComplementaria: $(this).val(),
+                    IntIdEmpresa: $("#ddl_Empresa").val(),
+                    IntBActivo: 1
+                }
+                lst_obj_Aplicaciones.push(obj_Aplicacion);
+            }
+        });
+
+        return lst_obj_Aplicaciones;
+    }
+
+    function fn_GrabarUsuarioEmpresa() {
+        
+        var int_IdTerminalPredeterminada = $("#ddl_TerminalesPredeterminada").val();
+
+        obj_TerminalesSeleccionadas = fn_ObtenerTerminalesSeleccionadas();
+        obj_AplicacionesSeleccionadas = fn_ObtenerAplicacionesSeleccionadas();
+
+        //validaciones
+        var terminalPredeterminadaCorrecta = false;
+        $(obj_TerminalesSeleccionadas).each(function (index, value) {
+            if (parseInt(int_IdTerminalPredeterminada) === parseInt(value.IntIdTerminal)) {
+                terminalPredeterminadaCorrecta = true;
+            };
+        })
+
+        if (terminalPredeterminadaCorrecta == false) {
+            toastr["error"]("Debe seleccionar una terminal predeterminada que este dentro de la lista seleccionada en terminales.");
+            return false;
+        }
+
+        if (!obj_ClaseGlobal.fn_ValidarDatosFormulario("#form_UsuarioEmpresa")){
+            return false;
+        }
+
+        //parametros
+        var int_IdEmpresa = $("#ddl_Empresa").val();
+        var int_IdPerfil = $("#ddl_Perfil").val();
+        var int_BAccesoRemoto = ($('#check_AccesoRemoto').is(':checked')) ? 1 : 0;
+        var int_BActivo = ($('#check_ActivoUsuarioEmpresa').is(':checked')) ? 1 : 0;
+        var int_IdTipoUsuario = $("#ddl_TipoUsuarioEmpresa").val();
+        var int_IdPersonaRH = $("#it_DescTipoUsuario").data("id");
+        var int_IdPuestoRH = $("#it_NomPuestoRH").data("id");
+
+        //Se define el metod
+        var str_Metodo = "";
+        var str_Url = "@VariableGlobal.StrUrlApi/UsuarioEmpresa";
+
+        if (int_IdUsuarioEmpresa > 0) {
+            str_Metodo = "PUT";
+        } else {
+            str_Metodo = "POST";
+        }
+
+        //se crea el objeto
+        var obj_UsuarioEmpresa = {
+            IntIdUsuarioEmpresa: int_IdUsuarioEmpresa,
+            IntIdUsuario: int_IdUsuario,
+            IntIdEmpresa: int_IdEmpresa,
+            IntIdPerfil: int_IdPerfil,
+            IntBAccesoRemoto: int_BAccesoRemoto,
+            IntIdTerminal_Predeterminada: int_IdTerminalPredeterminada,
+            intIdTipoUsuario: int_IdTipoUsuario,
+            intIdPersonaRH: int_IdPersonaRH,
+            intIdPuestoRH: int_IdPuestoRH,
+            IntBActivo: int_BActivo,
+            LstObjUsuarioTerminal: obj_TerminalesSeleccionadas,
+            LstObjUsuarioAplicacionComplementaria: obj_AplicacionesSeleccionadas
+        }
+
+        //se llama el metodo AJAX
+        $.ajax({
+            url: str_Url //se obtiene la URL desde las variables globales y se le asigna el controlador
+            , type: str_Metodo //tipo de accion
+            , data: JSON.stringify(obj_UsuarioEmpresa) //parametros que se pasaran al controller
+            , contentType: "application/json; charset=utf-8"
+            , dataType: "json"
+            , async: false
+            , success: function (obj_Datos) {
+
+                //console.log(obj_Datos);
+                //Se manda el mensaje de exito
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+
+                if (obj_Datos["IntError"] > 0) {//si manda algun error mantenemos el pop-up abierto
+                    return false;
+                }
+
+                var int_PaginaActual = obj_DataTableEmpresa.page();//obtenemos la pagina que se encuentra el datatable
+
+                obj_DataTableEmpresa.ajax.reload();//se recarga el objeto datatable con los datos actualizados
+                obj_DataTableEmpresa.page(int_PaginaActual).draw("page");//se mantiene en la pagina que estava
+
+                $.pgwModal('close');//cerramos el modal
+            }
+        });
+    }
+</script>

@@ -1,0 +1,88 @@
+﻿@{
+
+    Page.Title = "ABC Usuario-Empresa";
+
+    //verificamos si trae parametro para ser Popup o ventana
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+    //se declara la variable intIdDolly, esta se obtiene de la URL como parametro
+    int IntIdPermiso = int.Parse(Request.QueryString["IdPermiso"]?.ToString() ?? "0");
+
+    if (IntPopUp == 0)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+    }
+
+}
+
+<div class="col-lg-12">
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+
+            <form method="get" class="form-horizontal">
+
+                <div class="form-group">
+                    <div class="col-md-6">
+
+                        <div class="form-group">
+                            <label for="ddl_TipoUsuario" class="col-lg-4 control-label">Empresa:</label>
+                            <div class="col-lg-8">
+                                <select class="form-control">
+                                    <option>Opcion 1</option>
+                                    <option>Opcion 2</option>
+                                    <option>Opcion 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="check_Activo" class="col-lg-4 control-label">Activo:</label>
+                            <div class="col-lg-8">
+                                <div class="i-checks"><label> <input id="check_Activo" name="gp1" type="checkbox" value="" /> <i></i></label></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="check_Activo" class="col-lg-4 control-label">Nuevo:</label>
+                            <div class="col-lg-8">
+                                <div class="i-checks"><label> <input id="check_Activo" name="gp1" type="checkbox" value="" /> <i></i></label></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="check_Activo" class="col-lg-4 control-label">Borrar:</label>
+                            <div class="col-lg-8">
+                                <div class="i-checks"><label> <input id="check_Activo" name="gp1" type="checkbox" value="" /> <i></i></label></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="check_Activo" class="col-lg-4 control-label">Editar:</label>
+                            <div class="col-lg-8">
+                                <div class="i-checks"><label> <input id="check_Activo" name="gp1" type="checkbox" value="" /> <i></i></label></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+
+                        <div class="form-group">
+                            <label for="ddl_TipoUsuario" class="col-lg-4 control-label">Menu:</label>
+                            <div class="col-lg-8">
+                                <select class="form-control">
+                                    <option>Opcion 1</option>
+                                    <option>Opcion 2</option>
+                                    <option>Opcion 3</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                <div class="form-group">
+                    <div class="col-lg-12">
+                        <button id="btn_Grabar" class="btn btn-primary pull-right m-xs" type="button" title="Grabar"><i class="fa fa-check"></i> Grabar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
