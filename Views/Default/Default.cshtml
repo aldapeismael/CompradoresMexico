@@ -88,9 +88,9 @@
                     </div>
                 </div>
                 <div class="row post-img">
-                    <img class="rounded mx-auto" src="@VariableGlobal.StrUrlSitio/img/imgdumy.png" alt="">
+                    <img class="rounded mx-auto" src="@VariableGlobal.StrUrlSitio/Views/Publicacion/PublicacionImagen/@objPublicacion.StrNombreArchivo" alt="">
                 </div>
-                <div class="row body">
+                <div class="row body" style="max-height: 50px !important">
                     <div class="col-9">
                         <p style="cursor:pointer" class="productName"><a href="@VariableGlobal.StrUrlSitio/Views/Publicacion/publicacionDetalle.cshtml?idPublicacion=@objPublicacion.IntIdPublicacion">@objPublicacion.StrDescCategoria</a></p>
                         <p class="productDesc">@objPublicacion.StrDescripcion</p>

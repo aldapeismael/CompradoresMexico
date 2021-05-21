@@ -13,12 +13,14 @@ using System.Web.WebPages.Html;
 /// </summary>
 public class Publicacion: IMetodosModelos<Publicacion>
 {
+    public const string StrUrlArchivoPublicacion = @"Compradores\CompradoresMexico\Views\Publicacion\PublicacionImagen\";
     #region variables
 
     int _IntIdPublicacion;
     int _IntIdCategoria;
     Guid _GuidGuidPublicacion;
     string _StrDescripcion;
+    string _StrNombreArchivo;
     string _StrCveComprador;
     string _StrTelefono;
     string _StrCorreo;
@@ -140,6 +142,19 @@ public class Publicacion: IMetodosModelos<Publicacion>
         }
     }
 
+    public string StrNombreArchivo
+    {
+        get
+        {
+            return _StrNombreArchivo;
+        }
+
+        set
+        {
+            _StrNombreArchivo = value;
+        }
+    }
+
     #endregion
 
     #region Constructores
@@ -230,6 +245,7 @@ public class Publicacion: IMetodosModelos<Publicacion>
                         StrCorreo = dataSetObtenerDataTable.Tables[0].Columns.Contains("correo") ? FilaPublicacion["correo"].ToString() : "",
                         StrCveCategoria = dataSetObtenerDataTable.Tables[0].Columns.Contains("cveCategoria") ? FilaPublicacion["cveCategoria"].ToString() : "",
                         StrDescCategoria = dataSetObtenerDataTable.Tables[0].Columns.Contains("descCategoria") ? FilaPublicacion["descCategoria"].ToString() : "",
+                        StrNombreArchivo = dataSetObtenerDataTable.Tables[0].Columns.Contains("imagen1") ? FilaPublicacion["imagen1"].ToString() : "",
                         IntBActivo = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("bActivo") ? FilaPublicacion["bActivo"].ToString() : "0"),
                         DtFechaAlta = DateTime.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("fechaAlta") ? FilaPublicacion["fechaAlta"].ToString() : "01/01/0001")
                     });
@@ -319,6 +335,7 @@ public class Publicacion: IMetodosModelos<Publicacion>
             sqlCommand.Parameters.AddWithValue("@p_Presupuesto", this.DecPresupuesto);
             sqlCommand.Parameters.AddWithValue("@p_BActivo", 1);
             sqlCommand.Parameters.AddWithValue("@p_IdUsuarioAlta", IntIdUsuario);
+            sqlCommand.Parameters.AddWithValue("@p_NombreArchivo", this.StrNombreArchivo);
 
             DataSet dataSetInsertar = ConexionBD.EjecutarComando(IntIdEmpresa, IntIdUsuario, sqlCommand, "archivo: Publicacion.cs => Insertar()");
 

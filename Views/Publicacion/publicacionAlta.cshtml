@@ -9,6 +9,11 @@
     int i = 0;
 }
 <link rel="stylesheet" href="@VariableGlobal.StrUrlSitio/css/product.css">
+<link href="@VariableGlobal.StrUrlSitio/css/plugins/dropzone/dropzone.css" rel="stylesheet" />
+
+<!-- DropZone PlugIn -->
+<script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/dropzone/dropzone.js"></script>
+
 <section>
     <div class="containerForm">
         <form>
@@ -27,9 +32,11 @@
                 </select>
             </div>
             <div class="form-group">
-                <div class="mb-3">
-                    <label for="formFile" class="form-label">Selecciona imagen</label>
-                    <input class="form-control formMix" type="file" id="formFile">
+                <input id="it_ImagenPublicacion" type="hidden" value="" />
+                <div class="dropzone" id="dropzoneForm">
+                    <div class="fallback">
+                        <input name="file" type="file" multiple /><!--objeto imput que ejecuta la carga-->
+                    </div>
                 </div>
             </div>
             <div class="form-group">
@@ -58,25 +65,44 @@
 </section>
 
 <script>
+    var int_megasPermitidos = 5;
+    var dropZone = null;
+    var str_NombreArchivo = "";
+    var str_Imagen = "";
+    var obj_Imagen = {};
+    var buttons = '';
+    var fl = '';
+
     $(document).ready(function () {
+        fn_CargarDropZone(obj_ClaseGlobal.fn_GenerarCadena());
         $("#btn_RegistraPublicacion").click(function () {
-            fn_RegistroPublicacion(this);
+            fn_RegistroPublicacion(true);
         });
     });
 
+    function fn_GrabarArchivo() {
+        dropZone.processQueue();
+    }
 
-    function fn_RegistroPublicacion(btnClick) {
+    function fn_RegistroPublicacion(bool_grabarArchivo) {
+        if (dropZone.files.length > 0 && bool_grabarArchivo) {
+            if (dropZone.files[0].status == 'queued') {
+                fn_GrabarArchivo();
+                return false;
+            }
+        }
         var obj_Publicacion = {
             IntIdPublicacion: $("#containerNav_Publicacion").data("id"),
             IntIdCategoria: $("#ddl_Categoria").val(),
             DecPresupuesto: $("#it_Presupuesto").val(),
-            StrDescripcion: $("#txt_Descripcion").val()
+            StrDescripcion: $("#txt_Descripcion").val(),
+            StrNombreArchivo: $("#it_ImagenPublicacion").val()
         }
 
         var str_Metodo = "";
         var str_Url = "";
         str_Metodo = "POST";
-        str_Url = "@VariableGlobal.StrUrlApi/Publicacion";
+        str_Url = "@VariableGlobal.StrUrlApi/Publicacion/Post/0/";
 
         $.ajax({
             url: str_Url,
@@ -100,6 +126,68 @@
             }
         });
     }
+
+    function fn_CargarDropZone(par_nombreArchivo) {
+		bool_errorImagen = false;
+		var formDiv = document.getElementById("dropzoneForm");//guarda en una variable la referencia al objeto contenedor
+		 //guarda la lista de toda la configuración del objeto inputFile
+        var config = {
+			init: function() {
+				this.on("addedfile", function() {
+					if (this.files[1]!=null){
+						this.removeFile(this.files[0]);
+					}
+				});
+				this.on("maxfilesexceeded", function(file) {
+					this.removeAllFiles();
+					this.addFile(file);
+			  });
+			},
+            url: '@VariableGlobal.StrUrlApi/Publicacion/SubirImagen/0/', //dirección fake UploadCiudad
+            maxFiles:1, //numero maximo de carga de archivos
+            maxFilesize: int_megasPermitidos,//limite maximo para la cantidad de Mega Bites por c/u de los archivos
+            paramName: par_nombreArchivo,//nombre logico con el que se identifican los archivos en la carga
+            maxThumbnailFilesize: 1,//cantidad maxima de archivos permitidos para la carga total
+            acceptedFiles: '.jpg,.jpeg,.gif,.png',// tipos de archivos permitidos para adjuntar
+            autoProcessQueue: false, // significa que no se guadaran automaticamente los archivos al ser agregados al control
+            addRemoveLinks: true,//habilita el borrados de los archivos en sus respectivos iconos
+			renameFilename: function renameFilename(file) {
+				str_Imagen = par_nombreArchivo.split('.')[0] + "." + file.split('.').pop();
+				return str_Imagen;
+			},
+			selectedfiles: function(files){
+				$(files).each(function(index){
+					this.delay = index * 100;
+				});
+			},
+			error: function(file, errorMessage) {
+				bool_errorImagen = true;
+			},
+			queuecomplete: function() {
+				$("#it_ImagenPublicacion").val(str_Imagen);
+				bool_errorImagen = false;
+                fn_RegistroPublicacion(false);
+			}
+        };
+        //drop.auto5
+        dropZone = new Dropzone(formDiv, config);
+        Dropzone.autoDiscover = false;
+
+        //metodo para remover los archivos
+        dropZone.on("removedfile", function (file) { //el objeto dropZone en su evento 'removed file'
+            var strNombreArchivo = par_nombreArchivo.split('.')[0] + "." + file.name.split('.').pop();
+            var intId = file.id;
+			var strUrl = "@Publicacion.StrUrlArchivoPublicacion.Replace(@"\", @"\\")";
+			obj_Imagen = {
+				StrNombre : strNombreArchivo ,
+				IntId: (intId !== null ? intId : 0),
+				StrUrl: strUrl
+			}
+
+            $("#it_ImagenPublicacion").data("ruta", "");
+
+        });
+	}
 </script>
 
 
