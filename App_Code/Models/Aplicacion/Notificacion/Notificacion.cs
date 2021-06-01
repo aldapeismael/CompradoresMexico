@@ -36,6 +36,7 @@ public class Notificacion : IMetodosModelos<Notificacion>
     string _StrIcono;
     string _StrTipo;
     int _IntCantidadNotificaciones;
+    string _StrJsonChat;
     #endregion
 
     #region Getter y Setter
@@ -178,6 +179,19 @@ public class Notificacion : IMetodosModelos<Notificacion>
             _IntCantidadNotificaciones = value;
         }
     }
+
+    public string StrJsonChat
+    {
+        get
+        {
+            return _StrJsonChat;
+        }
+
+        set
+        {
+            _StrJsonChat = value;
+        }
+    }
     #endregion
 
     #region Constructor
@@ -284,36 +298,37 @@ public class Notificacion : IMetodosModelos<Notificacion>
         return bool_Valido;
     }
 
-    public bool ObtenerCantidadNotificacion(int ParamIdUsuario)
+    public bool ObtenerCantidadNotificacion(int ParamIdUsuario, int ParamIdUsuarioDestino)
     {
         bool bool_Valido = false;
         SqlCommand sqlcommand = new SqlCommand();
         try
         {
-            sqlcommand.CommandText = "notificacion.spNotificacionObtener";
+            sqlcommand.CommandText = "dbo.spChat";
             sqlcommand.CommandType = CommandType.StoredProcedure;
-            sqlcommand.Parameters.AddWithValue("@p_Ejecuta", 1);
+            sqlcommand.Parameters.AddWithValue("@p_Ejecuta", 10);
             sqlcommand.Parameters.AddWithValue("@p_IdUsuario", ParamIdUsuario);
+            sqlcommand.Parameters.AddWithValue("@p_IdUsuariodestino", ParamIdUsuarioDestino);
 
             //RegistroError objRegistroError = new RegistroError(sqlcommand.Parameters, MethodBase.GetCurrentMethod().Name, this.GetType().Name + ".cs", this.GetType().Name + ".cs");
-            RegistroError objRegistroError = new RegistroError()
-            {
-                StrDescStoredProcedureParametro = new RegistroError().ObtenerParametros(sqlcommand.Parameters),
-                StrIP = RegistroError.ObtenerIpLocal(),
-                StrDescNavegador = HttpContext.Current.Request.Browser.Type,
-                StrVista = HttpContext.Current.Request.Url.AbsoluteUri,
-                DateFechaInicio = DateTime.Now,
-                StrDescModeloMetodo = MethodBase.GetCurrentMethod().Name,
-                StrDescModelo = this.GetType().Name + ".cs",
-                StrDescControlador = this.GetType().Name + "Controller",
-                IntBActivo = 1,
-            };
-            sqlcommand.Parameters.AddWithValue("@p_RegistroError", JsonConvert.SerializeObject(objRegistroError));
-            DataSet dataSetObtener = ConexionBD.EjecutarComandoEstadistica(sqlcommand);
+            //RegistroError objRegistroError = new RegistroError()
+            //{
+            //    StrDescStoredProcedureParametro = new RegistroError().ObtenerParametros(sqlcommand.Parameters),
+            //    StrIP = RegistroError.ObtenerIpLocal(),
+            //    StrDescNavegador = HttpContext.Current.Request.Browser.Type,
+            //    StrVista = HttpContext.Current.Request.Url.AbsoluteUri,
+            //    DateFechaInicio = DateTime.Now,
+            //    StrDescModeloMetodo = MethodBase.GetCurrentMethod().Name,
+            //    StrDescModelo = this.GetType().Name + ".cs",
+            //    StrDescControlador = this.GetType().Name + "Controller",
+            //    IntBActivo = 1,
+            //};
+            //sqlcommand.Parameters.AddWithValue("@p_RegistroError", JsonConvert.SerializeObject(objRegistroError));
+            DataSet dataSetObtener = ConexionBD.EjecutarComando(1, 1, sqlcommand, "");
 
             if (dataSetObtener != null && dataSetObtener.Tables.Count > 0)
             {
-                this.IntCantidadNotificaciones = int.Parse(dataSetObtener.Tables[0].Rows[0]["cantidadNotificaciones"].ToString());
+                this.StrJsonChat = dataSetObtener.Tables[0].Rows[0]["jsonChat"].ToString();
             }
         }
         catch (Exception e)

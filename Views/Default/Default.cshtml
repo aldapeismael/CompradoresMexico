@@ -101,7 +101,6 @@
                 </div>
                 <div class="row footer">
                     <div class="col">
-                        <a href="#"><i class="material-icons md-48">chat_bubble_outline</i></a>
                         <a href="#" id="btn_Favorito" data-idpublicacion="@objPublicacion.IntIdPublicacion"><i class="material-icons md-36">favorite_border</i></a>
                         <a href="#"><i class="material-icons md-36">turned_in_not</i></a>
                     </div>
@@ -138,9 +137,22 @@
         $("#btn_Favorito").click(function () {
             fn_EnviarLike(this);
         });
+        
+        $("#btn_Contactar").click(function () {
+            let int_IdLiquidacion = $(this).data("idpublicacion");
+            fn_AbriModalChat(int_IdLiquidacion);
+        });
     });
 
-
+    function fn_AbriModalChat(param_Int_IdLiquidacion) {
+        $.pgwModal({//abre ABC not
+            url: "@VariableGlobal.StrUrlSitio/Views/Chat/chat.cshtml?Popup=1&IdPublicacion=" + param_Int_IdLiquidacion,
+            loadingContent: '<span style="text-align:center">Cargando</span>',
+            closeOnBackgroundClick: false,
+            title: "Contactar",
+            maxWidth: '95%'
+        });
+    }
 
     function fn_EnviarLike(btnClick) {
         var int_idPublicacion = $(btnClick).data("idpublicacion");
@@ -174,3 +186,5 @@
 
 
 </script>
+
+    

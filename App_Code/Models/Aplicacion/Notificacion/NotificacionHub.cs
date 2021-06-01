@@ -8,13 +8,13 @@ using Microsoft.AspNet.SignalR;
 public class NotificacionHub : Hub
 {
     #region Metodos
-    public void ObtenerCantidadNotificacion(int ParamIdUsuario)
+    public void ObtenerCantidadNotificacion(int ParamIdUsuario, int ParamIdUsuarioDestino)
     {
         try
         {
             Notificacion objNotificacion = new Notificacion();
-            objNotificacion.ObtenerCantidadNotificacion(ParamIdUsuario);
-            Clients.Caller.ObtenerNotificacion(objNotificacion.IntCantidadNotificaciones);
+            objNotificacion.ObtenerCantidadNotificacion(ParamIdUsuario, ParamIdUsuarioDestino);
+            Clients.Caller.ObtenerNotificacion(objNotificacion.StrJsonChat);
         }
         catch (Exception e)
         {

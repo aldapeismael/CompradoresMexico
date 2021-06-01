@@ -1,0 +1,84 @@
+﻿@{
+    Page.Title = "Publicación";
+
+    int IntPopUp = int.Parse(Request.QueryString["Popup"]?.ToString() ?? "0");
+    if (IntPopUp == 0)
+    {
+        Layout = "~/_SiteLayout.cshtml";
+    }
+    int IntIdPublicacion = int.Parse(Request.QueryString["IdPublicacion"]?.ToString() ?? "0");
+
+    ObjetoBusqueda objetoBusqueda = new ObjetoBusqueda();
+    objetoBusqueda.IntEjecuta = 0;
+    objetoBusqueda.IntId1 = IntIdPublicacion;
+    if (IntIdPublicacion == 0)
+    {
+        Response.Redirect("~/Views/Default/Default.cshtml");
+    }
+    var lstObjPublicacion = new Publicacion().ObtenerListaGenerica(objetoBusqueda);
+    Publicacion objPublicacion = new Publicacion();
+    if (lstObjPublicacion.Count > 0)
+    {
+        objPublicacion = lstObjPublicacion.First();
+    }
+    int i = 0;
+}
+
+<link rel="stylesheet" href="@VariableGlobal.StrUrlSitio/css/productDetail.css">
+<div class="ContactModal" id="ContactModal">
+    <div class="containerForm">
+        <div class="containerNav">
+            <h2>Contactar</h2>
+            <div id="ContactModalClose">
+                <i class="material-icons md-48">clear</i>
+            </div>
+        </div>
+        <hr>
+        <div class="row containerProfile">
+            <div class="col-2 profile">
+                <img src="@VariableGlobal.StrUrlSitio/Views/Publicacion/PublicacionImagen/@objPublicacion.StrNombreArchivo" width="50px">
+            </div>
+            <div class="col-8 user">
+                <div>
+                    <p class="user">
+                        Jhon Wick
+                    </p>
+                </div>
+                <div>
+                    <p class="userDetail">
+                        usuario@usuario.com
+                        <span>
+                            wwww.provedores.com
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-2 btn">
+                <i class="material-icons md-48">call</i>
+            </div>
+        </div>
+        <hr>
+        <div class="row containerProduct">
+            <div class="col-10">
+                <p class="productName">Mustang Shelby 67</p>
+                <p class="productDesc">Ford</p>
+            </div>
+            <div class="col-2">
+                <p class="productCost">
+                    $46
+                </p>
+            </div>
+            <img src="img/mustang.jpg" class="" alt="">
+            <div class="row containerChat">
+                <div class="col-10">
+                    <input type="text" placeholder="Escribe tu mensaje" name="" id="">
+                </div>
+                <div class="col-2">
+                    <button class="rounded-circle">
+                        >
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

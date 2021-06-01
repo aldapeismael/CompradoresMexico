@@ -13,7 +13,7 @@ using System.Web.WebPages.Html;
 /// </summary>
 public class Publicacion: IMetodosModelos<Publicacion>
 {
-    public const string StrUrlArchivoPublicacion = @"Compradores\CompradoresMexico\Views\Publicacion\PublicacionImagen\";
+    public const string StrUrlArchivoPublicacion = @"CompradoresMexico\Views\Publicacion\PublicacionImagen\";
     #region variables
 
     int _IntIdPublicacion;
@@ -29,6 +29,8 @@ public class Publicacion: IMetodosModelos<Publicacion>
     decimal _DecPresupuesto;
     DateTime _DtFechaAlta;
     int _IntBActivo;
+    int _IntIdComprador;
+    int _IntIdUsuario;
 
     public int IntIdPublicacion
     {
@@ -155,6 +157,32 @@ public class Publicacion: IMetodosModelos<Publicacion>
         }
     }
 
+    public int IntIdComprador
+    {
+        get
+        {
+            return _IntIdComprador;
+        }
+
+        set
+        {
+            _IntIdComprador = value;
+        }
+    }
+
+    public int IntIdUsuario
+    {
+        get
+        {
+            return _IntIdUsuario;
+        }
+
+        set
+        {
+            _IntIdUsuario = value;
+        }
+    }
+
     #endregion
 
     #region Constructores
@@ -238,6 +266,7 @@ public class Publicacion: IMetodosModelos<Publicacion>
                     lstObjPublicacion.Add(new Publicacion
                     {
                         IntIdPublicacion = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idPublicacion") ? FilaPublicacion["idPublicacion"].ToString() : "0"),
+                        IntIdComprador = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idComprador") ? FilaPublicacion["idComprador"].ToString() : "0"),
                         DecPresupuesto = decimal.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("presupuesto") ? FilaPublicacion["presupuesto"].ToString() : "0"),
                         StrDescripcion = dataSetObtenerDataTable.Tables[0].Columns.Contains("descripcion") ? FilaPublicacion["descripcion"].ToString() : "",
                         StrCveComprador = dataSetObtenerDataTable.Tables[0].Columns.Contains("cveComprador") ? FilaPublicacion["cveComprador"].ToString() : "",
@@ -247,6 +276,7 @@ public class Publicacion: IMetodosModelos<Publicacion>
                         StrDescCategoria = dataSetObtenerDataTable.Tables[0].Columns.Contains("descCategoria") ? FilaPublicacion["descCategoria"].ToString() : "",
                         StrNombreArchivo = dataSetObtenerDataTable.Tables[0].Columns.Contains("imagen1") ? FilaPublicacion["imagen1"].ToString() : "",
                         IntBActivo = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("bActivo") ? FilaPublicacion["bActivo"].ToString() : "0"),
+                        IntIdUsuario = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idUsuario") ? FilaPublicacion["idUsuario"].ToString() : "0"),
                         DtFechaAlta = DateTime.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("fechaAlta") ? FilaPublicacion["fechaAlta"].ToString() : "01/01/0001")
                     });
                 }
