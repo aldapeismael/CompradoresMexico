@@ -29,6 +29,7 @@ public class Publicacion: IMetodosModelos<Publicacion>
     decimal _DecPresupuesto;
     DateTime _DtFechaAlta;
     int _IntBActivo;
+    int _IntIdChat;
     int _IntIdComprador;
     int _IntIdUsuario;
 
@@ -183,6 +184,19 @@ public class Publicacion: IMetodosModelos<Publicacion>
         }
     }
 
+    public int IntIdChat
+    {
+        get
+        {
+            return _IntIdChat;
+        }
+
+        set
+        {
+            _IntIdChat = value;
+        }
+    }
+
     #endregion
 
     #region Constructores
@@ -277,6 +291,7 @@ public class Publicacion: IMetodosModelos<Publicacion>
                         StrNombreArchivo = dataSetObtenerDataTable.Tables[0].Columns.Contains("imagen1") ? FilaPublicacion["imagen1"].ToString() : "",
                         IntBActivo = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("bActivo") ? FilaPublicacion["bActivo"].ToString() : "0"),
                         IntIdUsuario = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idUsuario") ? FilaPublicacion["idUsuario"].ToString() : "0"),
+                        IntIdChat = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idChat") ? FilaPublicacion["idChat"].ToString() : "0"),
                         DtFechaAlta = DateTime.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("fechaAlta") ? FilaPublicacion["fechaAlta"].ToString() : "01/01/0001")
                     });
                 }
