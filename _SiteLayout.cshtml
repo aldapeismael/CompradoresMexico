@@ -42,6 +42,7 @@
         Response.Redirect("~/Views/Default/Default.cshtml");
     }
 
+
     int IntEjecuta = 0;
 
     if (@VariableGlobal.SessionIntBRobot == 1)
@@ -108,7 +109,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@100;400;500;600;900&display=swap"
           rel="stylesheet">
-    <title>Document</title>
+    <title>Compradores México</title>
 
     <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/datatables.min.js"></script>
     <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/visible/buttons.colVis.min.js"></script>
@@ -198,7 +199,7 @@
             </div>
         </nav>
         <div class="menuUser" id="menuUser">
-            <div><a href="#">Pefil</a></div>
+            @*<div><a href="#">Pefil</a></div>*@
             <div><a href="@VariableGlobal.StrUrlSitio/Views/Chat/misChat.cshtml">Mis Chats</a></div>
             <div><a href="@VariableGlobal.StrUrlSitio/Views/MiPerfil/tipoUsuario.cshtml">Cambiar usuario</a></div>
             <div style="border-bottom: none;"><a id="btn_Salir" href="@VariableGlobal.StrUrlSitio/Acceso.cshtml" style="color: rgb(179, 40, 40);" href="#">Salir</a></div>

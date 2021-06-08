@@ -18,6 +18,7 @@ public class Chat
     int _IntIdUsuario;
     int _IntIdUsuarioDestino;
     string _StrMensaje;
+    string _StrJsonMensajes;
     string _StrCveUsuario;
     DateTime _DtFechaMensaje;
 
@@ -113,6 +114,19 @@ public class Chat
         }
     }
 
+    public string StrJsonMensajes
+    {
+        get
+        {
+            return _StrJsonMensajes;
+        }
+
+        set
+        {
+            _StrJsonMensajes = value;
+        }
+    }
+
     #endregion
 
     #region Constructor
@@ -176,6 +190,7 @@ public class Chat
             sqlCommand.CommandType = CommandType.StoredProcedure;
             sqlCommand.Parameters.AddWithValue("@p_Ejecuta", ParamObjeto.IntEjecuta);
             sqlCommand.Parameters.AddWithValue("@p_IdUsuario", IntIdUsuario);
+            sqlCommand.Parameters.AddWithValue("@p_IdChat", IntIdChat);
 
             RegistroError objRegistroError = new RegistroError(sqlCommand.Parameters, MethodBase.GetCurrentMethod().Name, this.GetType().Name + ".cs", this.GetType().Name + "Controller.cs");
             sqlCommand.Parameters.AddWithValue("@p_RegistroError", JsonConvert.SerializeObject(objRegistroError));
@@ -193,6 +208,7 @@ public class Chat
                         DtFechaMensaje = DateTime.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("fechaMensaje") ? FilaChat["fechaMensaje"].ToString() : "01-01-0001"),
                         StrCveUsuario = dataSetObtenerDataTable.Tables[0].Columns.Contains("cveUsuario") ? FilaChat["cveUsuario"].ToString() : "",
                         StrMensaje = dataSetObtenerDataTable.Tables[0].Columns.Contains("mensaje") ? FilaChat["mensaje"].ToString() : "",
+                        StrJsonMensajes = dataSetObtenerDataTable.Tables[0].Columns.Contains("jsonMensajes") ? FilaChat["jsonMensajes"].ToString() : "",
                     });
                 }
             }

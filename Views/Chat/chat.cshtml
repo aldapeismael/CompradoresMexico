@@ -6,10 +6,11 @@
     {
         Layout = "~/_SiteLayout.cshtml";
     }
-    int IntIdPublicacion = int.Parse(Request.QueryString["IdPublicacion"]?.ToString() ?? "0");
+    int IntIdPublicacion = int.Parse(Request.QueryString["IdPublicacion"]?.ToString() ?? "-1");
     int IntIdChat = int.Parse(Request.QueryString["IdChat"]?.ToString() ?? "0");
     int IntIdUsuarioDestino = 0;
     string StrCveComprador = "";
+    string StrAltura = "100px";
 
     ObjetoBusqueda objetoBusqueda = new ObjetoBusqueda();
     objetoBusqueda.IntEjecuta = 0;
@@ -26,19 +27,20 @@
         IntIdPublicacion = objPublicacion.IntIdPublicacion;
         StrCveComprador = objPublicacion.StrCveComprador;
         IntIdChat = objPublicacion.IntIdChat;
+        IntIdUsuarioDestino = objPublicacion.IntIdUsuario;
     }
 
     objetoBusqueda = new ObjetoBusqueda();
     objetoBusqueda.IntId1 = IntIdChat;
     objetoBusqueda.IntEjecuta = 2;
     var lstObjChat = new Chat().ObtenerListaGenerica(objetoBusqueda);
+    string StrJsonMensajes = "[]";
     if (lstObjChat.Count > 0)
     {
         IntIdUsuarioDestino = lstObjChat.First().IntIdUsuarioDestino;
-    }
-    else
-    {
-        IntIdUsuarioDestino = objPublicacion.IntIdUsuario;
+        StrCveComprador = lstObjChat.First().StrCveUsuario;
+        StrJsonMensajes = lstObjChat.First().StrJsonMensajes;
+        StrAltura = "300px";
     }
     int i = 0;
 
@@ -85,10 +87,10 @@
                 </div>
                 <img src="@VariableGlobal.StrUrlSitio/Views/Publicacion/PublicacionImagen/@objPublicacion.StrNombreArchivo" class="" alt="">
             }
-            <div id="chatbox" style="overflow-y: scroll; height: 100px; max-height: 100px"></div>
+            <div id="chatbox" style="word-wrap: break-word; overflow-y: scroll; overflow-x: hidden; height: @StrAltura; max-height: @StrAltura"></div>
             <div class="row containerChat">
                 <div class="col-10">
-                    <input type="text" placeholder="Escribe tu mensaje" name="" id="txt_MensajeEnvio">
+                    <textarea rows=2 class="form-control" placeholder="Escribe tu mensaje" name="" id="txt_MensajeEnvio"></textarea>
                 </div>
                 <div class="col-2">
                     <button id="btn_EnviaMensaje" class="rounded-circle">
@@ -104,6 +106,20 @@
         fn_EnviaMensaje();
     });
     var int_IdChat = "@IntIdChat";
+
+    function fn_ImprimeChat() {
+        var lst_ObjChat = JSON.parse('@Html.Raw(StrJsonMensajes)');
+        $(lst_ObjChat.reverse()).each(function (index, value) {
+            $('#chatbox').append("<strong style='color: black !important'>" + value.cveUsuarioEnvia + ": </strong>" + value.mensaje + " <span style='font-size: small'>(" + value.fechaMensaje + ")</span> <br>");
+        });
+        setTimeout(function () {
+            var objDiv = document.getElementById("chatbox");
+            objDiv.scrollTop = objDiv.scrollHeight;
+        }, 500);
+    }
+
+    fn_ImprimeChat();
+
     function fn_EnviaMensaje() {
         var strMensajeEnvio = $("#txt_MensajeEnvio").val();
         var obj_Chat = {
@@ -125,16 +141,18 @@
                 type: str_Metodo,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
+                global: false,
                 success: function (obj_Datos) {
                     //Se manda el mensaje de exito
                     if (obj_Datos["IntError"] == 1) {
                         toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
                     } else {
-                        $('#chatbox').append("<strong>" + "@VariableGlobal.SessionStrCveUsuario" + ":</strong> " + strMensajeEnvio + "<br>");
+                        $('#chatbox').append("<strong style='color: black !important'>" + "@VariableGlobal.SessionStrCveUsuario" + ":</strong> " + strMensajeEnvio + " <span style='font-size: small'>(" + moment().format("DD/MM/YYYY HH:mm") + ")</span> <br>");
                         var objDiv = document.getElementById("chatbox");
                         objDiv.scrollTop = objDiv.scrollHeight;
                         int_IdChat = obj_Datos["IntIdRespuesta"];
                         $("#txt_MensajeEnvio").val("");
+                        $("#txt_MensajeEnvio").focus();
                     }
                 }
             });
