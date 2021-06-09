@@ -140,7 +140,7 @@ public static class VariableGlobal
     }
 
     /// <summary>
-    /// Tipo de Usuario, 1 = Empleado , 2 = Operador
+    /// Tipo de Usuario, 1 = Comprador, 2 = proveedor
     /// </summary>
     public static int SessionIntTipoUsuario
     {

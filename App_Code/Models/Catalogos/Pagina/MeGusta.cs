@@ -22,7 +22,11 @@ public class MeGusta : IMetodosModelos<MeGusta>
     string _StrCvePublicacion;
     string _StrFechaPublicacion;
     string _StrCveCompradorPublicacion;
+    string _StrDescripcion;
+    string _StrImagen1;
+    string _StrCveCategoria;
     int _IntBActivo;
+    decimal _DecPresupuesto;
 
     public int IntIdMeGusta
     {
@@ -113,6 +117,58 @@ public class MeGusta : IMetodosModelos<MeGusta>
         }
     }
 
+    public string StrDescripcion
+    {
+        get
+        {
+            return _StrDescripcion;
+        }
+
+        set
+        {
+            _StrDescripcion = value;
+        }
+    }
+
+    public decimal DecPresupuesto
+    {
+        get
+        {
+            return _DecPresupuesto;
+        }
+
+        set
+        {
+            _DecPresupuesto = value;
+        }
+    }
+
+    public string StrImagen1
+    {
+        get
+        {
+            return _StrImagen1;
+        }
+
+        set
+        {
+            _StrImagen1 = value;
+        }
+    }
+
+    public string StrCveCategoria
+    {
+        get
+        {
+            return _StrCveCategoria;
+        }
+
+        set
+        {
+            _StrCveCategoria = value;
+        }
+    }
+
     #endregion
 
     #region Constructores
@@ -163,6 +219,7 @@ public class MeGusta : IMetodosModelos<MeGusta>
     {
         var IntIdEmpresa = VariableGlobal.SessionIntIdEmpresa;
         var IntIdUsuario = VariableGlobal.SessionIntIdUsuario;
+        var IntTipoUsuario = VariableGlobal.SessionIntTipoUsuario;
         List<MeGusta> lstObjMeGusta = new List<MeGusta>();
         try
         {
@@ -170,6 +227,8 @@ public class MeGusta : IMetodosModelos<MeGusta>
             sqlCommand.CommandText = "dbo.spMeGusta";
             sqlCommand.CommandType = CommandType.StoredProcedure;
             sqlCommand.Parameters.AddWithValue("@p_Ejecuta", ParamObjeto.IntEjecuta);
+            sqlCommand.Parameters.AddWithValue("@p_IdUsuario", IntIdUsuario);
+            sqlCommand.Parameters.AddWithValue("@p_TipoUsuario", IntTipoUsuario);
 
             RegistroError objRegistroError = new RegistroError(sqlCommand.Parameters, MethodBase.GetCurrentMethod().Name, this.GetType().Name + ".cs", this.GetType().Name + "Controller.cs");
             sqlCommand.Parameters.AddWithValue("@p_RegistroError", JsonConvert.SerializeObject(objRegistroError));
@@ -182,6 +241,11 @@ public class MeGusta : IMetodosModelos<MeGusta>
                     lstObjMeGusta.Add(new MeGusta
                     {
                         IntIdMeGusta = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idMeGusta") ? FilaMeGusta["idMeGusta"].ToString() : "0"),
+                        IntIdPublicacion = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idPublicacion") ? FilaMeGusta["idPublicacion"].ToString() : "0"),
+                        StrDescripcion = dataSetObtenerDataTable.Tables[0].Columns.Contains("descripcion") ? FilaMeGusta["descripcion"].ToString() : "",
+                        StrImagen1 = dataSetObtenerDataTable.Tables[0].Columns.Contains("imagen1") ? FilaMeGusta["imagen1"].ToString() : "",
+                        StrCveCategoria = dataSetObtenerDataTable.Tables[0].Columns.Contains("cveCategoria") ? FilaMeGusta["cveCategoria"].ToString() : "",
+                        DecPresupuesto = decimal.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("presupuesto") ? FilaMeGusta["presupuesto"].ToString() : "0"),
                         DtFechaAlta = DateTime.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("fechaAlta") ? FilaMeGusta["fechaAlta"].ToString() : "01/01/0001")
                     });
                 }
@@ -261,7 +325,7 @@ public class MeGusta : IMetodosModelos<MeGusta>
             var IntIdUsuario = VariableGlobal.SessionIntIdUsuario;
 
             SqlCommand sqlCommand = new SqlCommand();
-            sqlCommand.CommandText = "corporativo.spMeGusta";
+            sqlCommand.CommandText = "dbo.spMeGusta";
             sqlCommand.CommandType = CommandType.StoredProcedure;
             sqlCommand.Parameters.AddWithValue("@p_Ejecuta", 1);
             sqlCommand.Parameters.AddWithValue("@p_Debug", 0);
@@ -275,7 +339,8 @@ public class MeGusta : IMetodosModelos<MeGusta>
                 objRespuestaBD = new RespuestaBD(
                    short.Parse(dataSetInsertar.Tables[0].Rows[0]["Error"].ToString()),
                    dataSetInsertar.Tables[0].Rows[0]["MensajeError"].ToString(),
-                   dataSetInsertar.Tables[0].Rows[0]["TipoError"].ToString()
+                   dataSetInsertar.Tables[0].Rows[0]["TipoError"].ToString(),
+                   int.Parse(dataSetInsertar.Tables[0].Rows[0]["IdRespuesta"].ToString())
                );
             }
             else

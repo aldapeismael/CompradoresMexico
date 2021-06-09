@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 public class MeGustaController : ApiController
 {
 
-
+    [HttpPost]
     public JsonResult<RespuestaBD> Post([FromBody]MeGusta value)// metodo para insertar
     {
         return Json(value.Insertar());

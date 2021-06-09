@@ -101,8 +101,15 @@
                 </div>
                 <div class="row footer">
                     <div class="col">
-                        <a href="#" id="btn_Favorito" data-idpublicacion="@objPublicacion.IntIdPublicacion"><i class="material-icons md-36">favorite_border</i></a>
-                        <a href="#"><i class="material-icons md-36">turned_in_not</i></a>
+                        @if (objPublicacion.IntIdMegusta == 0)
+                        {
+                            <a href="" class="btn_Favorito" data-idpublicacion="@objPublicacion.IntIdPublicacion"><i class="material-icons md-36 btnFavoritoIcono" id="btnFavoritoIcono_@objPublicacion.IntIdPublicacion">favorite_border</i></a>
+                        }
+                        else
+                        {
+                            <a href="" class="btn_Favorito" data-idpublicacion="@objPublicacion.IntIdPublicacion"><i class="material-icons md-36 btnFavoritoIcono" id="btnFavoritoIcono_@objPublicacion.IntIdPublicacion" style="color: red !important">favorite</i></a>
+                        }
+                        <a href="@VariableGlobal.StrUrlSitio/Views/Publicacion/publicacionDetalle.cshtml?idPublicacion=@objPublicacion.IntIdPublicacion"><i class="material-icons md-36">info_outline</i></a>
                     </div>
                 </div>
             </div>
@@ -134,10 +141,12 @@
                 'height': winHeight,
             });
         });
-        $("#btn_Favorito").click(function () {
-            fn_EnviarLike(this);
+        $(".btn_Favorito").click(function (event) {
+            event.preventDefault();
+            var int_idPublicacion = $(this).data("idpublicacion");
+            fn_EnviarLike(int_idPublicacion);
         });
-        
+
         $("#btn_Contactar").click(function () {
             let int_IdLiquidacion = $(this).data("idpublicacion");
             fn_AbriModalChat(int_IdLiquidacion);
@@ -154,8 +163,7 @@
         });
     }
 
-    function fn_EnviarLike(btnClick) {
-        var int_idPublicacion = $(btnClick).data("idpublicacion");
+    function fn_EnviarLike(int_idPublicacion) {
         //Mandamos los datos al webmethod para guardar los datos
         //declaramos el objeto que se le pasara al controlador
         var obj_MeGusta = {
@@ -165,19 +173,29 @@
         var str_Metodo = "";
         var str_Url = "";
         str_Metodo = "POST";
-        str_Url = "@VariableGlobal.StrUrlApi/MeGusta";
+        str_Url = "@VariableGlobal.StrUrlApi/MeGusta/Post/0/";
 
         $.ajax({
             url: str_Url,
             data: JSON.stringify(obj_MeGusta),
             type: str_Metodo,
+            async: false,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
+            global: false,
             success: function (obj_Datos) {
-
                 //Se manda el mensaje de exito
-                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
-
+                if (obj_Datos["IntError"] == 1) {
+                    toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                } else {
+                    if (obj_Datos["IntIdRespuesta"] == 1) {
+                        $("#btnFavoritoIcono_" + int_idPublicacion).html("favorite");
+                        $("#btnFavoritoIcono_" + int_idPublicacion).attr("style", "color: red");
+                    } else {
+                        $("#btnFavoritoIcono_" + int_idPublicacion).html("favorite_border");
+                        $("#btnFavoritoIcono_" + int_idPublicacion).attr("style", "");
+                    }
+                }
             }
         });
     }
@@ -187,4 +205,3 @@
 
 </script>
 
-    

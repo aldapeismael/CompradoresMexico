@@ -19,6 +19,7 @@ public class Publicacion: IMetodosModelos<Publicacion>
     int _IntIdPublicacion;
     int _IntIdCategoria;
     Guid _GuidGuidPublicacion;
+    int _IntIdMegusta;
     string _StrDescripcion;
     string _StrNombreArchivo;
     string _StrCveComprador;
@@ -211,6 +212,19 @@ public class Publicacion: IMetodosModelos<Publicacion>
         }
     }
 
+    public int IntIdMegusta
+    {
+        get
+        {
+            return _IntIdMegusta;
+        }
+
+        set
+        {
+            _IntIdMegusta = value;
+        }
+    }
+
     #endregion
 
     #region Constructores
@@ -307,6 +321,7 @@ public class Publicacion: IMetodosModelos<Publicacion>
                         IntBActivo = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("bActivo") ? FilaPublicacion["bActivo"].ToString() : "0"),
                         IntIdUsuario = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idUsuario") ? FilaPublicacion["idUsuario"].ToString() : "0"),
                         IntIdChat = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idChat") ? FilaPublicacion["idChat"].ToString() : "0"),
+                        IntIdMegusta = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idMeGusta") ? FilaPublicacion["idMeGusta"].ToString() : "0"),
                         DtFechaAlta = DateTime.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("fechaAlta") ? FilaPublicacion["fechaAlta"].ToString() : "01/01/0001")
                     });
                 }

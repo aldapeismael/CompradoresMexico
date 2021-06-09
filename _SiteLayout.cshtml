@@ -200,6 +200,10 @@
         </nav>
         <div class="menuUser" id="menuUser">
             @*<div><a href="#">Pefil</a></div>*@
+            @if (VariableGlobal.SessionIntTipoUsuario == 2)
+            {
+                <div><a href="@VariableGlobal.StrUrlSitio/Views/MeGusta/misMeGusta.cshtml">Mis Me Gusta</a></div>
+            }
             <div><a href="@VariableGlobal.StrUrlSitio/Views/Chat/misChat.cshtml">Mis Chats</a></div>
             <div><a href="@VariableGlobal.StrUrlSitio/Views/MiPerfil/tipoUsuario.cshtml">Cambiar usuario</a></div>
             <div style="border-bottom: none;"><a id="btn_Salir" href="@VariableGlobal.StrUrlSitio/Acceso.cshtml" style="color: rgb(179, 40, 40);" href="#">Salir</a></div>
@@ -263,20 +267,20 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-4">
-                            <a class="navbar-brand" href="~/Views/Default/Default.cshtml">
+                            <a class="navbar-brand" href="@VariableGlobal.StrUrlSitio/Views/Default/Default.cshtml">
                                 <i class="material-icons md-48">home</i>
                             </a>
                         </div>
-                        <div class="col-4">
-                            @if (VariableGlobal.SessionIntTipoUsuario != 2)
-                            {
+                        @if (VariableGlobal.SessionIntTipoUsuario != 2)
+                        {
+                            <div class="col-4">
                                 <a href="@VariableGlobal.StrUrlSitio/Views/Publicacion/publicacionAlta.cshtml">
                                     <i class="material-icons md-48">add_circle</i>
                                 </a>
-                            }
-                        </div>
+                            </div>
+                        }
                         <div class="col-4">
-                            <a href="">
+                            <a href="@VariableGlobal.StrUrlSitio/Views/Chat/misChat.cshtml">
                                 <i class="material-icons md-48">chat_bubble_outline</i>
                             </a>
                         </div>
