@@ -138,7 +138,7 @@
         <div class="text-center" style="margin-bottom: 20px;">
             <p class="title">Hola!</p>
         </div>
-        <div class="containerForm">
+        <div class="containerForm" style="padding: 15px 0px 15px 0px">
             <form action="" method="post">
                 <input type="text" class="form-control"
                        id="it_usuario"
@@ -212,9 +212,11 @@
 
                 //Se manda el mensaje de exito
                 toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
-                setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
-                    location.href = '@VariableGlobal.StrUrlSitio/Acceso.cshtml';
-                }, 3500);
+                if (obj_Datos["IntError"] == 0) {
+                    setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
+                        location.href = '@VariableGlobal.StrUrlSitio/Acceso.cshtml';
+                    }, 3500);
+                }
             }
         });
     }
