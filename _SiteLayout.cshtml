@@ -9,6 +9,10 @@
         IntBMenu = int.Parse(Request.Form["bMenu"]?.ToString() ?? "1");
     }
 
+    ObjetoBusqueda objetoBusqueda = new ObjetoBusqueda();
+    objetoBusqueda.IntEjecuta = 0;
+    var lstObjCategoria = new Categoria().ObtenerListaGenerica(objetoBusqueda);
+
     if (IntIdRobot == 0)     //GEG
     {
 
@@ -41,6 +45,7 @@
     {
         Response.Redirect("~/Views/Default/Default.cshtml");
     }
+
 
     int IntEjecuta = 0;
 
@@ -76,6 +81,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <style>
+        input, input:before, input:after {
+            -webkit-user-select: initial;
+            -khtml-user-select: initial;
+            -moz-user-select: initial;
+            -ms-user-select: initial;
+            user-select: initial;
+        } 
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="@VariableGlobal.StrUrlSitio/css/general.css">
@@ -108,7 +122,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@100;400;500;600;900&display=swap"
           rel="stylesheet">
-    <title>Document</title>
+    <title>Compradores México</title>
 
     <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/datatables.min.js"></script>
     <script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/dataTables/visible/buttons.colVis.min.js"></script>
@@ -198,7 +212,12 @@
             </div>
         </nav>
         <div class="menuUser" id="menuUser">
-            <div><a href="#">Pefil</a></div>
+            @*<div><a href="#">Pefil</a></div>*@
+            @if (VariableGlobal.SessionIntTipoUsuario == 2)
+            {
+                <div><a href="@VariableGlobal.StrUrlSitio/Views/MeGusta/misMeGusta.cshtml">Mis Me Gusta</a></div>
+            }
+            <div><a href="@VariableGlobal.StrUrlSitio/Views/Chat/misChat.cshtml">Mis Chats</a></div>
             <div><a href="@VariableGlobal.StrUrlSitio/Views/MiPerfil/tipoUsuario.cshtml">Cambiar usuario</a></div>
             <div style="border-bottom: none;"><a id="btn_Salir" href="@VariableGlobal.StrUrlSitio/Acceso.cshtml" style="color: rgb(179, 40, 40);" href="#">Salir</a></div>
         </div>
@@ -213,40 +232,32 @@
                 <hr>
                 <div class="form-group">
                     <label for="exampleFormControlInput1">Categoria</label>
-                    <input type="text" class="form-control"
-                           id="exampleFormControlInput1"
-                           placeholder="Celulares">
-                </div>
-                <div class="form-group">
-                    <label for="exampleFormControlInput1">Presupuesto</label>
-                    <input type="text" class="form-control"
-                           id="exampleFormControlInput1"
-                           placeholder="$1,000">
-                </div>
-                <div class="form-group">
-                    <label for="exampleFormControlSelect1">Sub Categoria</label>
-                    <select class="form-control"
-                            id="exampleFormControlSelect1">
-                        <option>Apple</option>
-                        <option>Samsung</option>
-                        <option>Xiomi</option>
-                        <option>Motorola</option>
+                    <select class="form-control" id="exampleFormControlSelect2">
+                        <option>Todo</option>
+                        @foreach (var item in lstObjCategoria)
+                        {
+                            <option value="@item.IntIdCategoria">@item.StrDescCategoria</option>
+                        }
                     </select>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">Por palabra</label>
+                    <input type="text" class="form-control"
+                           id="exampleFormControlInput1"
+                           placeholder="Busqueda por palabra clave">
                 </div>
                 <div class="form-group">
                     <label for="exampleFormControlSelect2">Estado</label>
                     <select multiple class="form-control"
                             id="exampleFormControlSelect2">
-                        <option>MTY</option>
-                        <option>COA</option>
-                        <option>MEX</option>
-                        <option>SLP</option>
-                        <option>BCS</option>
+                        <option>Nuevo León</option>
+                        <option>Coahuila</option>
                     </select>
                 </div>
+                <br />
                 <div class="containerNavFooter">
                     <button type="submit" class="btn btn-primary">Buscar</button>
-                    <a href="">Busqueda avanzada</a>
+                    @*<a href="">Busqueda avanzada</a>*@
                 </div>
             </div>
         </div>
@@ -261,20 +272,20 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-4">
-                            <a class="navbar-brand" href="~/Views/Default/Default.cshtml">
+                            <a class="navbar-brand" href="@VariableGlobal.StrUrlSitio/Views/Default/Default.cshtml">
                                 <i class="material-icons md-48">home</i>
                             </a>
                         </div>
-                        <div class="col-4">
-                            @if (VariableGlobal.SessionIntTipoUsuario != 2)
-                            {
+                        @if (VariableGlobal.SessionIntTipoUsuario != 2)
+                        {
+                            <div class="col-4">
                                 <a href="@VariableGlobal.StrUrlSitio/Views/Publicacion/publicacionAlta.cshtml">
                                     <i class="material-icons md-48">add_circle</i>
                                 </a>
-                            }
-                        </div>
+                            </div>
+                        }
                         <div class="col-4">
-                            <a href="">
+                            <a href="@VariableGlobal.StrUrlSitio/Views/Chat/misChat.cshtml">
                                 <i class="material-icons md-48">chat_bubble_outline</i>
                             </a>
                         </div>

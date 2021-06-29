@@ -1,3 +1,4 @@
+
 body {
   color: #397eb4;
   font-family: "Encode Sans", sans-serif !important; }
@@ -34,6 +35,8 @@ header .menuUser {
   width: 35%;
   height: auto;
   top: 74px;
+  padding-left: 5px;
+  left: 5px;
   position: fixed;
   box-shadow: #575d5d 0px 6px 9px 3px; }
   header .menuUser div {

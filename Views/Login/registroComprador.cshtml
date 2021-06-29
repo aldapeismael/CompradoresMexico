@@ -1,4 +1,4 @@
-﻿@{
+@{
     string pBSession = Encriptado.EncriptarDatos("pBSession");
     string pBSession_Si = Encriptado.EncriptarDatos("1");
     string pBSession_No = Encriptado.EncriptarDatos("0");
@@ -146,11 +146,11 @@
             <p class="title">Hola!</p>
         </div>
         <div class="containerForm">
-            <form action="" method="post">
-                <input type="text" class="form-control"
+            <form action="" method="post" style="padding: 15px 0px 15px 0px">
+                <input type="text" class="form-control required"
                        id="it_usuario"
                        placeholder="Usuario" aria-label="usuario">
-                <input type="password" class="form-control"
+                <input type="password" class="form-control required"
                        id="it_contrasena"
                        placeholder="Contraseña" aria-label="Contraseña">
                 <input type="email" class="form-control"
@@ -169,7 +169,7 @@
             </form>
         </div>
         <div class="container footer">
-            <a href="registroProveedor.cshtml" class="pass">¿Eres proveedor?</a>
+            <a href="registroProveedor.cshtml" class="pass">¿Eres Vendedor?</a>
         </div>
     </div>
 </body>
@@ -183,10 +183,9 @@
 
 
     function fn_RegistroComprador(btnClick) {
-        debugger;
-        //if (!obj_ClaseGlobal.fn_ValidarDatosFormulario()) {
-        //    return false;
-        //}
+        if (!obj_ClaseGlobal.fn_ValidarDatosFormulario()) {
+            return false;
+        }
         var obj_Comprador = {
             StrCveComprador: $("#it_usuario").val(),
             StrTelefono: $("#it_telefono").val(),
@@ -211,10 +210,22 @@
 
                 //Se manda el mensaje de exito
                 toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
-                setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
-                    location.href = '@VariableGlobal.StrUrlSitio/Acceso.cshtml';
-                }, 3500);
+
+                if (obj_Datos["IntError"] == 0) {
+                    setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
+                        location.href = '@VariableGlobal.StrUrlSitio/Acceso.cshtml';
+                    }, 3500);
+                }
             }
         });
     }
 </script>
+
+    <style>
+        input {
+            -webkit-user-select: text !important; /* Chrome, Opera, Safari */
+            -moz-user-select: text; /* Firefox 2+ */
+            -ms-user-select: text; /* IE 10+ */
+            user-select: text; /* Standard syntax */
+        }
+    </style>

@@ -121,7 +121,7 @@ function fn_CargarNotificacion(param_boolRevisa) {
     if (!int_BHora) {
         localStorage.setItem("StrHoraNotificacion", dt_FechaActual);
     }
-    if (moment().diff(localStorage.getItem("StrHoraNotificacion"), 'second') >= 30 || param_boolRevisa == true) {
+    if (moment().diff(localStorage.getItem("StrHoraNotificacion"), 'second') >= 5 || param_boolRevisa == true) {
         localStorage.setItem("StrHoraNotificacion", dt_FechaActual);
         var signal_Notificacion = $.connection.notificacionHub;
         signal_Notificacion.client.ObtenerNotificacion = function (strJsonNuevoMensaje) {
@@ -138,7 +138,9 @@ function fn_CargarNotificacion(param_boolRevisa) {
 
         $.connection.hub.start().done(function () {
             // Call the Send method on the hub.
-            signal_Notificacion.server.obtenerCantidadNotificacion(instanciaClase._intIdUsuario, instanciaClase._intIdUsuarioDestino);
+            if ($('#chatbox').length > 0)
+                signal_Notificacion.server.obtenerCantidadNotificacion(instanciaClase._intIdUsuario, instanciaClase._intIdUsuarioDestino);
+
         });
     }
 };

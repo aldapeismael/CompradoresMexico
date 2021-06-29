@@ -1,4 +1,4 @@
-﻿@{
+@{
 
     string pBSession = Encriptado.EncriptarDatos("pBSession");
     string pBSession_Si = Encriptado.EncriptarDatos("1");
@@ -138,15 +138,15 @@
         <div class="text-center" style="margin-bottom: 20px;">
             <p class="title">Hola!</p>
         </div>
-        <div class="containerForm">
+        <div class="containerForm" style="padding: 15px 0px 15px 0px">
             <form action="" method="post">
                 <input type="text" class="form-control"
                        id="it_usuario"
                        placeholder="Usuario" aria-label="usuario">
-                <input type="password" class="form-control"
+                <input type="password" class="form-control required"
                        id="it_contrasena"
                        placeholder="Contraseña" aria-label="Contraseña">
-                <input type="email" class="form-control"
+                <input type="email" class="form-control required"
                        id="it_correo"
                        placeholder="Correo" aria-label="correo">
                 <input type="number" class="form-control"
@@ -212,10 +212,20 @@
 
                 //Se manda el mensaje de exito
                 toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
-                setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
-                    location.href = '@VariableGlobal.StrUrlSitio/Acceso.cshtml';
-                }, 3500);
+                if (obj_Datos["IntError"] == 0) {
+                    setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
+                        location.href = '@VariableGlobal.StrUrlSitio/Acceso.cshtml';
+                    }, 3500);
+                }
             }
         });
     }
 </script>
+     <style>
+        input {
+            -webkit-user-select: text !important; /* Chrome, Opera, Safari */
+            -moz-user-select: text; /* Firefox 2+ */
+            -ms-user-select: text; /* IE 10+ */
+            user-select: text; /* Standard syntax */
+        }
+    </style>

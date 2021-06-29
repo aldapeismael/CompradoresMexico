@@ -40,19 +40,19 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="it_Presupuesto">Presupuesto</label>
+                <label for="it_Presupuesto">Presupuesto (opcional)</label>
                 <br>
                 <input type="number" class="form-control"
                        id="it_Presupuesto" maxlength="10"
-                       placeholder="" aria-label="telefono">
+                       placeholder="" aria-label="telefono" value="0">
             </div>
             <div class="form-group">
-                <label for="txt_Descripcion">Descripción</label>
+                <label for="txt_Descripcion">Describe tu publicación</label>
                 <br>
                 <textarea name="" id="txt_Descripcion"></textarea>
             </div>
             <div class="containerNavFooter">
-                <button type="button" id="btn_RegistraPublicacion" class="btn btn-primary">Agregar</button>
+                <button type="button" id="btn_RegistraPublicacion" class="btn btn-primary">Publicar</button>
             </div>
         </form>
     </div>
@@ -90,6 +90,9 @@
                 fn_GrabarArchivo();
                 return false;
             }
+        }
+        if ($("#it_Presupuesto").val() == "") {
+            $("#it_Presupuesto").val(0);
         }
         var obj_Publicacion = {
             IntIdPublicacion: $("#containerNav_Publicacion").data("id"),
@@ -143,7 +146,7 @@
 					this.addFile(file);
 			  });
 			},
-            url: '@VariableGlobal.StrUrlApi/Publicacion/SubirImagen/0/', //dirección fake UploadCiudad
+            url: '@VariableGlobal.StrUrlApi/PublicacionListado/SubirImagen/0/', //dirección fake UploadCiudad
             maxFiles:1, //numero maximo de carga de archivos
             maxFilesize: int_megasPermitidos,//limite maximo para la cantidad de Mega Bites por c/u de los archivos
             paramName: par_nombreArchivo,//nombre logico con el que se identifican los archivos en la carga

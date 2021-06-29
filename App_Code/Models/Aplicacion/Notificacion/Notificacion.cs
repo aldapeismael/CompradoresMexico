@@ -304,7 +304,7 @@ public class Notificacion : IMetodosModelos<Notificacion>
         SqlCommand sqlcommand = new SqlCommand();
         try
         {
-            sqlcommand.CommandText = "dbo.spChat";
+            sqlcommand.CommandText = "dbo.spChatNotificacion";
             sqlcommand.CommandType = CommandType.StoredProcedure;
             sqlcommand.Parameters.AddWithValue("@p_Ejecuta", 10);
             sqlcommand.Parameters.AddWithValue("@p_IdUsuario", ParamIdUsuario);

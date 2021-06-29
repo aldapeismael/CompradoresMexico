@@ -83,7 +83,7 @@
                     return
                 }
                 if (obj_Datos.IntReenvio == 2) {
-                    toastr["warning"]("Favor inscribirse como proveedor")
+                    toastr["warning"]("Favor inscribirse como Vendedor")
                     setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
                         location.href = '@VariableGlobal.StrUrlSitio/Views/Login/registroProveedor.cshtml?' + '@pIdTipoUsuario' + '=' + str_param_IdTipoUsuario;
                     }, 3500);
