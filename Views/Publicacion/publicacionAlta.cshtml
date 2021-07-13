@@ -18,12 +18,12 @@
     <div class="containerForm">
         <form>
             <div class="containerNav_Publicacion">
-                <h2>Agrega publicación</h2>
+                <h2>Agrega publicaci&oacute;n</h2>
             </div>
             <hr>
             <div class="form-group">
                 <label for="ddl_Categoria">Categoria</label>
-                <select class="form-control" id="ddl_Categoria">
+                <select class="form-control required" id="ddl_Categoria">
                     <option>Seleccione</option>
                     @foreach (var item in lstObjCategoria)
                     {
@@ -47,7 +47,16 @@
                        placeholder="" aria-label="telefono" value="0">
             </div>
             <div class="form-group">
-                <label for="txt_Descripcion">Describe tu publicación</label>
+                <label for="ddl_Vigencia">Vigencia</label>
+                <select class="form-control required" id="ddl_Vigencia">
+                    <option value="1">Tiempo Indefinido</option>
+                    <option value="2">1 Semana</option>
+                    <option value="3">1 Mes</option>
+                    <option value="4">6 Meses</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="txt_Descripcion">Describe tu publicaci&oacute;n</label>
                 <br>
                 <textarea name="" id="txt_Descripcion"></textarea>
             </div>
@@ -94,12 +103,17 @@
         if ($("#it_Presupuesto").val() == "") {
             $("#it_Presupuesto").val(0);
         }
+
+        if (!obj_ClaseGlobal.fn_ValidarDatosFormulario()) {
+            return false;
+        }
         var obj_Publicacion = {
             IntIdPublicacion: $("#containerNav_Publicacion").data("id"),
             IntIdCategoria: $("#ddl_Categoria").val(),
             DecPresupuesto: $("#it_Presupuesto").val(),
             StrDescripcion: $("#txt_Descripcion").val(),
-            StrNombreArchivo: $("#it_ImagenPublicacion").val()
+            StrNombreArchivo: $("#it_ImagenPublicacion").val(),
+            IntTipoVigencia: $("#ddl_Vigencia").val()
         }
 
         var str_Metodo = "";
@@ -120,11 +134,11 @@
                 if (obj_Datos["IntError"] == 1) {
                     setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
                         location.href = '@VariableGlobal.StrUrlSitio/Views/Publicacion/publicacionAlta.cshtml';
-                    }, 3500);
+                    }, 2000);
                 } else {
                     setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
                         location.href = '@VariableGlobal.StrUrlSitio/Views/Default/Default.cshtml';
-                    }, 3500);
+                    }, 2000);
                 }
             }
         });
@@ -133,7 +147,7 @@
     function fn_CargarDropZone(par_nombreArchivo) {
 		bool_errorImagen = false;
 		var formDiv = document.getElementById("dropzoneForm");//guarda en una variable la referencia al objeto contenedor
-		 //guarda la lista de toda la configuración del objeto inputFile
+		 //guarda la lista de toda la configuraci&oacute;n del objeto inputFile
         var config = {
 			init: function() {
 				this.on("addedfile", function() {
@@ -146,7 +160,7 @@
 					this.addFile(file);
 			  });
 			},
-            url: '@VariableGlobal.StrUrlApi/PublicacionListado/SubirImagen/0/', //dirección fake UploadCiudad
+            url: '@VariableGlobal.StrUrlApi/PublicacionListado/SubirImagen/0/', //direcci&oacute;n fake UploadCiudad
             maxFiles:1, //numero maximo de carga de archivos
             maxFilesize: int_megasPermitidos,//limite maximo para la cantidad de Mega Bites por c/u de los archivos
             paramName: par_nombreArchivo,//nombre logico con el que se identifican los archivos en la carga
@@ -154,7 +168,8 @@
             acceptedFiles: '.jpg,.jpeg,.gif,.png',// tipos de archivos permitidos para adjuntar
             autoProcessQueue: false, // significa que no se guadaran automaticamente los archivos al ser agregados al control
             addRemoveLinks: true,//habilita el borrados de los archivos en sus respectivos iconos
-			renameFilename: function renameFilename(file) {
+            autoQueue: false,
+            renameFilename: function renameFilename(file) {
 				str_Imagen = par_nombreArchivo.split('.')[0] + "." + file.split('.').pop();
 				return str_Imagen;
 			},
@@ -190,7 +205,110 @@
             $("#it_ImagenPublicacion").data("ruta", "");
 
         });
-	}
+        dropZone.on("addedfile", function (origFile) {
+            var MAX_WIDTH = 800;
+            var MAX_HEIGHT = 600;
+
+            var reader = new FileReader();
+
+            // Convert file to img
+
+            reader.addEventListener("load", function (event) {
+                event.preventDefault();
+                var origImg = new Image();
+                origImg.src = event.target.result;
+
+                origImg.addEventListener("load", function (event) {
+                    event.preventDefault();
+                    var width = event.target.width;
+                    var height = event.target.height;
+
+
+                    // Don't resize if it's small enough
+
+                    if (width <= MAX_WIDTH && height <= MAX_HEIGHT) {
+                        dropZone.enqueueFile(origFile);
+                        return;
+                    }
+
+
+                    // Calc new dims otherwise
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+
+                    // Resize
+
+                    var canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(origImg, 0, 0, width, height);
+
+                    var resizedFile = base64ToFile(canvas.toDataURL(), origFile);
+
+
+                    // Replace original with resized
+
+                    var origFileIndex = dropZone.files.indexOf(origFile);
+                    dropZone.files[origFileIndex] = resizedFile;
+
+
+                    // Enqueue added file manually making it available for
+                    // further processing by dropzone
+
+                    dropZone.enqueueFile(resizedFile);
+                });
+            });
+
+            reader.readAsDataURL(origFile);
+        });
+    }
+
+    function base64ToFile(dataURI, origFile) {
+        var byteString, mimestring;
+
+        if (dataURI.split(',')[0].indexOf('base64') !== -1) {
+            byteString = atob(dataURI.split(',')[1]);
+        } else {
+            byteString = decodeURI(dataURI.split(',')[1]);
+        }
+
+        mimestring = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+        var content = new Array();
+        for (var i = 0; i < byteString.length; i++) {
+            content[i] = byteString.charCodeAt(i);
+        }
+
+        var newFile = new File(
+            [new Uint8Array(content)], origFile.name, { type: mimestring }
+        );
+
+
+        // Copy props set by the dropzone in the original file
+
+        var origProps = [
+            "upload", "status", "previewElement", "previewTemplate", "accepted"
+        ];
+
+        $.each(origProps, function (i, p) {
+            newFile[p] = origFile[p];
+        });
+
+        return newFile;
+    }
 </script>
 
 

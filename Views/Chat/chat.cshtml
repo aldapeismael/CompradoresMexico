@@ -33,7 +33,10 @@
     objetoBusqueda = new ObjetoBusqueda();
     objetoBusqueda.IntId1 = IntIdChat;
     objetoBusqueda.IntEjecuta = 2;
-    var lstObjChat = new Chat().ObtenerListaGenerica(objetoBusqueda);
+    Chat objChat = new Chat();
+    objChat.IntIdChat = IntIdChat;
+    objChat.IntIdUsuarioDestino = IntIdUsuarioDestino;
+    var lstObjChat = objChat.ObtenerListaGenerica(objetoBusqueda);
     string StrJsonMensajes = "[]";
     if (lstObjChat.Count > 0)
     {

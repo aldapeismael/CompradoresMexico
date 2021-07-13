@@ -352,7 +352,7 @@ public class RegistroError
         try
         {
             SqlCommand sqlCommand = new SqlCommand();
-            sqlCommand.CommandText = "erpEstadisticaTmi.aplicacion.spRegistroErrorObtenerDataTable";
+            sqlCommand.CommandText = "erpEstadisticaCompradores.aplicacion.spRegistroErrorObtenerDataTable";
             sqlCommand.CommandType = CommandType.StoredProcedure;
             sqlCommand.Parameters.AddWithValue("@p_Ejecuta", 0);
             sqlCommand.Parameters.AddWithValue("@p_OrdenColumna", objFiltroDt.order[0].column);

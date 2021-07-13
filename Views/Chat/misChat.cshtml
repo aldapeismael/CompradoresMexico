@@ -8,7 +8,7 @@
     }
 
     ObjetoBusqueda objetoBusqueda = new ObjetoBusqueda();
-    objetoBusqueda.IntEjecuta = 2;
+    objetoBusqueda.IntEjecuta = 3;
     if (1 == 0)
     {
         Response.Redirect("~/Views/Default/Default.cshtml");
@@ -77,7 +77,7 @@
                                 <img class="rounded-circle widthSet heightSet" src="@VariableGlobal.StrUrlSitio/img/dummy.jpg" alt="">
                             </td>
                             <td style="width: 80%">
-                                <div class="PanelNombre"><a href="#" id="btn_Nombre" data-id="@objChat.IntIdUsuarioDestino" data-idchat="@objChat.IntIdChat"><strong>@objChat.StrCveUsuario</strong></a></div>
+                                <div class="PanelNombre"><a href="#" id="btn_Nombre" class="btn_Nombre" data-id="@objChat.IntIdUsuarioDestino" data-idchat="@objChat.IntIdChat"><strong>@objChat.StrCveUsuario</strong></a></div>
                                 <span style="white-space: pre-line"></span>
                                 <div class="Ultimomensaje">@(objChat.StrMensaje.Length > 20 ? (objChat.StrMensaje.Substring(0,20) + "...") : objChat.StrMensaje) </div>
                             </td>
@@ -106,7 +106,7 @@
             , str_JsonNotificacion.altoNotificacion
             , "@VariableGlobal.SessionIntIdUsuario"
             , @IntIdUsuarioDestino);
-        $("#btn_Nombre").click(function () {
+        $(".btn_Nombre").click(function () {
             let int_IdUsuarioDestino = $(this).data("id");
             let int_IdChat = $(this).data("idchat");
             instanciaClase._intIdUsuarioDestino = int_IdUsuarioDestino;

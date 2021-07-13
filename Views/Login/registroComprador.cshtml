@@ -115,6 +115,19 @@
     <script src="@VariableGlobal.StrUrlSitio/Scripts/utileria.js?id=@Guid.NewGuid()"></script><!---carga de script custom para la configuraciones globales --->
 
     <script src="@VariableGlobal.StrUrlSitio/js/functions.js"></script>
+    <style>
+        .master .containerForm form select {
+            width: 100%;
+            margin: 0 auto;
+            margin-bottom: 20px;
+            background-color: #d6e8f7;
+            text-align: center;
+            text-align-last: center !important;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+    </style>
 </head>
 <body>
     <header>
@@ -122,7 +135,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-10">
-                        <a href="~/Views/Default/Default.cshtml" style="text-decoration: none;"><img width="100px"  class="" src="@VariableGlobal.StrUrlSitio/img/logo.png" alt=""></a>
+                        <a href="~/Views/Default/Default.cshtml" style="text-decoration: none;"><img width="100px" class="" src="@VariableGlobal.StrUrlSitio/img/logo.png" alt=""></a>
                     </div>
                     <div class="col-2" id="menuProfile">
                         <a class="navbar-brand" href="#">
@@ -135,7 +148,7 @@
 
         <div class="menuUser" id="menuUser">
             <div>
-                <div><a href="#">Términos y condiciones</a></div>
+                <div><a href="#">T&eacute;rminos y condiciones</a></div>
                 <div><a href="">Aviso de privacidad</a></div>
                 <div style="border-bottom: none;"><a href="#">Acerca de</a></div>
             </div>
@@ -152,19 +165,24 @@
                        placeholder="Usuario" aria-label="usuario">
                 <input type="password" class="form-control required"
                        id="it_contrasena"
-                       placeholder="Contraseña" aria-label="Contraseña">
+                       placeholder="Contrase&ntilde;a" aria-label="Contrasena">
                 <input type="email" class="form-control"
                        id="it_correo"
                        placeholder="Correo" aria-label="correo">
                 <input type="number" class="form-control"
                        id="it_telefono" maxlength="10"
-                       placeholder="Teléfono" aria-label="telefono">
+                       placeholder="Tel&eacute;fono" aria-label="telefono">
                 <input class="form-control required"
                        id="it_Nombre" maxlength="20"
                        placeholder="Nombre" aria-label="Nombre">
                 <input class="form-control required"
                        id="it_Apellido" maxlength="20"
                        placeholder="Apellido" aria-label="Nombre">
+                <select class="form-control required" id="ddl_Estado" placeholder="Estado">
+                    <option value="0">Seleccione estado</option>
+                    <option value="1">Nuevo Le&oacute;n</option>
+                    <option value="2">Coahuila</option>
+                </select>
                 <button id="btn_RegistraComprador" type="button" class="btn btnRef">Registrar</button>
             </form>
         </div>
@@ -193,6 +211,7 @@
             StrContrasena: $("#it_contrasena").val(),
             StrNombreUsuario: $("#it_Nombre").val(),
             StrApellidoUsuario: $("#it_Apellido").val(),
+            IntIdEstado: $("#ddl_Estado").val(),
         }
 
         var str_Metodo = "";
@@ -221,11 +240,11 @@
     }
 </script>
 
-    <style>
-        input {
-            -webkit-user-select: text !important; /* Chrome, Opera, Safari */
-            -moz-user-select: text; /* Firefox 2+ */
-            -ms-user-select: text; /* IE 10+ */
-            user-select: text; /* Standard syntax */
-        }
-    </style>
+<style>
+    input {
+        -webkit-user-select: text !important; /* Chrome, Opera, Safari */
+        -moz-user-select: text; /* Firefox 2+ */
+        -ms-user-select: text; /* IE 10+ */
+        user-select: text; /* Standard syntax */
+    }
+</style>

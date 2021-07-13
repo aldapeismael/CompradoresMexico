@@ -3,17 +3,25 @@
 
     Layout = "~/_SiteLayout.cshtml";
 
-    string pStrTipoUsuarioCadena = Encriptado.EncriptarDatos("pIdTipoUsuario");
+    string pStrTipoUsuarioCadena = "aIfgKdBOWjKOYyETsCWCrw";//Encriptado.EncriptarDatos("pIdTipoUsuario");
+    string pStrCveBusquedaCadena = Encriptado.EncriptarDatos("pCveBusqueda");
     string pStrIdTipoUsuarioEncriptado = "0";
     pStrIdTipoUsuarioEncriptado = Request.QueryString[pStrTipoUsuarioCadena]?.ToString() ?? "0";
+    int pIdCategoria = int.Parse(Request.QueryString["pIdCategoria"]?.ToString() ?? "0");
+    string pCveBusqueda = Request.QueryString["pCveBusqueda"]?.ToString() ?? "";
+    string pEstados = Request.QueryString["pEstados"]?.ToString() ?? "";
     int pIntIdUsuario = VariableGlobal.SessionIntTipoUsuario;
     if (pStrIdTipoUsuarioEncriptado != "0")
     {
+        pStrIdTipoUsuarioEncriptado = pStrIdTipoUsuarioEncriptado.Replace(" ", "+");
         pIntIdUsuario = int.Parse(Encriptado.DesencriptarDatos(pStrIdTipoUsuarioEncriptado));
         HttpContext.Current.Session["IntTipoUsuario"] = pIntIdUsuario;
     }
 
     ObjetoBusqueda objetoBusqueda = new ObjetoBusqueda();
+    objetoBusqueda.IntId2 = pIdCategoria;
+    objetoBusqueda.StrDes1 = pCveBusqueda;
+    objetoBusqueda.StrDes2 = pEstados;
     objetoBusqueda.IntEjecuta = 1;
     var lstObjPublicacion = new Publicacion().ObtenerListaGenerica(objetoBusqueda);
 
@@ -27,7 +35,7 @@
         const int DAY = 24 * HOUR;
         const int MONTH = 30 * DAY;
 
-        var ts = new TimeSpan(DateTime.UtcNow.Ticks - paramFecha.Ticks);
+        var ts = new TimeSpan(DateTime.Now.Ticks - paramFecha.Ticks);
         double delta = Math.Abs(ts.TotalSeconds);
 
         if (delta < 1 * MINUTE)
@@ -77,7 +85,7 @@
     @foreach (var objPublicacion in lstObjPublicacion)
     {
         <text>
-            <div class="container post">
+            <div class="container post publicacionContenedor" data-idpublicacion="@objPublicacion.IntIdPublicacion">
                 <div class="row header">
                     <div class="col-2">
                         <img class="rounded-circle" src="@VariableGlobal.StrUrlSitio/img/dummy.jpg" alt="">
@@ -88,7 +96,7 @@
                     </div>
                 </div>
                 <div class="row post-img">
-                    <img class="rounded mx-auto" src="@VariableGlobal.StrUrlSitio/Views/Publicacion/PublicacionImagen/@objPublicacion.StrNombreArchivo" alt="">
+                    <img class="rounded mx-auto imgCropped" src="@VariableGlobal.StrUrlSitio/Views/Publicacion/PublicacionImagen/@objPublicacion.StrNombreArchivo" alt="">
                 </div>
                 <div class="row body" style="max-height: 50px !important">
                     <div class="col-9">
@@ -110,6 +118,11 @@
                             <a href="" class="btn_Favorito" data-idpublicacion="@objPublicacion.IntIdPublicacion"><i class="material-icons md-36 btnFavoritoIcono" id="btnFavoritoIcono_@objPublicacion.IntIdPublicacion" style="color: red !important">favorite</i></a>
                         }
                         <a href="@VariableGlobal.StrUrlSitio/Views/Publicacion/publicacionDetalle.cshtml?idPublicacion=@objPublicacion.IntIdPublicacion"><i class="material-icons md-36">info_outline</i></a>
+                        @if (objPublicacion.IntIdUsuario == VariableGlobal.SessionIntIdUsuario)
+                        {
+                            <a id="btn_EliminaPublicacion" class="btn_EliminaPublicacion" href="#"><i class="material-icons md-36">delete_outline</i></a>
+                        }
+
                     </div>
                 </div>
             </div>
@@ -118,7 +131,11 @@
     <br />
     <br />
 </section>
-
+<style>
+    .imgCropped {
+        object-fit: cover;
+    }
+</style>
 <script>
 
     $(document).ready(function () {
@@ -141,10 +158,34 @@
                 'height': winHeight,
             });
         });
+
         $(".btn_Favorito").click(function (event) {
             event.preventDefault();
             var int_idPublicacion = $(this).data("idpublicacion");
             fn_EnviarLike(int_idPublicacion);
+        });
+
+        $(".btn_EliminaPublicacion").click(function (event) {
+            event.preventDefault();
+            var objPublicacion = $(this).closest(".publicacionContenedor");
+            var int_idPublicacion = $(objPublicacion).data("idpublicacion");
+
+            swal({//metodo para el mensage de confirm
+            title: "",
+            text: "Desea eliminar esta publicación?? ",
+            type: "warning",//tipo de mensage =>  opciones: warning, error, info y success
+            showCancelButton: true,//mostrar boton de cancelacion
+            confirmButtonColor: hex_str_ColorBotonConfirmar,//color de boton de confirmacion
+            confirmButtonText: "Eliminar",//texto en el boton de confirmacion
+            cancelButtonText: "Cerrar",//texto en el boton de cancelacion
+            closeOnConfirm: true,//la ventana de cerrara al momento de seleccionar la opcion de confirmacion
+            closeOnCancel: true,//la ventana de cerrara al momento de seleccionar la opcion de cancelacion
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+                    fn_EliminarPublicacion(int_idPublicacion, objPublicacion);
+                }
+            });
         });
 
         $("#btn_Contactar").click(function () {
@@ -195,6 +236,35 @@
                         $("#btnFavoritoIcono_" + int_idPublicacion).html("favorite_border");
                         $("#btnFavoritoIcono_" + int_idPublicacion).attr("style", "");
                     }
+                }
+            }
+        });
+    }
+
+    function fn_EliminarPublicacion(int_idPublicacion, objPublicacion) {
+        //Mandamos los datos al webmethod para guardar los datos
+        //declaramos el objeto que se le pasara al controlador
+        var obj_Publicacion = {
+            IntIdPublicacion: int_idPublicacion
+        }
+
+        var str_Metodo = "";
+        var str_Url = "";
+        str_Metodo = "POST";
+        str_Url = "@VariableGlobal.StrUrlApi/PublicacionAccion/EliminaPublicacion/";
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_Publicacion),
+            type: str_Metodo,
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            global: false,
+            success: function (obj_Datos) {
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                if (obj_Datos["IntError"] == 0) {
+                    $(objPublicacion).remove();
                 }
             }
         });

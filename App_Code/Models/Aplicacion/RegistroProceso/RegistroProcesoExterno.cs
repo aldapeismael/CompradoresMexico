@@ -87,7 +87,7 @@ public class RegistroProcesoExterno : IMetodosModelos<RegistroProcesoExterno>
             objUsuario.ObtenerPorCve();
             objEmpresa.ObtenerPorCve();
             SqlCommand sqlcommand = new SqlCommand();
-            sqlcommand.CommandText = "erpEstadisticaTmi.aplicacion.spRegistroProcesoInsertar";
+            sqlcommand.CommandText = "erpEstadisticaCompradores.aplicacion.spRegistroProcesoInsertar";
             sqlcommand.CommandType = CommandType.StoredProcedure;
             sqlcommand.Parameters.AddWithValue("@p_Transaccion", 0);//PARAMETRO PUBLICO
             sqlcommand.Parameters.AddWithValue("@p_IdEmpresa", objEmpresa.IntIdEmpresa);//PARAMETRO PUBLICO

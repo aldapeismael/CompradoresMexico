@@ -18,6 +18,7 @@ public class Publicacion: IMetodosModelos<Publicacion>
 
     int _IntIdPublicacion;
     int _IntIdCategoria;
+    int _IntTipoVigencia;
     Guid _GuidGuidPublicacion;
     int _IntIdMegusta;
     string _StrDescripcion;
@@ -225,6 +226,19 @@ public class Publicacion: IMetodosModelos<Publicacion>
         }
     }
 
+    public int IntTipoVigencia
+    {
+        get
+        {
+            return _IntTipoVigencia;
+        }
+
+        set
+        {
+            _IntTipoVigencia = value;
+        }
+    }
+
     #endregion
 
     #region Constructores
@@ -294,6 +308,9 @@ public class Publicacion: IMetodosModelos<Publicacion>
             sqlCommand.CommandType = CommandType.StoredProcedure;
             sqlCommand.Parameters.AddWithValue("@p_Ejecuta", ParamObjeto.IntEjecuta);   
             sqlCommand.Parameters.AddWithValue("@p_IdPublicacion", ParamObjeto.IntId1);
+            sqlCommand.Parameters.AddWithValue("@p_IdGenerico2", ParamObjeto.IntId2);
+            sqlCommand.Parameters.AddWithValue("@p_StrGenerico1", ParamObjeto.StrDes1);
+            sqlCommand.Parameters.AddWithValue("@p_StrGenerico2", ParamObjeto.StrDes2);
             sqlCommand.Parameters.AddWithValue("@p_IdUsuario", IntIdUsuario);
             sqlCommand.Parameters.AddWithValue("@p_TipoUsuario", intTipoUsuario);
 
@@ -410,6 +427,7 @@ public class Publicacion: IMetodosModelos<Publicacion>
             sqlCommand.Parameters.AddWithValue("@p_Presupuesto", this.DecPresupuesto);
             sqlCommand.Parameters.AddWithValue("@p_BActivo", 1);
             sqlCommand.Parameters.AddWithValue("@p_IdUsuarioAlta", IntIdUsuario);
+            sqlCommand.Parameters.AddWithValue("@p_TipoVigencia", this.IntTipoVigencia);
             sqlCommand.Parameters.AddWithValue("@p_NombreArchivo", this.StrNombreArchivo);
 
             DataSet dataSetInsertar = ConexionBD.EjecutarComando(IntIdEmpresa, IntIdUsuario, sqlCommand, "archivo: Publicacion.cs => Insertar()");
@@ -505,7 +523,42 @@ public class Publicacion: IMetodosModelos<Publicacion>
 
     public RespuestaBD Eliminar()
     {
-        throw new NotImplementedException();
+        RespuestaBD objRespuestaBD = new RespuestaBD();
+        try
+        {
+            var IntIdEmpresa = VariableGlobal.SessionIntIdEmpresa;
+            var IntIdUsuario = VariableGlobal.SessionIntIdUsuario;
+
+            SqlCommand sqlCommand = new SqlCommand();
+            sqlCommand.CommandText = "dbo.spPublicacion";
+            sqlCommand.CommandType = CommandType.StoredProcedure;
+            sqlCommand.Parameters.AddWithValue("@p_Ejecuta", 2);
+            sqlCommand.Parameters.AddWithValue("@p_Debug", 0);
+            sqlCommand.Parameters.AddWithValue("@p_IdPublicacion", this.IntIdPublicacion);
+            sqlCommand.Parameters.AddWithValue("@p_IdUsuario", IntIdUsuario);
+            sqlCommand.Parameters.AddWithValue("@p_RegistroError", "[]");
+
+            DataSet dataSetInsertar = ConexionBD.EjecutarComando(IntIdEmpresa, IntIdUsuario, sqlCommand, "archivo: Publicacion.cs => Insertar()");
+
+            if (dataSetInsertar != null && dataSetInsertar.Tables.Count > 0 && dataSetInsertar.Tables[0].Rows.Count > 0)
+            {
+                objRespuestaBD = new RespuestaBD(
+                   short.Parse(dataSetInsertar.Tables[0].Rows[0]["Error"].ToString()),
+                   dataSetInsertar.Tables[0].Rows[0]["MensajeError"].ToString(),
+                   dataSetInsertar.Tables[0].Rows[0]["TipoError"].ToString(),
+                   int.Parse(dataSetInsertar.Tables[0].Rows[0]["IdRespuesta"].ToString())
+               );
+            }
+            else
+            {
+                objRespuestaBD = new RespuestaBD(1, "No se obtuvo respuesta de la base de datos", "error");
+            }
+        }
+        catch (Exception ex)
+        {
+            objRespuestaBD = new RespuestaBD(1, ex.ToString(), "error");
+        }
+        return objRespuestaBD;
     }    
     #endregion
 }

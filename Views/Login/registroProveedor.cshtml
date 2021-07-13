@@ -128,7 +128,7 @@
 
         <div class="menuUser" id="menuUser">
             <div>
-                <div><a href="#">Términos y condiciones</a></div>
+                <div><a href="#">T&eacute;rminos y condiciones</a></div>
                 <div><a href="">Aviso de privacidad</a></div>
                 <div style="border-bottom: none;"><a href="#">Acerca de</a></div>
             </div>
@@ -145,13 +145,13 @@
                        placeholder="Usuario" aria-label="usuario">
                 <input type="password" class="form-control required"
                        id="it_contrasena"
-                       placeholder="Contraseña" aria-label="Contraseña">
+                       placeholder="Contrase&ntilde;a" aria-label="Contrasena">
                 <input type="email" class="form-control required"
                        id="it_correo"
                        placeholder="Correo" aria-label="correo">
                 <input type="number" class="form-control"
                        id="it_telefono" maxlength="10"
-                       placeholder="Teléfono" aria-label="telefono">
+                       placeholder="Tel&eacute;fono" aria-label="telefono">
                 <input class="form-control required"
                        id="it_Nombre" maxlength="20"
                        placeholder="Nombre" aria-label="Nombre">
@@ -163,12 +163,12 @@
                        placeholder="RFC" aria-label="RFC">
                 <input class="form-control"
                        id="it_Empresa" maxlength="20"
-                       placeholder="Nombre de Compañia" aria-label="Empresa">
+                       placeholder="Nombre de Compa&ntilde;ia" aria-label="Empresa">
                 <button id="btn_RegistraProveedor" type="button" class="btn btnRef">Registrar</button>
             </form>
         </div>
         <div class="container footer">
-            <a href="registroComprador.cshtml" class="pass">¿Eres Comprador?</a>
+            <a href="registroComprador.cshtml" class="pass">Eres Comprador?</a>
         </div>
     </div>
 </body>
@@ -183,6 +183,12 @@
 
 
     function fn_RegistroProveedor(btnClick) {
+        if ($("#it_RFC").val() != "") {
+            if (!(/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/.test($("#it_RFC").val()))) {
+                toastr["error"]("Favor de dar un rfc Valido");
+                return false;
+            }
+        }
         if (!obj_ClaseGlobal.fn_ValidarDatosFormulario()) {
             return false;
         }

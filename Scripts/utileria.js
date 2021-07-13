@@ -729,7 +729,7 @@ class class_global {
 			if (!$(this).parent().hasClass('easy-autocomplete')) {
                 var start = this.selectionStart;
                 var end = this.selectionEnd;
-                var value = $(this).val().toUpperCase();
+                var value = $(this).val()
                 $(this).val(value);
                 this.setSelectionRange(start, end);
                 return;

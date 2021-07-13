@@ -140,7 +140,7 @@ public class RegistroProceso : IMetodosModelos<RegistroProceso>
         try
         {
             SqlCommand sqlCommand = new SqlCommand();
-            sqlCommand.CommandText = "erpEstadisticaTmi.aplicacion.spRegistroProcesoObtener";
+            sqlCommand.CommandText = "erpEstadisticaCompradores.aplicacion.spRegistroProcesoObtener";
             sqlCommand.CommandType = CommandType.StoredProcedure;
             sqlCommand.Parameters.AddWithValue("@p_Ejecuta", 0);
             sqlCommand.Parameters.AddWithValue("@p_OrdenColumna", objFiltroDt.order[0].column);

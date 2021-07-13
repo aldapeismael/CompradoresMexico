@@ -285,7 +285,7 @@ public class ConexionBD
                     using (SqlConnection connRegistroAcceso = new SqlConnection(constrRegistroAcceso))
                     {
                         SqlCommand sqlCommandRegistroAcceso = new SqlCommand();
-                        sqlCommandRegistroAcceso.CommandText = "erpEstadisticaTmi.aplicacion.spRegistroAccesoInsertar";
+                        sqlCommandRegistroAcceso.CommandText = "erpEstadisticaCompradores.aplicacion.spRegistroAccesoInsertar";
                         sqlCommandRegistroAcceso.CommandType = CommandType.StoredProcedure;
                         sqlCommandRegistroAcceso.Parameters.AddWithValue("@p_Ejecuta", 0);
                         sqlCommandRegistroAcceso.Parameters.AddWithValue("@p_IdEmpresa", this.IntIdEmpresa);

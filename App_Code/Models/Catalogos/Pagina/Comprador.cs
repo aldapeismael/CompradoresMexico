@@ -23,6 +23,7 @@ public class Comprador
     string _StrApellidoUsuario;
     DateTime _DtFechaAlta;
     int _IntBActivo;
+    int _IntIdEstado;
 
     public int IntIdComprador
     {
@@ -153,6 +154,19 @@ public class Comprador
             _IntBActivo = value;
         }
     }
+
+    public int IntIdEstado
+    {
+        get
+        {
+            return _IntIdEstado;
+        }
+
+        set
+        {
+            _IntIdEstado = value;
+        }
+    }
     #endregion
 
     #region Constructor
@@ -184,6 +198,7 @@ public class Comprador
             sqlCommand.Parameters.AddWithValue("@p_ApellidoUsuario", this.StrApellidoUsuario);
             sqlCommand.Parameters.AddWithValue("@p_bActivo", this.IntBActivo);
             sqlCommand.Parameters.AddWithValue("@p_IdUsuario", IntIdUsuario);
+            sqlCommand.Parameters.AddWithValue("@p_IdEstado", this.IntIdEstado);
 
             DataSet dataSetInsertar = ConexionBD.EjecutarComando(IntIdEmpresa, IntIdUsuario, sqlCommand, "archivo: Comprador.cs => Insertar()");
 

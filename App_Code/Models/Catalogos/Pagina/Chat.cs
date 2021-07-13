@@ -190,6 +190,7 @@ public class Chat
             sqlCommand.CommandType = CommandType.StoredProcedure;
             sqlCommand.Parameters.AddWithValue("@p_Ejecuta", ParamObjeto.IntEjecuta);
             sqlCommand.Parameters.AddWithValue("@p_IdUsuario", IntIdUsuario);
+            sqlCommand.Parameters.AddWithValue("@p_IdUsuariodestino", IntIdUsuarioDestino);
             sqlCommand.Parameters.AddWithValue("@p_IdChat", IntIdChat);
 
             RegistroError objRegistroError = new RegistroError(sqlCommand.Parameters, MethodBase.GetCurrentMethod().Name, this.GetType().Name + ".cs", this.GetType().Name + "Controller.cs");

@@ -242,7 +242,7 @@ public class Correo
             //Host = "secure.emailsrvr.com",
             //Timeout = 10000,
             //EnableSsl = true,
-            //Credentials = new System.Net.NetworkCredential("alertas@alianzatrayecto.com", "notificaciones.AT18"),
+            //Credentials = new System.Net.NetworkCredential("alertas@acompraodres.com", "notificaciones.AT18"),
 
             UseDefaultCredentials = false,
             Port = this._ObjSmtp.Port,

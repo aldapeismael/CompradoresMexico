@@ -38,5 +38,4 @@ public class PublicacionController : ApiController
     {
         return Publicacion.ObtenerLista(ParamIntTipoLista, ParamIntTipoTexto);
     }
-    
 }

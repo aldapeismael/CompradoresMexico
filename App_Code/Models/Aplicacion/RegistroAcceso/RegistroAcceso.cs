@@ -73,7 +73,7 @@ public class RegistroAcceso: IMetodosModelos<RegistroAcceso>
         try
         {
             SqlCommand sqlCommand = new SqlCommand();
-            sqlCommand.CommandText = "erpEstadisticaTmi.aplicacion.spRegistroAccesoObtenerLista";
+            sqlCommand.CommandText = "erpEstadisticaCompradores.aplicacion.spRegistroAccesoObtenerLista";
             sqlCommand.CommandType = CommandType.StoredProcedure;
             sqlCommand.Parameters.AddWithValue("@p_Ejecuta", 0);
             sqlCommand.Parameters.AddWithValue("@p_TipoBusqueda", ParamTipoBusqueda);
@@ -99,7 +99,7 @@ public class RegistroAcceso: IMetodosModelos<RegistroAcceso>
         try
         {
             SqlCommand sqlCommand = new SqlCommand();
-            sqlCommand.CommandText = "erpEstadisticaTmi.aplicacion.spRegistroAccesoObtenerDataTable";
+            sqlCommand.CommandText = "erpEstadisticaCompradores.aplicacion.spRegistroAccesoObtenerDataTable";
             sqlCommand.CommandType = CommandType.StoredProcedure;
             sqlCommand.Parameters.AddWithValue("@p_Ejecuta", 0);
             sqlCommand.Parameters.AddWithValue("@p_FechaInicial", objFiltro.DtFechaInicial);

@@ -19,7 +19,7 @@
         password = Request.Form["it_contrasena"];
         menu = "operativo";
 
-        if (!username.Contains("@"))
+        if (true)
         {
             var validarAcceso = new AccesoController().ValidarUsuario(username, password);
 

@@ -43,7 +43,7 @@
         margin-bottom: 15%; height: 100%;">
         <div class="containerCarusel">
             <div class="exit">
-                <i class="material-icons md-48">arrow_back_ios</i>
+                <i class="material-icons md-48" id="btn_PantallaAnterior">arrow_back_ios</i>
             </div>
             <img src="@VariableGlobal.StrUrlSitio/Views/Publicacion/PublicacionImagen/@objPublicacion.StrNombreArchivo" alt="">
         </div>
@@ -56,8 +56,10 @@
                 <div>
                     <p>$@objPublicacion.DecPresupuesto.ToString("#,###,###.##")</p>
                 </div>
-                @*<a href="@VariableGlobal.StrUrlSitio/Views/Chat/chat.cshtml?Popup=0&IdPublicacion=@objPublicacion.IntIdPublicacion" id="btn_Contactar" data-id="@objPublicacion.IntIdPublicacion" class="btn btn-block">Contactar</a>*@
-                <button type="button" id="btn_Contactar" data-id="@objPublicacion.IntIdPublicacion" class="btn btn-block">Contactar</button>
+                @if (objPublicacion.IntIdUsuario != VariableGlobal.SessionIntIdUsuario)
+                {
+                    <button type="button" id="btn_Contactar" data-id="@objPublicacion.IntIdPublicacion" class="btn btn-block">Contactar</button>
+                }
             </div>
         </div>
         <div class="ContainerDesc">
@@ -77,11 +79,14 @@
         var obj_Notificacion = new class_notificacion("@VariableGlobal.StrUrlSitio", "@VariableGlobal.StrUrlApi"
             , str_JsonNotificacion.frecuenciaBusqueda
             , str_JsonNotificacion.minutosDiferencia
-            , str_JsonNotificacion.altoNotificacion, @VariableGlobal.SessionIntIdUsuario
+            , str_JsonNotificacion.altoNotificacion, "@VariableGlobal.SessionIntIdUsuario"
             , @objPublicacionPrimero.IntIdUsuario);
         $("#btn_Contactar").click(function () {
             let int_IdLiquidacion = $(this).data("id");
             fn_AbriModalChat(int_IdLiquidacion);
+        });
+        $("#btn_PantallaAnterior").click(function () {
+            window.history.back();
         });
     });
 
