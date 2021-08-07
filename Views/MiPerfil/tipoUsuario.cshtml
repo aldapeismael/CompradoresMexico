@@ -10,6 +10,9 @@
     string pBSession_Si = Encriptado.EncriptarDatos("1");
     string pBSession_No = Encriptado.EncriptarDatos("0");
 
+    Perfil objPerfil = new Perfil();
+    objPerfil.ObtenerImagenes();
+
 }
 <style>
 
@@ -22,18 +25,20 @@
 
 <div class="container master">
     <div class="text-center" style="margin-bottom: 20px;">
-        <p class="title">¿Quién eres?</p>
+        <p class="title">&#191;Quién eres?</p>
     </div>
     <div class="containerProfile">
         <div class="card text-center">
             <div class="card-body">
-                <img src="@VariableGlobal.StrUrlSitio/img/dummy.png" alt="" srcset="">
-                <a id="btn_CambioProveedor" href="#" class="btn btnRef btnCambioSession">Soy @VariableGlobal.SessionStrDescUsuario Proveedor</a>
+                <img src="@VariableGlobal.StrUrlSitio/Views/Publicacion/PublicacionImagen/@objPerfil.StrImagenProveedor" 
+                     style="border-radius: 50%; width: 141px !important; height: 141px !important"  alt="" srcset="">
+                <a id="btn_CambioProveedor" href="#" class="btn btnRef btnCambioSession">Soy @VariableGlobal.SessionStrDescUsuario Vendedor</a>
             </div>
         </div>
         <div class="card text-center">
             <div class="card-body">
-                <img src="@VariableGlobal.StrUrlSitio/img/dummy.png" alt="" srcset="">
+                <img src="@VariableGlobal.StrUrlSitio/Views/Publicacion/PublicacionImagen/@objPerfil.StrImagenComprador" 
+                     style="border-radius: 50%; width: 141px !important; height: 141px !important"  alt="" srcset="">
                 <a id="btn_CambioComprador" href="#" class="btn btnRef btnCambioSession">Soy @VariableGlobal.SessionStrDescUsuario Comprador</a>
             </div>
         </div>

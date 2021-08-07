@@ -127,10 +127,37 @@ function fn_CargarNotificacion(param_boolRevisa) {
         signal_Notificacion.client.ObtenerNotificacion = function (strJsonNuevoMensaje) {
             // Html encode display name and message.
             var objNuevoMensaje = JSON.parse(strJsonNuevoMensaje);
-            if ($('#chatbox').length > 0 && objNuevoMensaje.length > 0) {
+            if ($('.msg_history').length > 0 && objNuevoMensaje.length > 0) {
                 for (var i = 0; i < objNuevoMensaje.length; i++) {
-                    $('#chatbox').append("<strong>" + objNuevoMensaje[i].cveUsuario + ":</strong> " + objNuevoMensaje[i].mensaje + "<br>");
-                    var objDiv = document.getElementById("chatbox");
+                    //$('#chatbox').append("<strong>" + objNuevoMensaje[i].cveUsuario + ":</strong> " + objNuevoMensaje[i].mensaje + "<br>");
+                    //var objDiv = document.getElementById("chatbox");
+                    //objDiv.scrollTop = objDiv.scrollHeight;
+
+                    if (objNuevoMensaje[i].idUsuarioEnvia != instanciaClase._intIdUsuario) {
+
+                        enviae = '<div class="incoming_msg">' +
+                            '                    <div class="received_msg">' +
+                            '                        <div class="received_withd_msg">' +
+                            '                            <p>' +
+                            objNuevoMensaje[i].mensaje +
+                            '                            </p>' +
+                            '                            <span class="time_date"> ' + objNuevoMensaje[i].fechaMensaje + '</span>' +
+                            '                        </div>' +
+                            '                    </div>' +
+                            '                </div>';
+                    } else {
+                        enviae = '<div class="outgoing_msg">' +
+                            '                            <div class="sent_msg">' +
+                            '                                <p>' +
+                            objNuevoMensaje[i].mensaje +
+                            '                                </p>' +
+                            '                                <span class="time_date"> ' + objNuevoMensaje[i].fechaMensaje + ' </span>' +
+                            '                            </div>' +
+                            '                        </div>';
+
+                    }
+                    $('.msg_history').append(enviae);
+                    var objDiv = document.getElementById("msg_history");
                     objDiv.scrollTop = objDiv.scrollHeight;
                 }
             }
@@ -138,8 +165,8 @@ function fn_CargarNotificacion(param_boolRevisa) {
 
         $.connection.hub.start().done(function () {
             // Call the Send method on the hub.
-            if ($('#chatbox').length > 0)
-                signal_Notificacion.server.obtenerCantidadNotificacion(instanciaClase._intIdUsuario, instanciaClase._intIdUsuarioDestino);
+            if ($('.msg_history').length > 0)
+                signal_Notificacion.server.obtenerCantidadNotificacion(instanciaClase._intIdUsuario, instanciaClase._intIdUsuarioDestino, $("#notificacionIdPublicacion").data("id"));
 
         });
     }

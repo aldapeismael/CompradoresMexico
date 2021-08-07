@@ -8,97 +8,139 @@
     }
     int IntIdPublicacion = int.Parse(Request.QueryString["IdPublicacion"]?.ToString() ?? "-1");
     int IntIdChat = int.Parse(Request.QueryString["IdChat"]?.ToString() ?? "0");
+
+    string StrCveCompradorDestino = "";
     int IntIdUsuarioDestino = 0;
-    string StrCveComprador = "";
-    string StrAltura = "100px";
 
-    ObjetoBusqueda objetoBusqueda = new ObjetoBusqueda();
-    objetoBusqueda.IntEjecuta = 0;
-    objetoBusqueda.IntId1 = IntIdPublicacion;
-    if (IntIdPublicacion == 0 && IntIdChat == 0)
-    {
-        Response.Redirect("~/Views/Default/Default.cshtml");
-    }
-    var lstObjPublicacion = new Publicacion().ObtenerListaGenerica(objetoBusqueda);
-    Publicacion objPublicacion = new Publicacion();
-    if (lstObjPublicacion.Count > 0)
-    {
-        objPublicacion = lstObjPublicacion.First();
-        IntIdPublicacion = objPublicacion.IntIdPublicacion;
-        StrCveComprador = objPublicacion.StrCveComprador;
-        IntIdChat = objPublicacion.IntIdChat;
-        IntIdUsuarioDestino = objPublicacion.IntIdUsuario;
-    }
-
-    objetoBusqueda = new ObjetoBusqueda();
-    objetoBusqueda.IntId1 = IntIdChat;
-    objetoBusqueda.IntEjecuta = 2;
     Chat objChat = new Chat();
-    objChat.IntIdChat = IntIdChat;
-    objChat.IntIdUsuarioDestino = IntIdUsuarioDestino;
-    var lstObjChat = objChat.ObtenerListaGenerica(objetoBusqueda);
+    Publicacion objPublicacion = new Publicacion();
+    ObjetoBusqueda objetoBusqueda = new ObjetoBusqueda();
+    int IntIdUsuarioSession = VariableGlobal.SessionIntIdUsuario;
     string StrJsonMensajes = "[]";
-    if (lstObjChat.Count > 0)
+    string StrDescCategoria = "";
+    string StrDescripcion = "";
+    if (IntIdChat > 0)
     {
-        IntIdUsuarioDestino = lstObjChat.First().IntIdUsuarioDestino;
-        StrCveComprador = lstObjChat.First().StrCveUsuario;
-        StrJsonMensajes = lstObjChat.First().StrJsonMensajes;
-        StrAltura = "300px";
+        objChat.IntIdChat = IntIdChat;
+        objChat.IntIdUsuario = VariableGlobal.SessionIntIdUsuario;
+        objetoBusqueda.IntId1 = IntIdChat;
+        objetoBusqueda.IntEjecuta = 102;
+        var lstObjChat = objChat.ObtenerListaGenerica(objetoBusqueda);
+        var chatPrimero = lstObjChat.First();
+        StrJsonMensajes = chatPrimero.StrJsonMensajes;
+        if (chatPrimero.IntIdUsuario1 == IntIdUsuarioSession)
+        {
+            StrCveCompradorDestino = chatPrimero.StrCveUsuario2;
+            IntIdUsuarioDestino = chatPrimero.IntIdUsuario2;
+        }
+        else
+        {
+            StrCveCompradorDestino = chatPrimero.StrCveUsuario1;
+            IntIdUsuarioDestino = chatPrimero.IntIdUsuario1;
+        }
+        IntIdPublicacion = chatPrimero.IntIdPublicacion;
+        StrDescCategoria = chatPrimero.StrCveCategoria;
+        StrDescripcion = chatPrimero.StrDescripcion;
     }
-    int i = 0;
+    else if (IntIdPublicacion != 0)
+    {
+        objetoBusqueda.IntEjecuta = 1002;
+        objetoBusqueda.IntId1 = IntIdPublicacion;
+        objChat.IntIdPublicacion = IntIdPublicacion;
+        var lstObjChat = objChat.ObtenerListaGenerica(objetoBusqueda);
+        var chatPrimero = lstObjChat.First();
+        StrJsonMensajes = chatPrimero.StrJsonMensajes;
+        if (chatPrimero.IntIdUsuario1 == IntIdUsuarioSession)
+        {
+            StrCveCompradorDestino = chatPrimero.StrCveUsuario2;
+            IntIdUsuarioDestino = chatPrimero.IntIdUsuario2;
+        }
+        else
+        {
+            StrCveCompradorDestino = chatPrimero.StrCveUsuario1;
+            IntIdUsuarioDestino = chatPrimero.IntIdUsuario1;
+        }
+        StrDescCategoria = chatPrimero.StrCveCategoria;
+        StrDescripcion = chatPrimero.StrDescripcion;
+    }
+
+
+
+
+
+    //int IntIdUsuarioDestino = 0;
+    //string StrAltura = "50px";
+    //int IntIdUsuarioSession = VariableGlobal.SessionIntIdUsuario;
+
+    //ObjetoBusqueda objetoBusqueda = new ObjetoBusqueda();
+    //objetoBusqueda.IntEjecuta = 100;
+    //objetoBusqueda.IntId1 = IntIdPublicacion;
+    //objetoBusqueda.IntId2 = IntIdChat;
+    //if (IntIdPublicacion == 0 && IntIdChat == 0)
+    //{
+    //    Response.Redirect("~/Views/Default/Default.cshtml");
+    //}
+    //var lstObjPublicacion = new Publicacion().ObtenerListaGenerica(objetoBusqueda);
+    //if (lstObjPublicacion.Count > 0)
+    //{
+    //    objPublicacion = lstObjPublicacion.First();
+    //    IntIdPublicacion = objPublicacion.IntIdPublicacion;
+    //    StrCveComprador = objPublicacion.StrCveComprador;
+    //    IntIdChat = objPublicacion.IntIdChat;
+    //    IntIdUsuarioDestino = objPublicacion.IntIdUsuario;
+    //}
+
+    //objetoBusqueda = new ObjetoBusqueda();
+    //objetoBusqueda.IntId1 = IntIdChat;
+    //objetoBusqueda.IntEjecuta = 102;
+    //Chat objChat = new Chat();
+    //objChat.IntIdChat = IntIdChat;
+    //objChat.IntIdUsuarioDestino = IntIdUsuarioDestino;
+    //var lstObjChat = objChat.ObtenerListaGenerica(objetoBusqueda);
+    //if (lstObjChat.Count > 0)
+    //{
+    //    IntIdUsuarioDestino = lstObjChat.First().IntIdUsuarioDestino;
+    //    StrCveComprador = lstObjChat.First().StrCveUsuario;
+    //    StrJsonMensajes = lstObjChat.First().StrJsonMensajes;
+    //    StrAltura = "300px";
+    //}
+    //int i = 0;
 
 
 
 }
 <link rel="stylesheet" href="@VariableGlobal.StrUrlSitio/css/productDetail.css">
 <div class="ContactModal modalChatMensaje" id="ContactModal" data-idpublicacion="@IntIdPublicacion">
-    <div class="containerForm">
+    <div class="containerForm" id="notificacionIdPublicacion" data-idchat="@IntIdChat" data-id="@IntIdPublicacion">
         <hr>
         <div class="row containerProfile">
             <div class="col-2 profile">
                 <img src="@VariableGlobal.StrUrlSitio/img/dummy.jpg" width="50px">
             </div>
-            <div class="col-8 user">
+            <div class="col-8">
                 <div>
                     <p class="user">
-                        @StrCveComprador
-                    </p>
-                </div>
-                <div>
-                    <p class="userDetail">
-                        <span>
-                        </span>
+                        @StrCveCompradorDestino
                     </p>
                 </div>
             </div>
-            <div class="col-2 btn">
-                @*<i class="material-icons md-48">call</i>*@
+            <div class="col-11">
+                <p>@StrDescCategoria: @(StrDescripcion.Length > 40 ? (StrDescripcion.Substring(0, 40) + "...") : StrDescripcion)</p>
             </div>
         </div>
         <hr>
         <div class="row containerProduct">
-            @if (IntIdPublicacion > 0)
-            {
-                <div class="col-10">
-                    <p class="productName">@objPublicacion.StrDescCategoria</p>
-                    <p class="productDesc">@objPublicacion.StrCveCategoria</p>
-                </div>
-                <div class="col-2">
-                    <p class="productCost">
-                        $@objPublicacion.DecPresupuesto.ToString("#,###,###.##")
-                    </p>
-                </div>
-                <img src="@VariableGlobal.StrUrlSitio/Views/Publicacion/PublicacionImagen/@objPublicacion.StrNombreArchivo" class="" alt="">
-            }
-            <div id="chatbox" style="word-wrap: break-word; overflow-y: scroll; overflow-x: hidden; height: @StrAltura; max-height: @StrAltura"></div>
-            <div class="row containerChat">
-                <div class="col-10">
-                    <textarea rows=2 class="form-control" placeholder="Escribe tu mensaje" name="" id="txt_MensajeEnvio"></textarea>
-                </div>
-                <div class="col-2">
-                    <button id="btn_EnviaMensaje" class="rounded-circle">
-                        >
-                    </button>
+            <div>
+                <div class="mesgs">
+                    <div class="msg_history" id="msg_history">
+
+                    </div>
+                    <div class="type_msg">
+                        <div class="input_msg_write">
+                            <input type="text" class="write_msg" placeholder="Escribe tu mensaje" id="txt_MensajeEnvio" />
+                            <button class="msg_send_btn" type="button" id="btn_EnviaMensaje"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -113,12 +155,37 @@
     function fn_ImprimeChat() {
         var lst_ObjChat = JSON.parse('@Html.Raw(StrJsonMensajes)');
         $(lst_ObjChat.reverse()).each(function (index, value) {
-            $('#chatbox').append("<strong style='color: black !important'>" + value.cveUsuarioEnvia + ": </strong>" + value.mensaje + " <span style='font-size: small'>(" + value.fechaMensaje + ")</span> <br>");
+            //$('#chatbox').append("<strong style='color: black !important'>" + value.cveUsuarioEnvia + ": </strong>" + value.mensaje + " <span style='font-size: small'>(" + value.fechaMensaje + ")</span> <br>");
+            var enviae = '';
+            if (value.idUsuarioEnvia != "@IntIdUsuarioSession") {
+
+                enviae = '<div class="incoming_msg">' +
+                    '                    <div class="received_msg">' +
+                    '                        <div class="received_withd_msg">' +
+                    '                            <p>' +
+                     value.mensaje +
+                    '                            </p>' +
+                    '                            <span class="time_date"> ' + value.fechaMensaje + '</span>' +
+                    '                        </div>' +
+                    '                    </div>' +
+                    '                </div>';
+            } else {
+                enviae = '<div class="outgoing_msg">' +
+                    '                            <div class="sent_msg">' +
+                    '                                <p>' +
+                    value.mensaje +
+                    '                                </p>' +
+                    '                                <span class="time_date"> ' + value.fechaMensaje + ' </span>' +
+                    '                            </div>' +
+                    '                        </div>';
+
+            }
+            $('.msg_history').append(enviae);
         });
         setTimeout(function () {
-            var objDiv = document.getElementById("chatbox");
+            var objDiv = document.getElementById("msg_history");
             objDiv.scrollTop = objDiv.scrollHeight;
-        }, 500);
+        }, 200);
     }
 
     fn_ImprimeChat();
@@ -127,7 +194,7 @@
         var strMensajeEnvio = $("#txt_MensajeEnvio").val();
         var obj_Chat = {
             IntIdChat: int_IdChat,
-            IntIdPublicacion: @objPublicacion.IntIdPublicacion,
+            IntIdPublicacion: @IntIdPublicacion,
             IntIdUsuarioDestino: "@IntIdUsuarioDestino",
             StrMensaje: strMensajeEnvio
         }
@@ -150,15 +217,241 @@
                     if (obj_Datos["IntError"] == 1) {
                         toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
                     } else {
-                        $('#chatbox').append("<strong style='color: black !important'>" + "@VariableGlobal.SessionStrCveUsuario" + ":</strong> " + strMensajeEnvio + " <span style='font-size: small'>(" + moment().format("DD/MM/YYYY HH:mm") + ")</span> <br>");
-                        var objDiv = document.getElementById("chatbox");
-                        objDiv.scrollTop = objDiv.scrollHeight;
+                        var enviae = '';
+
+                        enviae = '<div class="outgoing_msg">' +
+                            '                            <div class="sent_msg">' +
+                            '                                <p>' +
+                            strMensajeEnvio +
+                            '                                </p>' +
+                            '                                <span class="time_date"> ' + moment().format("DD/MM/YYYY HH:mm") + ' </span>' +
+                            '                            </div>' +
+                            '                        </div>';
+                        $('.msg_history').append(enviae);
                         int_IdChat = obj_Datos["IntIdRespuesta"];
                         $("#txt_MensajeEnvio").val("");
                         $("#txt_MensajeEnvio").focus();
+                        var objDiv = document.getElementById("msg_history");
+                        objDiv.scrollTop = objDiv.scrollHeight;
                     }
                 }
             });
         }
     }
 </script>
+<style>
+    .container {
+        max-width: 1170px;
+        margin: auto;
+    }
+
+    img {
+        max-width: 100%;
+    }
+
+    .inbox_people {
+        background: #f8f8f8 none repeat scroll 0 0;
+        float: left;
+        overflow: hidden;
+        width: 40%;
+        border-right: 1px solid #c4c4c4;
+    }
+
+    .inbox_msg {
+        border: 1px solid #c4c4c4;
+        clear: both;
+        overflow: hidden;
+    }
+
+    .top_spac {
+        margin: 20px 0 0;
+    }
+
+
+    .recent_heading {
+        float: left;
+        width: 40%;
+    }
+
+    .srch_bar {
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+    }
+
+    .headind_srch {
+        padding: 10px 29px 10px 20px;
+        overflow: hidden;
+        border-bottom: 1px solid #c4c4c4;
+    }
+
+    .recent_heading h4 {
+        color: #05728f;
+        font-size: 21px;
+        margin: auto;
+    }
+
+    .srch_bar input {
+        border: 1px solid #cdcdcd;
+        border-width: 0 0 1px 0;
+        width: 80%;
+        padding: 2px 0 4px 6px;
+        background: none;
+    }
+
+    .srch_bar .input-group-addon button {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+        border: medium none;
+        padding: 0;
+        color: #707070;
+        font-size: 18px;
+    }
+
+    .srch_bar .input-group-addon {
+        margin: 0 0 0 -27px;
+    }
+
+    .chat_ib h5 {
+        font-size: 15px;
+        color: #464646;
+        margin: 0 0 8px 0;
+    }
+
+        .chat_ib h5 span {
+            font-size: 13px;
+            float: right;
+        }
+
+    .chat_ib p {
+        font-size: 14px;
+        color: #989898;
+        margin: auto
+    }
+
+    .chat_img {
+        float: left;
+        width: 11%;
+    }
+
+    .chat_ib {
+        float: left;
+        padding: 0 0 0 15px;
+        width: 88%;
+    }
+
+    .chat_people {
+        overflow: hidden;
+        clear: both;
+    }
+
+    .chat_list {
+        border-bottom: 1px solid #c4c4c4;
+        margin: 0;
+        padding: 18px 16px 10px;
+    }
+
+    .inbox_chat {
+        height: 550px;
+        overflow-y: scroll;
+    }
+
+    .active_chat {
+        background: #ebebeb;
+    }
+
+    .incoming_msg_img {
+        display: inline-block;
+        width: 6%;
+    }
+
+    .received_msg {
+        display: inline-block;
+        padding: 0 0 0 10px;
+        vertical-align: top;
+        width: 100%;
+    }
+
+    .received_withd_msg p {
+        background: #ebebeb none repeat scroll 0 0;
+        border-radius: 5px;
+        color: #646464;
+        font-size: 14px;
+        margin: 0;
+        padding: 5px 10px 5px 12px;
+        width: 100%;
+    }
+
+    .time_date {
+        color: #747474;
+        display: block;
+        font-size: 12px;
+        margin: 0px;
+    }
+
+    .received_withd_msg {
+        width: 65%;
+    }
+
+    .mesgs {
+        float: left;
+        padding: 5px 0 0 0;
+        width: 100%;
+    }
+
+    .sent_msg p {
+        background: #05728f none repeat scroll 0 0;
+        border-radius: 5px;
+        font-size: 14px;
+        margin: 0;
+        color: #fff;
+        padding: 5px 10px 5px 12px;
+        width: 100%;
+    }
+
+    .outgoing_msg {
+        overflow: hidden;
+        margin: 0px;
+    }
+
+    .sent_msg {
+        float: right;
+        width: 65%;
+    }
+
+    .input_msg_write input {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+        border: medium none;
+        color: #4c4c4c;
+        font-size: 15px;
+        min-height: 48px;
+        width: 100%;
+    }
+
+    .type_msg {
+        border-top: 1px solid #c4c4c4;
+        position: relative;
+    }
+
+    .msg_send_btn {
+        background: #05728f none repeat scroll 0 0;
+        border: medium none;
+        border-radius: 50%;
+        color: #fff;
+        cursor: pointer;
+        font-size: 17px;
+        height: 33px;
+        position: absolute;
+        right: 0;
+        top: 11px;
+        width: 33px;
+    }
+
+    .messaging {
+        padding: 0 0 50px 0;
+    }
+
+    .msg_history {
+        height: 516px;
+        overflow-y: auto;
+    }
+</style>

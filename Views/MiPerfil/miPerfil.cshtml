@@ -3,16 +3,266 @@
 
     Layout = "~/_SiteLayout.cshtml";
 }
-<style>
+<link rel="stylesheet" href="@VariableGlobal.StrUrlSitio/css/product.css">
+<link href="@VariableGlobal.StrUrlSitio/css/plugins/dropzone/dropzone.css" rel="stylesheet" />
 
-    #page-wrapper {
-        padding: 0;
+<!-- DropZone PlugIn -->
+<script src="@VariableGlobal.StrUrlSitio/Scripts/plugins/dropzone/dropzone.js"></script>
+
+<section>
+    <div class="containerForm">
+        <form>
+            <div class="containerNav_ImagenPerfil">
+                <h5 style="color: #397eb4">Cambiar mi imagen de @(VariableGlobal.SessionIntTipoUsuario == 1?"Comprador":"Vendedor")</h5>
+            </div>
+            <hr>
+            <div class="form-group">
+                <input id="it_ImagenPerfil" type="hidden" value="" />
+                <div class="dropzone" id="dropzoneForm">
+                    <div class="fallback">
+                        <input name="file" type="file" multiple /><!--objeto imput que ejecuta la carga-->
+                    </div>
+                </div>
+            </div>
+            <div class="containerNavFooter">
+                <button type="button" id="btn_RegistraImagen" class="btn btn-primary">Guardar mi Imagen</button>
+            </div>
+        </form>
+    </div>
+    <div class="footer">
+        <i></i>
+        <i></i>
+    </div>
+    <br />
+    <br />
+</section>
+
+
+<script>
+    var int_megasPermitidos = 5;
+    var dropZone = null;
+    var str_NombreArchivo = "";
+    var str_Imagen = "";
+    var obj_Imagen = {};
+    var buttons = '';
+    var fl = '';
+
+    $(document).ready(function () {
+        fn_CargarDropZone(obj_ClaseGlobal.fn_GenerarCadena());
+        $("#btn_RegistraImagen").click(function () {
+            fn_RegistroImagenPerfil(true);
+        });
+    });
+
+    function fn_GrabarArchivo() {
+        dropZone.processQueue();
     }
-</style>
 
-<div class="wrapper border-bottom white-bg page-heading imagen-trac">
-    <div></div>
-</div>
+    function fn_RegistroImagenPerfil(bool_grabarArchivo) {
+        if (dropZone.files.length > 0 && bool_grabarArchivo) {
+            if (dropZone.files[0].status == 'queued') {
+                fn_GrabarArchivo();
+                return false;
+            }
+        }
+
+        var obj_ImagenPerfil = {
+            StrNombreArchivo: $("#it_ImagenPerfil").val(),
+        }
+
+        var str_Metodo = "";
+        var str_Url = "";
+        str_Metodo = "POST";
+        str_Url = "@VariableGlobal.StrUrlApi/PerfilImagen/Post/0/";
+
+        $.ajax({
+            url: str_Url,
+            data: JSON.stringify(obj_ImagenPerfil),
+            type: str_Metodo,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (obj_Datos) {
+
+                //Se manda el mensaje de exito
+                toastr[obj_Datos["StrTipoError"]](obj_Datos["StrMensajeError"]);
+                if (obj_Datos["IntError"] == 1) {
+
+                } else {
+                    setTimeout(function () { //esperamos unos segundos y redireccionamos a la lista
+                        location.href = '@VariableGlobal.StrUrlSitio/Views/Default/Default.cshtml';
+                    }, 2000);
+                }
+            }
+        });
+    }
+
+    function fn_CargarDropZone(par_nombreArchivo) {
+		bool_errorImagen = false;
+		var formDiv = document.getElementById("dropzoneForm");//guarda en una variable la referencia al objeto contenedor
+		 //guarda la lista de toda la configuraci&oacute;n del objeto inputFile
+        var config = {
+			init: function() {
+				this.on("addedfile", function() {
+					if (this.files[1]!=null){
+						this.removeFile(this.files[0]);
+					}
+				});
+				this.on("maxfilesexceeded", function(file) {
+					this.removeAllFiles();
+					this.addFile(file);
+			  });
+			},
+            url: '@VariableGlobal.StrUrlApi/PublicacionListado/SubirImagen/0/', //direcci&oacute;n fake UploadCiudad
+            maxFiles:1, //numero maximo de carga de archivos
+            maxFilesize: int_megasPermitidos,//limite maximo para la cantidad de Mega Bites por c/u de los archivos
+            paramName: par_nombreArchivo,//nombre logico con el que se identifican los archivos en la carga
+            maxThumbnailFilesize: 1,//cantidad maxima de archivos permitidos para la carga total
+            acceptedFiles: '.jpg,.jpeg,.gif,.png',// tipos de archivos permitidos para adjuntar
+            autoProcessQueue: false, // significa que no se guadaran automaticamente los archivos al ser agregados al control
+            addRemoveLinks: true,//habilita el borrados de los archivos en sus respectivos iconos
+            autoQueue: false,
+            renameFilename: function renameFilename(file) {
+				str_Imagen = par_nombreArchivo.split('.')[0] + "." + file.split('.').pop();
+				return str_Imagen;
+			},
+			selectedfiles: function(files){
+				$(files).each(function(index){
+					this.delay = index * 100;
+				});
+			},
+			error: function(file, errorMessage) {
+				bool_errorImagen = true;
+			},
+			queuecomplete: function() {
+				$("#it_ImagenPerfil").val(str_Imagen);
+				bool_errorImagen = false;
+                fn_RegistroImagenPerfil(false);
+			}
+        };
+        //drop.auto5
+        dropZone = new Dropzone(formDiv, config);
+        Dropzone.autoDiscover = false;
+
+        //metodo para remover los archivos
+        dropZone.on("removedfile", function (file) { //el objeto dropZone en su evento 'removed file'
+            var strNombreArchivo = par_nombreArchivo.split('.')[0] + "." + file.name.split('.').pop();
+            var intId = file.id;
+			var strUrl = "@Publicacion.StrUrlArchivoPublicacion.Replace(@"\", @"\\")";
+			obj_Imagen = {
+				StrNombre : strNombreArchivo ,
+				IntId: (intId !== null ? intId : 0),
+				StrUrl: strUrl
+			}
+
+            $("#it_ImagenPerfil").data("ruta", "");
+
+        });
+        dropZone.on("addedfile", function (origFile) {
+            var MAX_WIDTH = 800;
+            var MAX_HEIGHT = 600;
+
+            var reader = new FileReader();
+
+            // Convert file to img
+
+            reader.addEventListener("load", function (event) {
+                event.preventDefault();
+                var origImg = new Image();
+                origImg.src = event.target.result;
+
+                origImg.addEventListener("load", function (event) {
+                    event.preventDefault();
+                    var width = event.target.width;
+                    var height = event.target.height;
+
+
+                    // Don't resize if it's small enough
+
+                    if (width <= MAX_WIDTH && height <= MAX_HEIGHT) {
+                        dropZone.enqueueFile(origFile);
+                        return;
+                    }
+
+
+                    // Calc new dims otherwise
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+
+                    // Resize
+
+                    var canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(origImg, 0, 0, width, height);
+
+                    var resizedFile = base64ToFile(canvas.toDataURL(), origFile);
+
+
+                    // Replace original with resized
+
+                    var origFileIndex = dropZone.files.indexOf(origFile);
+                    dropZone.files[origFileIndex] = resizedFile;
+
+
+                    // Enqueue added file manually making it available for
+                    // further processing by dropzone
+
+                    dropZone.enqueueFile(resizedFile);
+                });
+            });
+
+            reader.readAsDataURL(origFile);
+        });
+    }
+
+    function base64ToFile(dataURI, origFile) {
+        var byteString, mimestring;
+
+        if (dataURI.split(',')[0].indexOf('base64') !== -1) {
+            byteString = atob(dataURI.split(',')[1]);
+        } else {
+            byteString = decodeURI(dataURI.split(',')[1]);
+        }
+
+        mimestring = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+        var content = new Array();
+        for (var i = 0; i < byteString.length; i++) {
+            content[i] = byteString.charCodeAt(i);
+        }
+
+        var newFile = new File(
+            [new Uint8Array(content)], origFile.name, { type: mimestring }
+        );
+
+
+        // Copy props set by the dropzone in the original file
+
+        var origProps = [
+            "upload", "status", "previewElement", "previewTemplate", "accepted"
+        ];
+
+        $.each(origProps, function (i, p) {
+            newFile[p] = origFile[p];
+        });
+
+        return newFile;
+    }
+</script>
+
 
 <script>
 

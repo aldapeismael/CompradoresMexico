@@ -8,7 +8,7 @@
     }
 
     ObjetoBusqueda objetoBusqueda = new ObjetoBusqueda();
-    objetoBusqueda.IntEjecuta = 3;
+    objetoBusqueda.IntEjecuta = 103;
     if (1 == 0)
     {
         Response.Redirect("~/Views/Default/Default.cshtml");
@@ -74,10 +74,12 @@
                     {
                         <tr>
                             <td style="width: 20%">
-                                <img class="rounded-circle widthSet heightSet" src="@VariableGlobal.StrUrlSitio/img/dummy.jpg" alt="">
+                                <img class="rounded-circle widthSet heightSet" src="@(VariableGlobal.StrUrlSitio + "/Views/Publicacion/PublicacionImagen/" + objChat.StrImagen1)" alt="">
                             </td>
                             <td style="width: 80%">
-                                <div class="PanelNombre"><a href="#" id="btn_Nombre" class="btn_Nombre" data-id="@objChat.IntIdUsuarioDestino" data-idchat="@objChat.IntIdChat"><strong>@objChat.StrCveUsuario</strong></a></div>
+                                <div class="PanelNombre"><a href="#" id="btn_Nombre" class="btn_Nombre" data-id="@objChat.IntIdUsuarioDestino" data-idpublicacion="@objChat.IntIdPublicacion" data-idchat="@objChat.IntIdChat"><strong>@objChat.StrCveUsuario</strong></a></div>
+                                <span style="white-space: pre-line"></span>
+                                <div class="" style="font-size:12px; font-weight:bold">@objChat.StrCveCategoria : @(objChat.StrDescripcion.Length > 20 ? (objChat.StrDescripcion.Substring(0,20) + "...") : objChat.StrDescripcion) </div>
                                 <span style="white-space: pre-line"></span>
                                 <div class="Ultimomensaje">@(objChat.StrMensaje.Length > 20 ? (objChat.StrMensaje.Substring(0,20) + "...") : objChat.StrMensaje) </div>
                             </td>
@@ -109,14 +111,15 @@
         $(".btn_Nombre").click(function () {
             let int_IdUsuarioDestino = $(this).data("id");
             let int_IdChat = $(this).data("idchat");
+            let int_IdPublicacion = $(this).data("idpublicacion");
             instanciaClase._intIdUsuarioDestino = int_IdUsuarioDestino;
-            fn_AbriModalChat(int_IdChat);
+            fn_AbriModalChat(int_IdChat, int_IdPublicacion);
         });
     });
 
-    function fn_AbriModalChat(param_Int_IdChat) {
+    function fn_AbriModalChat(param_Int_IdChat, param_int_IdPublicacion) {
         $.pgwModal({//abre ABC not
-            url: "@VariableGlobal.StrUrlSitio/Views/Chat/chat.cshtml?Popup=1&IdChat=" + param_Int_IdChat,
+            url: "@VariableGlobal.StrUrlSitio/Views/Chat/chat.cshtml?Popup=1&IdChat=" + param_Int_IdChat + "&IdPublicacion=" + param_int_IdPublicacion,
             loadingContent: '<span style="text-align:center">Cargando</span>',
             closeOnBackgroundClick: false,
             title: "Contactar",

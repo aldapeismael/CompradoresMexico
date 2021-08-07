@@ -151,6 +151,16 @@ public static class VariableGlobal
             return 0;
         }
     }
+    
+    public static string SessionStrImagenPerfil
+    {
+        get
+        {
+            if (HttpContext.Current.Session["StrImagenPerfil"] != null)
+                return HttpContext.Current.Session["StrImagenPerfil"].ToString();
+            return "";
+        }
+    }
     //regresa el IdPerfil si existe en las sesiones
     public static int SessionIntIdPerfil
     {

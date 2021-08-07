@@ -298,7 +298,7 @@ public class Notificacion : IMetodosModelos<Notificacion>
         return bool_Valido;
     }
 
-    public bool ObtenerCantidadNotificacion(int ParamIdUsuario, int ParamIdUsuarioDestino)
+    public bool ObtenerCantidadNotificacion(int ParamIdUsuario, int ParamIdUsuarioDestino, int ParamIdPublicacion)
     {
         bool bool_Valido = false;
         SqlCommand sqlcommand = new SqlCommand();
@@ -309,6 +309,7 @@ public class Notificacion : IMetodosModelos<Notificacion>
             sqlcommand.Parameters.AddWithValue("@p_Ejecuta", 10);
             sqlcommand.Parameters.AddWithValue("@p_IdUsuario", ParamIdUsuario);
             sqlcommand.Parameters.AddWithValue("@p_IdUsuariodestino", ParamIdUsuarioDestino);
+            sqlcommand.Parameters.AddWithValue("@p_IdPublicacion", ParamIdPublicacion);
 
             //RegistroError objRegistroError = new RegistroError(sqlcommand.Parameters, MethodBase.GetCurrentMethod().Name, this.GetType().Name + ".cs", this.GetType().Name + ".cs");
             //RegistroError objRegistroError = new RegistroError()

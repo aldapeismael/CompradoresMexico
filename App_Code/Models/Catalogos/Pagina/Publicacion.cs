@@ -28,7 +28,9 @@ public class Publicacion: IMetodosModelos<Publicacion>
     string _StrCorreo;
     string _StrCveCategoria;
     string _StrDescCategoria;
+    string _StrDescEstado;
     string _StrCveUsuario;
+    string _StrImagen;
     decimal _DecPresupuesto;
     DateTime _DtFechaAlta;
     int _IntBActivo;
@@ -239,6 +241,32 @@ public class Publicacion: IMetodosModelos<Publicacion>
         }
     }
 
+    public string StrDescEstado
+    {
+        get
+        {
+            return _StrDescEstado;
+        }
+
+        set
+        {
+            _StrDescEstado = value;
+        }
+    }
+
+    public string StrImagen
+    {
+        get
+        {
+            return _StrImagen;
+        }
+
+        set
+        {
+            _StrImagen = value;
+        }
+    }
+
     #endregion
 
     #region Constructores
@@ -333,8 +361,10 @@ public class Publicacion: IMetodosModelos<Publicacion>
                         StrCorreo = dataSetObtenerDataTable.Tables[0].Columns.Contains("correo") ? FilaPublicacion["correo"].ToString() : "",
                         StrCveCategoria = dataSetObtenerDataTable.Tables[0].Columns.Contains("cveCategoria") ? FilaPublicacion["cveCategoria"].ToString() : "",
                         StrDescCategoria = dataSetObtenerDataTable.Tables[0].Columns.Contains("descCategoria") ? FilaPublicacion["descCategoria"].ToString() : "",
+                        StrDescEstado = dataSetObtenerDataTable.Tables[0].Columns.Contains("descEstado") ? FilaPublicacion["descEstado"].ToString() : "",
                         StrNombreArchivo = dataSetObtenerDataTable.Tables[0].Columns.Contains("imagen1") ? FilaPublicacion["imagen1"].ToString() : "",
                         StrCveUsuario = dataSetObtenerDataTable.Tables[0].Columns.Contains("cveUsuario") ? FilaPublicacion["cveUsuario"].ToString() : "",
+                        StrImagen = dataSetObtenerDataTable.Tables[0].Columns.Contains("imagen") ? FilaPublicacion["imagen"].ToString() : "",
                         IntBActivo = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("bActivo") ? FilaPublicacion["bActivo"].ToString() : "0"),
                         IntIdUsuario = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idUsuario") ? FilaPublicacion["idUsuario"].ToString() : "0"),
                         IntIdChat = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idChat") ? FilaPublicacion["idChat"].ToString() : "0"),

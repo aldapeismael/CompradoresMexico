@@ -23,6 +23,7 @@ public class Acceso
     string _StrDescTerminal;
     string _StrCveTerminal;
     string _StrMenuUsuario;
+    string _StrImagen;
     string _StrToken;
     private string _StrDescUsuario;
     private string _StrDescPerfil;
@@ -204,6 +205,19 @@ public class Acceso
 
         set { _StrEmailUsuario = value; }
     }
+
+    public string StrImagen
+    {
+        get
+        {
+            return _StrImagen;
+        }
+
+        set
+        {
+            _StrImagen = value;
+        }
+    }
     #endregion
 
     #region construcotres
@@ -260,6 +274,7 @@ public class Acceso
                     IntIdEmpleado = int.Parse(validarUsuario.Tables[0].Rows[0]["idEmpleado"].ToString()),
                     IntBRobot = int.Parse(validarUsuario.Tables[0].Rows[0]["bRobot"].ToString()),
                     IntTipoUsuario = int.Parse(validarUsuario.Tables[0].Rows[0]["tipoUsuario"].ToString()),
+                    StrImagen = validarUsuario.Tables[0].Rows[0]["imagen"].ToString(),
                     BoolActivo = 1,
                     StrToken = "",
                     IntIdPerfil = int.Parse(validarUsuario.Tables[0].Rows[0]["idPerfil"].ToString()),

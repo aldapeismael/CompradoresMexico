@@ -15,6 +15,7 @@ public class TipoUsuario
     int _IntReenvio;
     int _IntIdTipoUsuario;
     string _StrTipoUsuario;
+    string _StrImagen;
 
     public int IntVerificado
     {
@@ -59,6 +60,19 @@ public class TipoUsuario
         }
     }
 
+    public string StrImagen
+    {
+        get
+        {
+            return _StrImagen;
+        }
+
+        set
+        {
+            _StrImagen = value;
+        }
+    }
+
     #endregion
 
     #region
@@ -90,6 +104,9 @@ public class TipoUsuario
             {
                 this.IntVerificado = int.Parse(dataSetObtener.Tables[0].Rows[0]["bVerificacion"].ToString());
                 this.IntReenvio = int.Parse(dataSetObtener.Tables[0].Rows[0]["reenvio"].ToString());
+                this.StrImagen = dataSetObtener.Tables[0].Rows[0]["imagen"].ToString();
+
+                HttpContext.Current.Session["StrImagenPerfil"] = this.StrImagen;
             }
         }
         catch (Exception ex)

@@ -1,40 +1,94 @@
 body {
-  color: #397eb4;
-  font-family: "Encode Sans", sans-serif !important; }
+    color: #397eb4;
+    font-family: "Encode Sans", sans-serif !important;
+}
 
 .master {
-  margin: 40% auto;
-  width: 80% !important; }
-  .master .title {
+    margin: 40% auto;
+    width: 80% !important;
+}
+
+@media (min-width: 960px) {
+    .master {
+        margin: 20% auto;
+        width: 50% !important;
+    }
+}
+
+@media (min-width: 960px) {
+    .master {
+        margin: 20% auto;
+        width: 100% !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .master {
+        margin: 15% auto;
+        width: 70% !important;
+    }
+}
+
+@media (min-width: 1280px) {
+    .master {
+        margin: 15% auto;
+        width: 40% !important;
+    }
+}
+
+.master .title {
     font-size: 25px;
     font-weight: 600;
-    color: #397eb4; }
-  .master .containerProfile {
+    color: #397eb4;
+}
+
+.master .containerProfile {
     width: 100%;
-    margin: 0 auto; }
-  .master .card {
+    margin: 0 auto;
+}
+
+@media (min-width: 960px) {
+    .master .containerProfile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.master .card {
     width: 80%;
     margin: 0 auto;
-    margin-bottom: 30px; }
+    margin-bottom: 30px;
+}
+
     .master .card img {
-      width: 75%;
-      margin-bottom: 15px; }
+        width: 75%;
+        margin-bottom: 15px;
+    }
+
     .master .card .btnRef {
-      background-color: #397eb4;
-      color: white;
-      font-weight: 600; }
-  .master .footer {
+        background-color: #397eb4;
+        color: white;
+        font-weight: 600;
+    }
+
+.master .footer {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    margin-top: 20px; }
+    margin-top: 20px;
+}
+
     .master .footer p {
-      color: #272727;
-      margin: 0;
-      font-weight: 600; }
+        color: #272727;
+        margin: 0;
+        font-weight: 600;
+    }
+
     .master .footer a {
-      text-decoration: underline !important;
-      font-weight: 800;
-      color: #397eb4 !important; }
+        text-decoration: underline !important;
+        font-weight: 800;
+        color: #397eb4 !important;
+    }
 
 /*# sourceMappingURL=loginProfile.css.map */

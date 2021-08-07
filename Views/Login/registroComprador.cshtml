@@ -126,7 +126,6 @@
             padding: 10px;
             font-size: 14px;
         }
-
     </style>
 </head>
 <body>
@@ -135,7 +134,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-10">
-                        <a href="~/Views/Default/Default.cshtml" style="text-decoration: none;"><img width="100px" class="" src="@VariableGlobal.StrUrlSitio/img/logo.png" alt=""></a>
+                        <a href="@VariableGlobal.StrUrlSitio/Views/Default/Default.cshtml" style="text-decoration: none;"><img width="100px" class="" src="@VariableGlobal.StrUrlSitio/img/logo.png" alt=""></a>
                     </div>
                     <div class="col-2" id="menuProfile">
                         <a class="navbar-brand" href="#">
@@ -163,15 +162,15 @@
                 <input class="form-control"
                        id="it_usuario"
                        placeholder="Usuario" aria-label="usuario">
-                <input type="password" class="form-control required"
-                       id="it_contrasena"
-                       placeholder="Contrase&ntilde;a" aria-label="Contrasena">
                 <input type="email" class="form-control"
                        id="it_correo"
                        placeholder="Correo" aria-label="correo">
                 <input type="number" class="form-control"
                        id="it_telefono" maxlength="10"
                        placeholder="Tel&eacute;fono" aria-label="telefono">
+                <input type="password" class="form-control required"
+                       id="it_contrasena"
+                       placeholder="Contrase&ntilde;a" aria-label="Contrasena">
                 <input class="form-control required"
                        id="it_Nombre" maxlength="20"
                        placeholder="Nombre" aria-label="Nombre">
@@ -182,12 +181,42 @@
                     <option value="0">Seleccione estado</option>
                     <option value="1">Nuevo Le&oacute;n</option>
                     <option value="2">Coahuila</option>
+                    <option value="3">Ciudad de M&eacute;xico</option>		
+                    <option value="4">Aguascalientes</option>		
+                    <option value="5">Baja California</option>		
+                    <option value="6">Baja California Sur</option>	
+                    <option value="7">Campeche</option>				
+                    <option value="8">Chiapas</option>				
+                    <option value="9">Chihuahua</option>				
+                    <option value="10">Colima</option>				
+                    <option value="11">Durango</option>				
+                    <option value="12">Estado de M&eacute;xico</option>		
+                    <option value="13">Guanajuato</option>			
+                    <option value="14">Guerrero</option>				
+                    <option value="15">Hidalgo</option>				
+                    <option value="16">Jalisco</option>				
+                    <option value="17">Michoac&aacute;n</option>			
+                    <option value="18">Morelos</option>				
+                    <option value="19">Nayarit</option>				
+                    <option value="20">Oaxaca</option>				
+                    <option value="21">Puebla</option>				
+                    <option value="22">Quer&eacute;taro</option>			
+                    <option value="23">Quintana Roo</option>			
+                    <option value="24">San Luis Potos&iacute;</option>		
+                    <option value="25">Sinaloa</option>				
+                    <option value="26">Sonora</option>				
+                    <option value="27">Tabasco</option>
+                    <option value="28">Tamaulipas</option>
+                    <option value="29">Tlaxcala</option>
+                    <option value="30">Veracruz</option>
+                    <option value="31">Yucat&aacute;n</option>
+                    <option value="32">Zacatecas</option>
                 </select>
                 <button id="btn_RegistraComprador" type="button" class="btn btnRef">Registrar</button>
             </form>
         </div>
         <div class="container footer">
-            <a href="registroProveedor.cshtml" class="pass">¿Eres Vendedor?</a>
+            <a href="registroProveedor.cshtml" class="pass">Eres Vendedor?</a>
         </div>
     </div>
 </body>

@@ -88,11 +88,11 @@
             <div class="container post publicacionContenedor" data-idpublicacion="@objPublicacion.IntIdPublicacion">
                 <div class="row header">
                     <div class="col-2">
-                        <img class="rounded-circle" src="@VariableGlobal.StrUrlSitio/img/dummy.jpg" alt="">
+                        <img class="rounded-circle" src="@VariableGlobal.StrUrlSitio/Views/Publicacion/PublicacionImagen/@objPublicacion.StrImagen" alt="">
                     </div>
                     <div class="col-10">
-                        <p class="title">@objPublicacion.StrCveComprador</p>
-                        <p class="subTitle">@ObtenerTiempoHace(objPublicacion.DtFechaAlta)</p>
+                        <p class="title">@(objPublicacion.StrCveComprador)</p>
+                        <p class="subTitle">@(ObtenerTiempoHace(objPublicacion.DtFechaAlta) + " en " + objPublicacion.StrDescEstado)</p>
                     </div>
                 </div>
                 <div class="row post-img">

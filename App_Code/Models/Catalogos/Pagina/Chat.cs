@@ -16,10 +16,17 @@ public class Chat
     int _IntIdChat;
     int _IntIdPublicacion;
     int _IntIdUsuario;
+    int _IntIdUsuario1;
+    int _IntIdUsuario2;
     int _IntIdUsuarioDestino;
     string _StrMensaje;
     string _StrJsonMensajes;
+    string _StrDescripcion;
+    string _StrCveCategoria;
+    string _StrImagen1;
     string _StrCveUsuario;
+    string _StrCveUsuario1;
+    string _StrCveUsuario2;
     DateTime _DtFechaMensaje;
 
 
@@ -127,6 +134,97 @@ public class Chat
         }
     }
 
+    public string StrDescripcion
+    {
+        get
+        {
+            return _StrDescripcion;
+        }
+
+        set
+        {
+            _StrDescripcion = value;
+        }
+    }
+
+    public string StrCveCategoria
+    {
+        get
+        {
+            return _StrCveCategoria;
+        }
+
+        set
+        {
+            _StrCveCategoria = value;
+        }
+    }
+
+    public string StrImagen1
+    {
+        get
+        {
+            return _StrImagen1;
+        }
+
+        set
+        {
+            _StrImagen1 = value;
+        }
+    }
+
+    public string StrCveUsuario1
+    {
+        get
+        {
+            return _StrCveUsuario1;
+        }
+
+        set
+        {
+            _StrCveUsuario1 = value;
+        }
+    }
+
+    public string StrCveUsuario2
+    {
+        get
+        {
+            return _StrCveUsuario2;
+        }
+
+        set
+        {
+            _StrCveUsuario2 = value;
+        }
+    }
+
+    public int IntIdUsuario1
+    {
+        get
+        {
+            return _IntIdUsuario1;
+        }
+
+        set
+        {
+            _IntIdUsuario1 = value;
+        }
+    }
+
+    public int IntIdUsuario2
+    {
+        get
+        {
+            return _IntIdUsuario2;
+        }
+
+        set
+        {
+            _IntIdUsuario2 = value;
+        }
+    }
+
     #endregion
 
     #region Constructor
@@ -151,6 +249,7 @@ public class Chat
             sqlCommand.Parameters.AddWithValue("@p_IdChat", this.IntIdChat);
             sqlCommand.Parameters.AddWithValue("@p_IdUsuario", IntIdUsuario);
             sqlCommand.Parameters.AddWithValue("@p_IdUsuariodestino", this.IntIdUsuarioDestino);
+            sqlCommand.Parameters.AddWithValue("@p_IdPublicacion", this.IntIdPublicacion);
             sqlCommand.Parameters.AddWithValue("@p_Mensaje", this.StrMensaje);
 
             DataSet dataSetInsertar = ConexionBD.EjecutarComando(IntIdEmpresa, IntIdUsuario, sqlCommand, "archivo: Publicacion.cs => Insertar()");
@@ -192,6 +291,7 @@ public class Chat
             sqlCommand.Parameters.AddWithValue("@p_IdUsuario", IntIdUsuario);
             sqlCommand.Parameters.AddWithValue("@p_IdUsuariodestino", IntIdUsuarioDestino);
             sqlCommand.Parameters.AddWithValue("@p_IdChat", IntIdChat);
+            sqlCommand.Parameters.AddWithValue("@p_IdPublicacion", IntIdPublicacion);
 
             RegistroError objRegistroError = new RegistroError(sqlCommand.Parameters, MethodBase.GetCurrentMethod().Name, this.GetType().Name + ".cs", this.GetType().Name + "Controller.cs");
             sqlCommand.Parameters.AddWithValue("@p_RegistroError", JsonConvert.SerializeObject(objRegistroError));
@@ -204,12 +304,21 @@ public class Chat
                     lstObjChat.Add(new Chat
                     {
                         IntIdChat = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idChat") ? FilaChat["idChat"].ToString() : "0"),
+                        IntIdPublicacion = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idPublicacion") ? FilaChat["idPublicacion"].ToString() : "0"),
                         IntIdUsuario = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idUsuario1") ? FilaChat["idUsuario1"].ToString() : "0"),
                         IntIdUsuarioDestino = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idUsuario2") ? FilaChat["idUsuario2"].ToString() : "0"),
                         DtFechaMensaje = DateTime.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("fechaMensaje") ? FilaChat["fechaMensaje"].ToString() : "01-01-0001"),
                         StrCveUsuario = dataSetObtenerDataTable.Tables[0].Columns.Contains("cveUsuario") ? FilaChat["cveUsuario"].ToString() : "",
                         StrMensaje = dataSetObtenerDataTable.Tables[0].Columns.Contains("mensaje") ? FilaChat["mensaje"].ToString() : "",
                         StrJsonMensajes = dataSetObtenerDataTable.Tables[0].Columns.Contains("jsonMensajes") ? FilaChat["jsonMensajes"].ToString() : "",
+                        StrDescripcion = dataSetObtenerDataTable.Tables[0].Columns.Contains("descripcion") ? FilaChat["descripcion"].ToString() : "",
+                        StrCveCategoria = dataSetObtenerDataTable.Tables[0].Columns.Contains("cveCategoria") ? FilaChat["cveCategoria"].ToString() : "",
+                        StrImagen1 = dataSetObtenerDataTable.Tables[0].Columns.Contains("imagen1") ? FilaChat["imagen1"].ToString() : "",
+
+                        IntIdUsuario1 = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idUsuario1") ? FilaChat["idUsuario1"].ToString() : "0"),
+                        IntIdUsuario2 = int.Parse(dataSetObtenerDataTable.Tables[0].Columns.Contains("idUsuario2") ? FilaChat["idUsuario2"].ToString() : "0"),
+                        StrCveUsuario1 = dataSetObtenerDataTable.Tables[0].Columns.Contains("cveUsuario1") ? FilaChat["cveUsuario1"].ToString() : "",
+                        StrCveUsuario2 = dataSetObtenerDataTable.Tables[0].Columns.Contains("cveUsuario2") ? FilaChat["cveUsuario2"].ToString() : "",
                     });
                 }
             }

@@ -11,7 +11,7 @@ using System.Web.WebPages.Html;
 /// <summary>
 /// Summary description for Class1
 /// </summary>
-public class Perfil: IMetodosModelos<Perfil>
+public class Perfil : IMetodosModelos<Perfil>
 {
 
     #region Propiedades
@@ -24,6 +24,9 @@ public class Perfil: IMetodosModelos<Perfil>
     private string _StrDescEmpresa;
     private int _IntLimite;
     RespuestaBD _ObjRespuestaBD;
+    string _StrNombreArchivo;
+    string _StrImagenProveedor;
+    string _StrImagenComprador;
 
     #region Getter y Setter
 
@@ -54,7 +57,7 @@ public class Perfil: IMetodosModelos<Perfil>
     public int IntIdEmpresa
     {
         get { return _IntIdEmpresa; }
-        set { _IntIdEmpresa  = value; }
+        set { _IntIdEmpresa = value; }
     }
 
     public string StrCveEmpresa
@@ -75,6 +78,45 @@ public class Perfil: IMetodosModelos<Perfil>
         set { _IntLimite = value; }
     }
 
+    public string StrNombreArchivo
+    {
+        get
+        {
+            return _StrNombreArchivo;
+        }
+
+        set
+        {
+            _StrNombreArchivo = value;
+        }
+    }
+
+    public string StrImagenProveedor
+    {
+        get
+        {
+            return _StrImagenProveedor;
+        }
+
+        set
+        {
+            _StrImagenProveedor = value;
+        }
+    }
+
+    public string StrImagenComprador
+    {
+        get
+        {
+            return _StrImagenComprador;
+        }
+
+        set
+        {
+            _StrImagenComprador = value;
+        }
+    }
+
     #endregion
     #endregion
 
@@ -87,15 +129,17 @@ public class Perfil: IMetodosModelos<Perfil>
         //
     }
 
-    public Perfil(int IntIdPerfil) {
-        _IntIdPerfil    =   IntIdPerfil;
+    public Perfil(int IntIdPerfil)
+    {
+        _IntIdPerfil = IntIdPerfil;
     }
 
-    public Perfil(int intIdPerfil,string strDescPerfil, int intIdEmpresa, int intBActivo){
-        _IntIdPerfil    =   intIdPerfil;
-        _StrDescPerfil  =   strDescPerfil;
+    public Perfil(int intIdPerfil, string strDescPerfil, int intIdEmpresa, int intBActivo)
+    {
+        _IntIdPerfil = intIdPerfil;
+        _StrDescPerfil = strDescPerfil;
         _IntIdEmpresa = intIdEmpresa;
-        _IntBActivo     =   intBActivo;
+        _IntBActivo = intBActivo;
     }
 
     #endregion
@@ -197,6 +241,113 @@ public class Perfil: IMetodosModelos<Perfil>
     public RespuestaBD Eliminar()
     {
         throw new NotImplementedException();
+    }
+
+    public RespuestaBD ActualizarImagen()
+    {
+        RespuestaBD objRespuestaBD = new RespuestaBD();
+        try
+        {
+            var IntIdEmpresa = VariableGlobal.SessionIntIdEmpresa;
+            var IntIdUsuario = VariableGlobal.SessionIntIdUsuario;
+
+            SqlCommand sqlCommand = new SqlCommand();
+            if (VariableGlobal.SessionIntTipoUsuario == 1)
+            {
+                sqlCommand.CommandText = @"
+                                            update dbo.comprador
+                                            set imagen = @p_NombreArchivo
+                                            OUTPUT INSERTED.IdComprador as IdActualiza
+                                            where idUsuario = @p_IdUsuario
+                                        ";
+            }
+            else
+            {
+                sqlCommand.CommandText = @"
+                                            update dbo.proveedor
+                                            set imagen = @p_NombreArchivo
+                                            OUTPUT INSERTED.idProveedor as IdActualiza
+                                            where idUsuario = @p_IdUsuario
+                                        ";
+            }
+            sqlCommand.Parameters.AddWithValue("@p_IdUsuario", IntIdUsuario);
+            sqlCommand.Parameters.AddWithValue("@p_NombreArchivo", this.StrNombreArchivo);
+
+            DataSet dataSetInsertar = ConexionBD.EjecutarComando(IntIdEmpresa, IntIdUsuario, sqlCommand, "archivo: Publicacion.cs => Insertar()");
+
+            if (dataSetInsertar != null && dataSetInsertar.Tables.Count > 0 && dataSetInsertar.Tables[0].Rows.Count > 0)
+            {
+                if (int.Parse(dataSetInsertar.Tables[0].Rows[0]["IdActualiza"].ToString()) > 0)
+                {
+                    objRespuestaBD = new RespuestaBD(
+                       0,
+                       "Actualizado con Exito",
+                       "success"
+                   );
+                    HttpContext.Current.Session["StrImagenPerfil"] = this.StrNombreArchivo;
+                }
+                else
+                {
+                    objRespuestaBD = new RespuestaBD(
+                       1,
+                       "Error al actualizar",
+                       "error"
+                   );
+                }
+            }
+            else
+            {
+                objRespuestaBD = new RespuestaBD(1, "No se obtuvo respuesta de la base de datos", "error");
+            }
+        }
+        catch (Exception ex)
+        {
+            objRespuestaBD = new RespuestaBD(1, ex.ToString(), "error");
+        }
+        return objRespuestaBD;
+    }
+
+    public void ObtenerImagenes()
+    {
+        try
+        {
+            var IntIdUsuario = VariableGlobal.SessionIntIdUsuario;
+
+            SqlCommand sqlCommand = new SqlCommand();
+            if (VariableGlobal.SessionIntTipoUsuario == 1)
+            {
+                sqlCommand.CommandText = @"
+                                           select
+	                                            imagen = isnull(c.imagen, 'temporal.png')
+                                            from dbo.comprador c(nolock)
+                                            where idUsuario = @p_IdUsuario
+                                            union all
+                                            select
+	                                            imagen = isnull(c.imagen, 'temporal.png')
+                                            from dbo.proveedor c(nolock)
+                                            where idUsuario = @p_IdUsuario
+                                        ";
+            }
+            sqlCommand.Parameters.AddWithValue("@p_IdUsuario", IntIdUsuario);
+
+            DataSet dataSetInsertar = ConexionBD.EjecutarComando(IntIdEmpresa, IntIdUsuario, sqlCommand, "archivo: Publicacion.cs => Insertar()");
+
+            if (dataSetInsertar != null && dataSetInsertar.Tables.Count > 0 && dataSetInsertar.Tables[0].Rows.Count > 0)
+            {
+                this.StrImagenComprador = dataSetInsertar.Tables[0].Rows[0]["imagen"].ToString();
+                this.StrImagenProveedor = dataSetInsertar.Tables[0].Rows[1]["imagen"].ToString();
+            }
+            else
+            {
+                this.StrImagenComprador = "temporal.png";
+                this.StrImagenProveedor = "temporal.png";
+            }
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
     }
 
     public RespuestaBD Insertar()
@@ -301,9 +452,9 @@ public class Perfil: IMetodosModelos<Perfil>
             sqlCommand.Parameters.AddWithValue("@p_FilaInicial", objFiltroDt.start);
             sqlCommand.Parameters.AddWithValue("@p_FilaFinal", objFiltroDt.length);
             sqlCommand.Parameters.AddWithValue("@p_StrBuscar", objFiltroDt.StrDescPerfilFiltro);
-            if (objFiltroDt.IntIdEmpresaFiltro == null)            
+            if (objFiltroDt.IntIdEmpresaFiltro == null)
                 sqlCommand.Parameters.AddWithValue("@p_IdEmpresa", IntIdEmpresa);
-            else 
+            else
                 sqlCommand.Parameters.AddWithValue("@p_IdEmpresa", objFiltroDt.IntIdEmpresaFiltro);
 
             sqlCommand.Parameters.AddWithValue("@p_BRobot", IntBRobot);
@@ -320,16 +471,16 @@ public class Perfil: IMetodosModelos<Perfil>
                 {
                     objPerfilListado.Add(new Perfil()
                     {
-                        IntIdPerfil     =   int.Parse(filaPerfil["idPerfil"].ToString()),
-                        StrDescPerfil   =   filaPerfil["descPerfil"].ToString(),
-                        IntIdEmpresa    =   int.Parse(filaPerfil["idEmpresa"].ToString()),
-                        StrCveEmpresa   =   filaPerfil["cveEmpresa"].ToString(),
-                        StrDescEmpresa  =   filaPerfil["descEmpresa"].ToString(),
-                        IntBActivo      =   int.Parse(filaPerfil["bActivo"].ToString())
+                        IntIdPerfil = int.Parse(filaPerfil["idPerfil"].ToString()),
+                        StrDescPerfil = filaPerfil["descPerfil"].ToString(),
+                        IntIdEmpresa = int.Parse(filaPerfil["idEmpresa"].ToString()),
+                        StrCveEmpresa = filaPerfil["cveEmpresa"].ToString(),
+                        StrDescEmpresa = filaPerfil["descEmpresa"].ToString(),
+                        IntBActivo = int.Parse(filaPerfil["bActivo"].ToString())
                     });
                 }
-                IntTotalFilasFitradas   =   int.Parse(dataSetObtenerDataTable.Tables[1].Rows[0]["totalFilasFiltradas"].ToString());
-                IntTotalFilas           =   int.Parse(dataSetObtenerDataTable.Tables[1].Rows[0]["totalFilasMostradas"].ToString());
+                IntTotalFilasFitradas = int.Parse(dataSetObtenerDataTable.Tables[1].Rows[0]["totalFilasFiltradas"].ToString());
+                IntTotalFilas = int.Parse(dataSetObtenerDataTable.Tables[1].Rows[0]["totalFilasMostradas"].ToString());
             }
         }
         catch (Exception e)
@@ -352,7 +503,7 @@ public class Perfil: IMetodosModelos<Perfil>
 }
 public class FiltrosDTPerfil : DataTableAjaxPostModel
 {
-    public string StrDescPerfilFiltro       { get; set; }
-    public string IntBActivoPerfilFiltro    { get; set; }
-    public string IntIdEmpresaFiltro      { get; set; }
+    public string StrDescPerfilFiltro { get; set; }
+    public string IntBActivoPerfilFiltro { get; set; }
+    public string IntIdEmpresaFiltro { get; set; }
 }

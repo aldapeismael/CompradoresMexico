@@ -18,6 +18,7 @@ public class Proveedor
     string _StrRfc;
     string _StrDescEmpresa;
     int _IntBActivo;
+    int _IntIdEstado;
     string _StrContrasena;
     string _StrNombreUsuario;
     string _StrApellidoUsuario;
@@ -165,6 +166,19 @@ public class Proveedor
         }
     }
 
+    public int IntIdEstado
+    {
+        get
+        {
+            return _IntIdEstado;
+        }
+
+        set
+        {
+            _IntIdEstado = value;
+        }
+    }
+
 
 
     #endregion
@@ -202,6 +216,7 @@ public class Proveedor
             sqlCommand.Parameters.AddWithValue("@p_ApellidoUsuario", this.StrApellidoUsuario);
             sqlCommand.Parameters.AddWithValue("@p_RFC", this.StrRfc);
             sqlCommand.Parameters.AddWithValue("@p_DescEmpresa", this.StrDescEmpresa);
+            sqlCommand.Parameters.AddWithValue("@p_IdEstado", this.IntIdEstado);
             sqlCommand.Parameters.AddWithValue("@p_bActivo", this.IntBActivo);
             sqlCommand.Parameters.AddWithValue("@p_IdUsuario", IntIdUsuario);
 
