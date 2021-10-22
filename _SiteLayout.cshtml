@@ -89,7 +89,7 @@
             -moz-user-select: initial;
             -ms-user-select: initial;
             user-select: initial;
-        } 
+        }
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -198,7 +198,8 @@
                 <div class="row">
                     <div class="col-2" id="menu">
                         <a class="navbar-brand" href="#">
-                            <i class="material-icons md-48">account_circle</i>
+                            @*<i class="material-icons md-48">account_circle</i>*@
+                            <img class="" style="border-radius: 50%; width: 45px; height: 45px" src="@VariableGlobal.StrUrlSitio/Views/Publicacion/PublicacionImagen/@VariableGlobal.SessionStrImagenPerfil" alt="">
                         </a>
                     </div>
                     <div class="col-8">
@@ -219,7 +220,8 @@
                 <div><a href="@VariableGlobal.StrUrlSitio/Views/MeGusta/misMeGusta.cshtml">Mis Me Gusta</a></div>
             }
             <div><a href="@VariableGlobal.StrUrlSitio/Views/Chat/misChat.cshtml">Mis Chats</a></div>
-            <div><a href="@VariableGlobal.StrUrlSitio/Views/MiPerfil/tipoUsuario.cshtml">Cambiar usuario</a></div>
+            <div><a href="@VariableGlobal.StrUrlSitio/Views/MiPerfil/tipoUsuario.cshtml">Cambiar a @(VariableGlobal.SessionIntTipoUsuario == 2?"Comprador":"Vendedor")</a></div>
+            <div><a href="@VariableGlobal.StrUrlSitio/Views/MiPerfil/miPerfil.cshtml">Mi Perfil</a></div>
             <div style="border-bottom: none;"><a id="btn_Salir" href="@VariableGlobal.StrUrlSitio/Acceso.cshtml" style="color: rgb(179, 40, 40);" href="#">Salir</a></div>
         </div>
         <div class="menuSerchAd" id="menuSerchAd">
@@ -232,7 +234,7 @@
                 </div>
                 <hr>
                 <div class="form-group">
-                    <label for="exampleFormControlInput1">Categoria</label>
+                    <label for="exampleFormControlInput1">Busca Compradores por categoria</label>
                     <select class="form-control" id="idCategoriaLayout">
                         <option value="0">Todo</option>
                         @foreach (var item in lstObjCategoria)
@@ -242,17 +244,49 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="exampleFormControlInput1">Por palabra</label>
+                    <div>
+                        <label for="exampleFormControlInput1">Busca anuncios por palabra</label>&nbsp;<span style="font-size:9px">(Escribe todas la palabras claves que hagan referencia a lo que vendes)</span>
+                    </div>
                     <input type="text" class="form-control"
                            id="cvePalabraClaveLayout"
                            placeholder="Busqueda por palabra clave">
                 </div>
                 <div class="form-group">
-                    <label for="exampleFormControlSelect2">Estado</label>
+                    <label for="exampleFormControlSelect2">Busca Compradores segun su estado</label>
                     <select multiple class="form-control"
                             id="ddl_EstadoMultiple">
                         <option value="1">Nuevo Le&oacute;n</option>
                         <option value="2">Coahuila</option>
+                        <option value="3">Ciudad de M&eacute;xico</option>
+                        <option value="4">Aguascalientes</option>
+                        <option value="5">Baja California</option>
+                        <option value="6">Baja California Sur</option>
+                        <option value="7">Campeche</option>
+                        <option value="8">Chiapas</option>
+                        <option value="9">Chihuahua</option>
+                        <option value="10">Colima</option>
+                        <option value="11">Durango</option>
+                        <option value="12">Estado de M&eacute;xico</option>
+                        <option value="13">Guanajuato</option>
+                        <option value="14">Guerrero</option>
+                        <option value="15">Hidalgo</option>
+                        <option value="16">Jalisco</option>
+                        <option value="17">Michoac&aacute;n</option>
+                        <option value="18">Morelos</option>
+                        <option value="19">Nayarit</option>
+                        <option value="20">Oaxaca</option>
+                        <option value="21">Puebla</option>
+                        <option value="22">Quer&eacute;taro</option>
+                        <option value="23">Quintana Roo</option>
+                        <option value="24">San Luis Potos&iacute;</option>
+                        <option value="25">Sinaloa</option>
+                        <option value="26">Sonora</option>
+                        <option value="27">Tabasco</option>
+                        <option value="28">Tamaulipas</option>
+                        <option value="29">Tlaxcala</option>
+                        <option value="30">Veracruz</option>
+                        <option value="31">Yucat&aacute;n</option>
+                        <option value="32">Zacatecas</option>
                     </select>
                 </div>
                 <br />
@@ -298,7 +332,7 @@
     </div><!--- fin contenido--->
     </div>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
     tipo_menu = '@VariableGlobal.SessionStrTipoMenu';
     var str_RutaActual = '@Strurl';
@@ -338,7 +372,7 @@
         location.href = '@VariableGlobal.StrUrlSitio/Views/Default/Default.cshtml?pIdCategoria=' + $("#idCategoriaLayout").val() + '&pCveBusqueda=' + $("#cvePalabraClaveLayout").val() + '&pEstados=' + strEstados;
     });
 
-</script>
+    </script>
     <script src="@VariableGlobal.StrUrlSitio/js/functions.js"></script>
 </body>
 </html>

@@ -35,23 +35,56 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@100;400;600;900&display=swap"
           rel="stylesheet">
+<style>
+    .beneficios {
+        text-align: left !important;
+        margin-left: 20px;
+        font-size: 12px;
+        padding-top: 0px
+    }
+</style>
 </head>
 <body>
     <div class="container master" style="margin: 30% auto !important">
-        <div class="text-center" style="margin-bottom: 20px;">
+        <div class="text-center" style="margin-bottom: 5px;">
             <p class="title">¿Quién eres?</p>
         </div>
+        <div class="text-center" style="margin-bottom: 20px;">
+            <label style="font-size:10px">*Dentro de tu perfil podras alternar entre comprador y vendedor.</label>
+        </div>
         <div class="containerProfile">
-            <div class="card text-center">
-                <div class="card-body">
-                    <img src="@VariableGlobal.StrUrlSitio/img/dummy.png" alt="" srcset="">
-                    <a href="registroProveedor.cshtml" class="btn btnRef">Soy @VariableGlobal.SessionStrDescUsuario Vendedor</a>
+            <div class="card text-center" style="border: none !important">
+                <div class="card text-center" style="margin-bottom: 0px !important">
+                    <div class="card-body">
+                        <img src="@VariableGlobal.StrUrlSitio/img/dummy.png" alt="" srcset="">
+                        <a href="registroProveedor.cshtml" class="btn btnRef">Soy @VariableGlobal.SessionStrDescUsuario Vendedor</a>
+                    </div>
+                </div>
+                <div class="" style="height:80px !important">
+                    <div class="card-body">
+                        <p class="beneficios">
+                            Beneficio de registrarte como Vendedor:
+                            <br />- Encuentra de una manera facil y rapida a compradores.
+                        </p>
+                    </div>
                 </div>
             </div>
-            <div class="card text-center">
-                <div class="card-body">
-                    <img src="@VariableGlobal.StrUrlSitio/img/dummy.png" alt="" srcset="">
-                    <a href="registroComprador.cshtml" class="btn btnRef">Soy @VariableGlobal.SessionStrDescUsuario Comprador</a>
+            <div class="card text-center" style="border: none !important">
+                <div class="card text-center" style="margin-bottom: 0px !important">
+                    <div class="card-body">
+                        <img src="@VariableGlobal.StrUrlSitio/img/dummy.png" alt="" srcset="">
+                        <a href="registroComprador.cshtml" class="btn btnRef">Soy @VariableGlobal.SessionStrDescUsuario Comprador</a>
+                    </div>
+                </div>
+                <div class="" style="height:80px !important">
+                    <div class="card-body">
+                        <p class="beneficios">
+                            Beneficio de registrarte como Comprador:
+                            <br />- Publica gratis lo que compras.
+                            <br />- Evita perder tiempo buscando proveedores.
+                            <br />- Encuentra cada dia mejores precios.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

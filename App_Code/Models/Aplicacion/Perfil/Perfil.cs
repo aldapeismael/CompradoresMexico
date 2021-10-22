@@ -314,9 +314,7 @@ public class Perfil : IMetodosModelos<Perfil>
             var IntIdUsuario = VariableGlobal.SessionIntIdUsuario;
 
             SqlCommand sqlCommand = new SqlCommand();
-            if (VariableGlobal.SessionIntTipoUsuario == 1)
-            {
-                sqlCommand.CommandText = @"
+            sqlCommand.CommandText = @"
                                            select
 	                                            imagen = isnull(c.imagen, 'temporal.png')
                                             from dbo.comprador c(nolock)
@@ -327,7 +325,6 @@ public class Perfil : IMetodosModelos<Perfil>
                                             from dbo.proveedor c(nolock)
                                             where idUsuario = @p_IdUsuario
                                         ";
-            }
             sqlCommand.Parameters.AddWithValue("@p_IdUsuario", IntIdUsuario);
 
             DataSet dataSetInsertar = ConexionBD.EjecutarComando(IntIdEmpresa, IntIdUsuario, sqlCommand, "archivo: Publicacion.cs => Insertar()");

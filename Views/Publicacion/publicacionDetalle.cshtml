@@ -40,7 +40,7 @@
 @foreach (var objPublicacion in lstObjPublicacion)
 {
     <section style="margin-top: 15%;
-        margin-bottom: 15%; height: 100%;">
+        margin-bottom: 15%; height: 100%;" class="containerProductoDetalle">
         <div class="containerCarusel">
             <div class="exit">
                 <i class="material-icons md-48" id="btn_PantallaAnterior">arrow_back_ios</i>
@@ -58,7 +58,7 @@
                 </div>
                 @if (objPublicacion.IntIdUsuario != VariableGlobal.SessionIntIdUsuario)
                 {
-                    <button type="button" id="btn_Contactar" data-id="@objPublicacion.IntIdPublicacion" class="btn btn-block">Contactar</button>
+                    <button type="button" id="btn_Contactar" data-id="@objPublicacion.IntIdPublicacion" class="btn btn-block">Contactar por chat</button>
                 }
             </div>
         </div>
@@ -91,12 +91,16 @@
     });
 
     function fn_AbriModalChat(param_Int_IdLiquidacion) {
+        var strWith = "95%";
+        if (document.body.clientWidth > 760)
+            strWith = "60%";
+
         $.pgwModal({//abre ABC not
             url: "@VariableGlobal.StrUrlSitio/Views/Chat/chat.cshtml?Popup=1&IdPublicacion=" + param_Int_IdLiquidacion,
             loadingContent: '<span style="text-align:center">Cargando</span>',
             closeOnBackgroundClick: false,
             title: "Contactar",
-            maxWidth: '95%'
+            maxWidth: strWith
         });
     }
 

@@ -76,15 +76,15 @@
     <link rel="stylesheet" href="css/cssCompradores/loginGeneral.css">
     <link rel="stylesheet" href="css/cssCompradores/loginForm.css">
 
-    <!-- JavaScript Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
-            crossorigin="anonymous"></script>
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
           rel="stylesheet"
           integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
           crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+            crossorigin="anonymous"></script>
     <!-- FONTS only -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet">
@@ -144,16 +144,18 @@
     </header>
     <div class="container master">
         <div class="text-center" style="margin-bottom: 20px;">
+            <p class="title" style="font-weight:800">La red de compradores <br />de México</p>
+            <br />
             <p class="title">Hola!</p>
         </div>
         <div class="containerForm">
             <form id="frm" class="m-t frm" role="form" action="" method="post">
                 <input type="hidden" name="hblogin" value="0">
                 <input name="it_usuario" id="it_usuario" type="text" class="form-control"
-                       placeholder="Usuario" aria-label="First
+                       placeholder="Usuario, Teléfono o Correo" aria-label="First
                         name">
                 <input name="it_contrasena" id="it_contrasena" type="password" class="form-control"
-                       placeholder="Contraseña" aria-label="Contrasena">
+                       placeholder="Contraseña" aria-label="Contrasena" data-toggle="tooltip" data-placement="top" title="Contraseña">
                 <button id="btn_Iniciar" type="submit" class="btn btnRef full-width m-b">Ingresar</button>
                 @*<a href="" class="btn btnRef">Ingresar</a>*@
             </form>
@@ -176,7 +178,8 @@
 		$('form').animate({ height: "toggle", opacity: "toggle" }, "slow");
 	});
 	var Bool_UsuarioLogueado = "@UsuarioLogeado";
-	var Int_Error = @IntError;
+    var Int_Error = @IntError;
+
 	$(document).ready(function () {
 
 		var bool_EsSafari = !!navigator.userAgent.match(/Version\/[\d\.]+.*Safari/)
@@ -222,7 +225,7 @@
 
 		fn_LimpiarFiltrosLocalStorage();
 
-	});
+    });
 
 	function fn_LimpiarFiltrosLocalStorage() {
 		if (typeof (Storage) !== 'undefined') {

@@ -12,9 +12,9 @@ using System.Linq;
 public class EmailManagment
 {
     public static EmailManagment Email => new EmailManagment();
-    const string smtpServer = "secure.emailsrvr.com";
-    const string emailFrom = "alertas@alianzatrayecto.com";
-    const string emailPwd = "notificaciones.AT18";
+    const string smtpServer = "";
+    const string emailFrom = "";
+    const string emailPwd = "";
     private EmailManagment()
     {
 
@@ -30,10 +30,8 @@ public class EmailManagment
             mail.From = new MailAddress(emailFrom);
             foreach (string mailTo in Emails)
                 mail.To.Add(mailTo);
-            mail.Subject = $"RH - RECORDATORIO";
-            mail.Body = "¡Hola! " + Entrevistador + Environment.NewLine +
-                "Recuerda que tienes que realizar una Entrevista a: " + Candidato + Environment.NewLine
-                + "Que esta programada con la fecha: " + fecha + " a las:" + hora;
+            mail.Subject = $"";
+            mail.Body = "";
 
             SmtpServer.Port = 587;
             SmtpServer.Credentials = new System.Net.NetworkCredential(emailFrom, emailPwd);
@@ -305,11 +303,8 @@ public class EmailManagment
             mail.From = new MailAddress(emailFrom);
             foreach (string mailTo in Emails)
                 mail.To.Add(mailTo);
-            mail.Subject = $"RH - VACANTE NUEVA";
-            mail.Body = "Querido(a) " + Candidato + Environment.NewLine +
-                "Grupo Alianza Trayecto acaba de Abrir una nueva Vacante de: " + Vacante + Environment.NewLine
-                + "Puedes revisar mas acerca de esta nueva Vacante aquí:" + Environment.NewLine;
-                //+ VariableGlobal.StrUrlBolsaAlianza + "/Login.cshtml";
+            mail.Subject = $"";
+            mail.Body = "" + Environment.NewLine;
 
             SmtpServer.Port = 587;
             SmtpServer.Credentials = new System.Net.NetworkCredential(emailFrom, emailPwd);
@@ -333,11 +328,8 @@ public class EmailManagment
             mail.From = new MailAddress(emailFrom);
             foreach (string mailTo in Emails)
                 mail.To.Add(mailTo);
-            mail.Subject = $"RH - Encuesta General Pendiente";
-            mail.Body = "Querido(a) " + Candidato + Environment.NewLine +
-                "Grupo Alianza Trayecto acaba de Abrir una nueva Vacante de: " + Vacante + Environment.NewLine
-                + "Puedes revisar mas acerca de esta nueva Vacante aquí:" + Environment.NewLine;
-            //+ VariableGlobal.StrUrlBolsaAlianza + "/Login.cshtml";
+            mail.Subject = $"";
+            mail.Body = "" + Environment.NewLine;
 
             SmtpServer.Port = 587;
             SmtpServer.Credentials = new System.Net.NetworkCredential(emailFrom, emailPwd);

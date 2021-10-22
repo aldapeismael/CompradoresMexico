@@ -117,7 +117,7 @@
                         {
                             <a href="" class="btn_Favorito" data-idpublicacion="@objPublicacion.IntIdPublicacion"><i class="material-icons md-36 btnFavoritoIcono" id="btnFavoritoIcono_@objPublicacion.IntIdPublicacion" style="color: red !important">favorite</i></a>
                         }
-                        <a href="@VariableGlobal.StrUrlSitio/Views/Publicacion/publicacionDetalle.cshtml?idPublicacion=@objPublicacion.IntIdPublicacion"><i class="material-icons md-36">info_outline</i></a>
+                        @*<a href="@VariableGlobal.StrUrlSitio/Views/Publicacion/publicacionDetalle.cshtml?idPublicacion=@objPublicacion.IntIdPublicacion"><i class="material-icons md-36">info_outline</i></a>*@
                         @if (objPublicacion.IntIdUsuario == VariableGlobal.SessionIntIdUsuario)
                         {
                             <a id="btn_EliminaPublicacion" class="btn_EliminaPublicacion" href="#"><i class="material-icons md-36">delete_outline</i></a>

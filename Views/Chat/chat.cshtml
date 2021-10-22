@@ -110,7 +110,7 @@
 
 }
 <link rel="stylesheet" href="@VariableGlobal.StrUrlSitio/css/productDetail.css">
-<div class="ContactModal modalChatMensaje" id="ContactModal" data-idpublicacion="@IntIdPublicacion">
+<div class="ContactModal2 modalChatMensaje" id="ContactModal" data-idpublicacion="@IntIdPublicacion">
     <div class="containerForm" id="notificacionIdPublicacion" data-idchat="@IntIdChat" data-id="@IntIdPublicacion">
         <hr>
         <div class="row containerProfile">
@@ -240,6 +240,15 @@
     }
 </script>
 <style>
+
+    .ContactModal2 {
+        z-index: 9999;
+        display: block !important;
+        width: 100%;
+        height: 100%;
+        top: 0px;
+    }
+
     .container {
         max-width: 1170px;
         margin: auto;

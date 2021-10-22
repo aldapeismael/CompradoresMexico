@@ -3,6 +3,37 @@ body {
     font-family: "Encode Sans", sans-serif !important;
 }
 
+.containerProductoDetalle {
+}
+
+@media (min-width: 760px) {
+    .containerProductoDetalle {
+        width: 60% !important;
+        margin: 0 auto;
+    }
+}
+
+@media (min-width: 960px) {
+    .containerProductoDetalle {
+        width: 60% !important;
+        margin: 0 auto;
+    }
+}
+
+@media (min-width: 1024px) {
+    .containerProductoDetalle {
+        width: 60% !important;
+        margin: 0 auto;
+    }
+}
+
+@media (min-width: 1280px) {
+    .containerProductoDetalle {
+        width: 60% !important;
+        margin: 0 auto;
+    }
+}
+
 .containerCarusel {
     margin-top: 22%;
     min-height: 300px;

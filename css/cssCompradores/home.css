@@ -28,7 +28,8 @@
 }
 
 .container.post {
-    height: 410px;
+    overflow: hidden;
+    min-height: 460px;
     padding: 20px 20px;
     border-bottom: #648dd3 solid 5px;
 }
